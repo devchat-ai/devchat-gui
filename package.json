@@ -6,12 +6,19 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "move": "tsc && vite build && mv -f dist/main.html dist/main.js ../devchat-intellij/src/main/resources/static ",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mantine/core": "^7.1.7",
+    "@mantine/hooks": "^7.1.7",
+    "@tabler/icons-react": "^2.40.0",
+    "@types/node": "^20.8.10",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "valtio": "^1.12.0",
+    "vite-plugin-css-injected-by-js": "^3.3.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
@@ -22,6 +29,9 @@
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "postcss": "^8.4.31",
+    "postcss-preset-mantine": "^1.9.1",
+    "postcss-simple-vars": "^7.0.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   }
