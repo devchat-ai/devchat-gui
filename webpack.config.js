@@ -6,6 +6,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { DefinePlugin } = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
@@ -154,6 +155,7 @@ const webviewConfig = {
     level: "log",
   },
   plugins: [
+    new CleanWebpackPlugin(),
     // generate an HTML file that includes the extension's JavaScript file
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "src", "index.html"),
@@ -171,4 +173,4 @@ const webviewConfig = {
   ],
 };
 
-module.exports = [extensionConfig, webviewConfig];
+module.exports = webviewConfig;
