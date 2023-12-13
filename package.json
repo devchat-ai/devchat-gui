@@ -53,6 +53,7 @@
     "lint": "eslint src --ext ts",
     "test": "mocha",
     "build": "webpack --config webpack.config.js",
+    "vscode": "webpack --config webpack.config.js",
     "dev": "webpack serve --config webpack.config.js --open",
     "idea": "webpack --config webpack.idea.config.js &&  mv dist/main.js dist/main.html ../src/main/resources/static && echo '🎆done'"
   },
