@@ -1,5 +1,5 @@
 const JStoIdea = {
-  sendMessage: (message: string, context: any = [], parent: string = "") => {
+  sendMessage: (message: string, context: any = [], parent: string = "",model:string="") => {
     const paramsContext: any = [];
     if (Array.isArray(context) && context.length > 0) {
       context.forEach((item) => {
@@ -18,6 +18,7 @@ const JStoIdea = {
       payload: {
         contexts: paramsContext,
         message: message,
+        model
       },
     };
     console.log("ready to send message: ", params);
@@ -425,7 +426,8 @@ class IdeaBridge {
         JStoIdea.sendMessage(
           message.text,
           message.contextInfo,
-          message.parent_hash
+          message.parent_hash,
+          message.model
         );
         break;
       // 重新生成消息，用于发送失败时再次发送

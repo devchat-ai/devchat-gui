@@ -163,7 +163,8 @@ You can configure DevChat from [Settings](#settings).`;
                 command: 'sendMessage',
                 text: text,
                 contextInfo: contextInfo(chatContexts),
-                parent_hash: lastNonEmptyHash()
+                parent_hash: lastNonEmptyHash(),
+                model: self.chatModel
             });
         };
 
