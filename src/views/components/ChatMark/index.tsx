@@ -199,7 +199,6 @@ const ChatMark = ({ children,value,messageDone }) => {
             });
         }
     },[]);
-
     // Render markdown widgets
     const renderWidgets = (widgets) => {
         let radioGroupTemp:any = []; 
@@ -239,8 +238,11 @@ const ChatMark = ({ children,value,messageDone }) => {
                 // if next widget is not radio, then end current group
                 const nextWidget = index + 1 < widgets.length? widgets[index + 1]:null;
                 if (!nextWidget || nextWidget.type !== 'radio') {
-                    const radioGroup = ((radios,allValues)=><Radio.Group 
+                    const radioGroup = ((radios,allValues)=>{
+                        const filteredValues = allValues.filter((value) => values[value] === 'checked');
+                        return <Radio.Group 
                                             key={`radio-group-${index}`} 
+                                            value={filteredValues.length > 0 ? filteredValues[0] : undefined}
                                             onChange={
                                                 event => handleRadioChange({
                                                         event,
@@ -248,7 +250,8 @@ const ChatMark = ({ children,value,messageDone }) => {
                                                     })
                                             }>
                                             {radios}
-                                        </Radio.Group>)(radioGroupTemp,radioValuesTemp);
+                                        </Radio.Group>;
+                    })(radioGroupTemp,radioValuesTemp);
                     radioGroupTemp = [];
                     radioValuesTemp = [];
                     wdigetsTemp.push(radioGroup);
