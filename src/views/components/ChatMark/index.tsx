@@ -140,7 +140,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                     id,
                     title,
                     type:'button',
-                    value:title,
+                    value: id
                 });
             } else if (match = line.match(checkboxRegex)) {
                 const [status, id, title] = match.slice(1);
@@ -148,7 +148,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                     id,
                     title,
                     type:'checkbox',
-                    value: status === 'x'?'checked':'unchecked',
+                    value: value?'unchecked':status === 'x'?'checked':'unchecked',
                 });
                 setAutoForm(true);
             } else if (match = line.match(radioRegex)) {
@@ -180,7 +180,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                 editorContentRecorder = editorContentRecorder.substring(0, editorContentRecorder.length - 1);
                 // apply editor content to widget
                 ((editorId,editorContent) => widgetsHandlers.apply((item)=>{
-                    if(item.id === editorId){
+                    if(item.id === editorId && !(item.id in values)){
                         item.value = editorContent;
                     }
                     return item;
@@ -216,7 +216,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                         size='xs'
                         value={widget.value}
                         onClick={event => handleButtonClick({event,index})}>
-                            {widget.title}
+                            {values[widget.id] === 'clicked' ? '[x] ' + widget.title:widget.title}
                         </Button>);
             } else if (widget.type === 'checkbox') {
                 wdigetsTemp.push(<Checkbox 
@@ -280,7 +280,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                 :renderWidgets(widgets)
             }
         </Box>
-    );
+    ); 
 };
 
 export default ChatMark;
