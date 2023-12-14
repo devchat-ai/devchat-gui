@@ -174,6 +174,7 @@ Generate a professionally written and formatted release note in markdown with th
         remarkPlugins={[()=> (tree) =>{
             let stepCount = 1;
             let chatmarkCount = 0;
+            let previousNode:any = null;
             visit(tree, function (node) {
                 if (node.type === 'code') {
                     // set meta data as props
@@ -184,13 +185,16 @@ Generate a professionally written and formatted release note in markdown with th
                     } else if(node.lang ==='chatmark' || node.lang ==='ChatMark'){
                         props['id'] = `chatmark-${chatmarkCount}`;
                         props['index'] = chatmarkCount;
-                    } 
+                    } else if ((node.lang === 'yaml' || node.lang === 'YAML') && previousNode && previousNode.type === 'code' && previousNode.lang === 'chatmark') {
+                        props['hidden'] = true;
+                    }
                     node.data={
                         hProperties:{
                             ...props
                         }
                     };
                     // record node and count data for next loop
+                    previousNode = node;
                     if(node.lang ==='chatmark' || node.lang ==='ChatMark'){
                         chatmarkCount++;
                     }
@@ -225,6 +229,10 @@ Generate a professionally written and formatted release note in markdown with th
                 if (lanugage === 'chatmark' || lanugage === 'ChatMark') {
                     const chatmarkValue = chatmarkValues[`chatmark-${index}`];
                     return <ChatMark value={chatmarkValue} messageDone={messageDone}>{value}</ChatMark>;
+                }
+
+                if ((lanugage === 'yaml' || lanugage === 'YAML') && props.hidden) {
+                    return <></>;
                 }
 
                 return !inline && lanugage ? (
