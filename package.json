@@ -53,8 +53,8 @@
     "lint": "eslint src --ext ts",
     "test": "mocha",
     "build": "webpack --config webpack.config.js",
-    "vscode": "webpack --config webpack.config.js && mv dist/* ../dist",
-    "vscode:watch": "webpack --config webpack.config.js --watch && mv dist/* ../dist",
+    "vscode": "webpack --config webpack.config.js",
+    "vscode:watch": "webpack --config webpack.config.js --watch",
     "dev": "webpack serve --config webpack.config.js --open",
     "build:idea": "webpack --config webpack.idea.config.js",
     "idea": "webpack --config webpack.idea.config.js &&  mv dist/main.js dist/main.html ../src/main/resources/static && echo '🎆done'"

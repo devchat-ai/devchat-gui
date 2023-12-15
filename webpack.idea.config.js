@@ -5,6 +5,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const webpack = require("webpack");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const webviewConfig = {
   name: "webview",
@@ -98,6 +99,11 @@ const webviewConfig = {
     new webpack.ProgressPlugin(),
     new webpack.DefinePlugin({
       "process.env.platform": JSON.stringify("idea"),
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "dist", to: "../dist" },
+      ],
     }),
   ],
 };
