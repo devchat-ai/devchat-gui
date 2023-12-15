@@ -161,6 +161,7 @@ OPENAI_API_KEY is missing from your environment or settings. Kindly input your O
 
       const setKeyUser = `Is DevChat Access Key ready?`;
 
+      console.log("self.key: ", self.key);
       if (self.key !== "") {
         self.messages.push(
           Message.create({
