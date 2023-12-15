@@ -100,11 +100,6 @@ const webviewConfig = {
     new webpack.DefinePlugin({
       "process.env.platform": JSON.stringify("idea"),
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: "dist", to: "../dist" },
-      ],
-    }),
   ],
 };
 

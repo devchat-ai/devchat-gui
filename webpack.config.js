@@ -170,6 +170,9 @@ const webviewConfig = {
     new DefinePlugin({
       "process.env.platform": JSON.stringify("vscode"),
     }),
+    new CopyWebpackPlugin({
+      patterns: [{ from: "dist", to: "../dist" }],
+    }),
   ],
 };
 
