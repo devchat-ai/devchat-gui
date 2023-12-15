@@ -1,5 +1,10 @@
 const JStoIdea = {
-  sendMessage: (message: string, context: any = [], parent: string = "",model:string="") => {
+  sendMessage: (
+    message: string,
+    context: any = [],
+    parent: string = "",
+    model: string = ""
+  ) => {
     const paramsContext: any = [];
     if (Array.isArray(context) && context.length > 0) {
       context.forEach((item) => {
@@ -18,7 +23,7 @@ const JStoIdea = {
       payload: {
         contexts: paramsContext,
         message: message,
-        model
+        model,
       },
     };
     console.log("ready to send message: ", params);
@@ -130,6 +135,15 @@ const JStoIdea = {
         break;
       case "DevChat.AccessKey.DevChat":
         // 设置key
+        const setkeyparams = {
+          action: "showSettingDialog/request",
+          metadata: {
+            callback: "IdeaToJSMessage",
+          },
+          payload: {},
+        };
+
+        window.JSJavaBridge.callJava(JSON.stringify(setkeyparams));
         break;
       default:
         break;
