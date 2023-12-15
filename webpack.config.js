@@ -140,7 +140,7 @@ const webviewConfig = {
         test: /\.(png|jpg|jpeg|gif|svg)$/, // 匹配文件类型
         use: [
           {
-            loader: "file-loader", // 使用file-loader
+            loader: "url-loader", // 使用file-loader
             options: {
               name: "[name].[ext]", // 输出文件的名称和扩展名
               outputPath: "assets/", // 输出文件的路径

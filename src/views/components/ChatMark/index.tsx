@@ -140,7 +140,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                     id,
                     title,
                     type:'button',
-                    value:title,
+                    value: id
                 });
             } else if (match = line.match(checkboxRegex)) {
                 const [status, id, title] = match.slice(1);
@@ -148,7 +148,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                     id,
                     title,
                     type:'checkbox',
-                    value: status === 'x'?'checked':'unchecked',
+                    value: value?'unchecked':status === 'x'?'checked':'unchecked',
                 });
                 setAutoForm(true);
             } else if (match = line.match(radioRegex)) {
@@ -180,7 +180,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                 editorContentRecorder = editorContentRecorder.substring(0, editorContentRecorder.length - 1);
                 // apply editor content to widget
                 ((editorId,editorContent) => widgetsHandlers.apply((item)=>{
-                    if(item.id === editorId){
+                    if(item.id === editorId && !(item.id in values)){
                         item.value = editorContent;
                     }
                     return item;
@@ -199,7 +199,6 @@ const ChatMark = ({ children,value,messageDone }) => {
             });
         }
     },[]);
-
     // Render markdown widgets
     const renderWidgets = (widgets) => {
         let radioGroupTemp:any = []; 
@@ -216,7 +215,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                         size='xs'
                         value={widget.value}
                         onClick={event => handleButtonClick({event,index})}>
-                            {widget.title}
+                            {values[widget.id] === 'clicked' ? '[x] ' + widget.title:widget.title}
                         </Button>);
             } else if (widget.type === 'checkbox') {
                 wdigetsTemp.push(<Checkbox 
@@ -239,8 +238,11 @@ const ChatMark = ({ children,value,messageDone }) => {
                 // if next widget is not radio, then end current group
                 const nextWidget = index + 1 < widgets.length? widgets[index + 1]:null;
                 if (!nextWidget || nextWidget.type !== 'radio') {
-                    const radioGroup = ((radios,allValues)=><Radio.Group 
+                    const radioGroup = ((radios,allValues)=>{
+                        const filteredValues = allValues.filter((value) => values[value] === 'checked');
+                        return <Radio.Group 
                                             key={`radio-group-${index}`} 
+                                            value={filteredValues.length > 0 ? filteredValues[0] : undefined}
                                             onChange={
                                                 event => handleRadioChange({
                                                         event,
@@ -248,7 +250,8 @@ const ChatMark = ({ children,value,messageDone }) => {
                                                     })
                                             }>
                                             {radios}
-                                        </Radio.Group>)(radioGroupTemp,radioValuesTemp);
+                                        </Radio.Group>;
+                    })(radioGroupTemp,radioValuesTemp);
                     radioGroupTemp = [];
                     radioValuesTemp = [];
                     wdigetsTemp.push(radioGroup);
@@ -280,7 +283,7 @@ const ChatMark = ({ children,value,messageDone }) => {
                 :renderWidgets(widgets)
             }
         </Box>
-    );
+    ); 
 };
 
 export default ChatMark;
