@@ -154,14 +154,13 @@ ${
 You can configure DevChat from [Settings](#settings).`;
 
       const setKeyMessage = `
-OPENAI_API_KEY is missing from your environment or settings. Kindly input your OpenAI or DevChat key, and I'll ensure DevChat is all set for you.
+DevChat key is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
 
 <button value="setting_devchat_key">Set DevChat key</button>
 `;
 
       const setKeyUser = `Is DevChat Access Key ready?`;
 
-      console.log("self.key: ", self.key);
       if (self.key !== "") {
         self.messages.push(
           Message.create({
