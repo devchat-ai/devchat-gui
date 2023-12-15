@@ -112,7 +112,7 @@ const JStoIdea = {
      * 1. workbench.action.openSettings
      * 2. AskCodeIndexStart
      * 3. AccessKey.OpenAI
-     * 4. AccessKey.DevChat
+     * 4. DevChat.AccessKey.DevChat
      */
     const content = Array.isArray(command.content) ? command.content[0] : "";
     switch (content) {
@@ -128,7 +128,7 @@ const JStoIdea = {
 
         window.JSJavaBridge.callJava(JSON.stringify(params));
         break;
-      case "AccessKey.DevChat":
+      case "DevChat.AccessKey.DevChat":
         // 设置key
         break;
       default:
