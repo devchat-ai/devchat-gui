@@ -130,6 +130,8 @@ Don't forget to check out the "+" button on the left of the input to add more co
 
 To get started, here are some of the things that I can do for you:
 
+${!self.key && '[please configure your API key first](#settings)'}
+
 [/code: write code based on your prompt](#code)
 
 [/commit_message: compose a commit message based on your code changes](#commit_message)
