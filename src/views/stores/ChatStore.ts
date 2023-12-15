@@ -161,7 +161,7 @@ DevChat key is missing from your environment or settings. Kindly input your DevC
 
       const setKeyUser = `Is DevChat Access Key ready?`;
 
-      if (self.key !== "") {
+      if (self.key === "") {
         self.messages.push(
           Message.create({
             type: "user",
