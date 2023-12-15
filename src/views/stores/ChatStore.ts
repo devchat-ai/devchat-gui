@@ -88,7 +88,8 @@ export const ChatStore = types.model('Chat', {
     chatPanelWidth: 300,
     disabled: false,
     rechargeSite: 'https://web.devchat.ai/pricing/',
-    features: types.optional(types.frozen(), {})
+    features: types.optional(types.frozen(), {}),
+    key: types.optional(types.string, ''),
 })
     .actions(self => {
 
@@ -121,7 +122,7 @@ export const ChatStore = types.model('Chat', {
         });
 
         const helpMessage = (originalMessage = false) => {
-
+console.log('self.key',self.key);
             let helps = `
 Do you want to write some code or have a question about the project? Simply right-click on your chosen files or code snippets and add them to DevChat. Feel free to ask me anything or let me help you with coding.
     
@@ -297,6 +298,9 @@ ${yaml.dump(values)}
             startResponsing: (message: string) => {
                 self.responsed = true;
                 self.currentMessage = message;
+            },
+            setKey: (key: string) => {
+                self.key = key;
             },
             newMessage: (message: IMessage) => {
                 self.messages.push(message);
