@@ -189,6 +189,12 @@ const InputMessage = observer((props: any) => {
       }
     );
     messageUtil.registerHandler(
+      "chatWithDevChat",
+      (message: { command: string; message: string }) => {
+        chat.commonMessage(message.message, []);
+      }
+    );
+    messageUtil.registerHandler(
       "appendContext",
       (message: { command: string; context: string }) => {
         // context is a temp file path
