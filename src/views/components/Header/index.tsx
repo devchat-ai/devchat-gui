@@ -68,11 +68,11 @@ export default function Head() {
               <IconSettings size="1.125rem" />
             </ActionIcon>
           </div>
-          {/* <div>
+          <div>
             <ActionIcon size="sm" onClick={switchLang}>
               <IconLanguage size="1.125rem" />
             </ActionIcon>
-          </div> */}
+          </div>
         </Flex>
       </Flex>
     </Header>
