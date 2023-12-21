@@ -255,6 +255,19 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
+  setLanguage: (message) => {
+    const params = {
+      action: "updateLanguage/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {
+        language: message?.language || "en",
+      },
+    };
+    console.log("setLanguage params: ", params);
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
 };
 
 class IdeaBridge {
@@ -379,6 +392,9 @@ class IdeaBridge {
       endPoint: setting.apiBase,
       accessKey: setting.apiKey,
       keyType: setting.apiKey.startsWith("DC") ? "DevChat" : "OpenAi",
+    });
+    this.handle.getLanguage({
+      language: setting.language,
     });
   }
 
@@ -518,6 +534,9 @@ class IdeaBridge {
         break;
       case "userInput":
         JStoIdea.userInput(message);
+        break;
+      case "setLanguage":
+        JStoIdea.setLanguage(message);
         break;
       default:
         break;
