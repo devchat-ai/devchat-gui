@@ -294,7 +294,7 @@ class IdeaBridge {
           this.resviesContext(res);
           break;
         case "getSetting/response":
-          this.resviceSettings(res);
+          // this.resviceSettings(res);
           break;
         case "listTopics/response":
           this.resviceTopicList(res);
@@ -364,7 +364,6 @@ class IdeaBridge {
   }
 
   resviceSettings(res) {
-    console.log("resviceSettings res: ", res);
     // 用户设置的回调
     const setting = res.payload.setting;
 
