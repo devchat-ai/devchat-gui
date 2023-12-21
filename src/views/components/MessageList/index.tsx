@@ -59,7 +59,6 @@ const MessageList = observer((props: any) => {
           type: messageType,
           hash: messageHash,
           contexts,
-          confirm,
         } = item;
         // setMessage(messageText);
         return (
@@ -89,46 +88,6 @@ const MessageList = observer((props: any) => {
                 },
               }}
             >
-              {messageType === "bot" && confirm && (
-                <Card
-                  shadow="sm"
-                  padding="xs"
-                  radius="md"
-                  withBorder
-                  className={classes.card}
-                >
-                  <Card.Section withBorder inheritPadding py="xs">
-                    <Group position="left">
-                      <IconInfoSquareRounded size={20} />
-                      <Text fw={500}>GPT-4 Usage Required</Text>
-                    </Group>
-                  </Card.Section>
-                  <Text className={classes.cardDescription}>
-                    DevChat will make GPT-4 API calls to analyze up to ten
-                    source files, costing{" "}
-                    <strong>approximately $0.4 USD per question</strong>.
-                    <br />
-                    <br />
-                    Would you like to proceed?
-                  </Text>
-                  <Group position="right">
-                    <Button
-                      size="compact-xs"
-                      className={classes.button}
-                      onClick={() => chat.sendLastUserMessage()}
-                    >
-                      Yes
-                    </Button>
-                    <Button
-                      size="compact-xs"
-                      className={classes.button}
-                      onClick={() => chat.cancelDevchatAsk()}
-                    >
-                      No
-                    </Button>
-                  </Group>
-                </Card>
-              )}
               <MessageContext
                 key={`message-context-${index}`}
                 contexts={contexts}

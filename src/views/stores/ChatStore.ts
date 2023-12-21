@@ -80,7 +80,6 @@ export const Message = types.model({
   type: types.enumeration(["user", "bot", "system"]),
   message: types.string,
   contexts: types.maybe(types.array(ChatContext)),
-  confirm: types.maybe(types.boolean),
 });
 
 export const ChatStore = types
@@ -214,7 +213,6 @@ DevChat key is missing from your environment or settings. Kindly input your DevC
       const lastUserMessage = self.messages[self.messages.length - 2];
       const lastBotMessage = self.messages[self.messages.length - 1];
       if (lastUserMessage && lastUserMessage.type === "user") {
-        lastBotMessage.confirm = false;
         startGenerating(lastUserMessage.message, lastUserMessage.contexts);
       }
       self.disabled = false;
@@ -223,7 +221,6 @@ DevChat key is missing from your environment or settings. Kindly input your DevC
     const cancelDevchatAsk = () => {
       const lastBotMessage = self.messages[self.messages.length - 1];
       if (lastBotMessage && lastBotMessage.type === "bot") {
-        lastBotMessage.confirm = false;
         lastBotMessage.message =
           "You've cancelled the question. Please let me know if you have any other questions or if there's anything else I can assist with.";
       }
@@ -281,22 +278,12 @@ Thinking...123
           contexts: chatContexts,
           message: userMessage,
         });
-        const isInstalled = true;
 
-        if (isInstalled) {
-          // self.disabled = true;
-          // self.errorMessage = '';
-          // self.messages.push({
-          //         type: 'bot',
-          //         message: '',
-          //         confirm: true
-          //     });
-          self.messages.push({
-            type: "bot",
-            message: "",
-          });
-          startGenerating(userMessage, chatContexts);
-        }
+        self.messages.push({
+          type: "bot",
+          message: "",
+        });
+        startGenerating(userMessage, chatContexts);
 
         // goto bottom
         goScrollBottom();
