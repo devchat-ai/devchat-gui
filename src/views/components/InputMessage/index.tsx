@@ -34,7 +34,7 @@ import Topic from "./Topic";
 import { observer } from "mobx-react-lite";
 import { useMst } from "@/views/stores/RootStore";
 import { ChatContext } from "@/views/stores/InputStore";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 const useStyles = createStyles((theme) => ({
   actionIcon: {
@@ -312,7 +312,7 @@ const InputMessage = observer((props: any) => {
                 color: theme.colors.gray[6],
               }}
             >
-              {description}
+              <Trans>{description}</Trans>
             </Text>
           </Stack>
         </Flex>
