@@ -78,7 +78,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
                         
 Ask anything about your codebase and get answers from our AI agent.
 
-DevChat intelligently navigates your codebase using GPT-4. It automatically selects and analyzes up to ten most relevant source files to answer your question, all at an approximate cost of $0.4 USD. Stay tuned — we're soon integrating the more cost-efficient LLama 2 - 70B model.
+DevChat intelligently navigates your codebase using GPT-4. It automatically selects and analyzes up to ten most relevant source files to answer your question. Stay tuned — we're soon integrating the more cost-efficient LLama 2 - 70B model.
 
 Sample questions:
 - Why does the lead time for changes sometimes show as null?
