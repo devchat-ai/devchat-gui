@@ -223,7 +223,7 @@ Generate a professionally written and formatted release note in markdown with th
 
                 if (lanugage === 'step' || lanugage === 'Step') {
                     let done = Number(index) < codes.length? true : lastNode.type !== 'code';
-                    return <Step language={lanugage} done={temp?done:true}>{value}</Step>;
+                    return <Step language={lanugage} done={temp?done:true} index={index}>{value}</Step>;
                 }
 
                 if (lanugage === 'chatmark' || lanugage === 'ChatMark') {
