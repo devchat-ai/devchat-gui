@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Header,
   Avatar,
@@ -22,7 +22,17 @@ const useStyles = createStyles((theme) => ({
 
 export default function Head() {
   const { classes } = useStyles();
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    messageUtil.registerHandler("getLanguage", (data: { language: string }) => {
+      if (data.language && data.language.toLocaleLowerCase() === "en") {
+        i18n.changeLanguage("en");
+      } else {
+        i18n.changeLanguage("zh");
+      }
+    });
+  }, []);
 
   const openSetting = () => {
     messageUtil.sendMessage({
@@ -35,6 +45,10 @@ export default function Head() {
     const currentLang = i18n.language;
     const newLang = currentLang === "en" ? "zh" : "en";
     i18n.changeLanguage(newLang);
+    messageUtil.sendMessage({
+      command: "setLanguage",
+      language: newLang,
+    });
   };
 
   return (
