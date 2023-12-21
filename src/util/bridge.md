@@ -42,6 +42,10 @@
 - receiveMessage // 对话
 - systemMessage // 没用了
 
+## 函数
+
+onInitializationFinish // 初始化完成之后服务端掉用
+
 # css
 
 --vscode-editor-font-familyy
