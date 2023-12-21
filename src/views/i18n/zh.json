@@ -1,3 +1,11 @@
 {
-  "Delete message": "11删除消息"
+  "Delete message": "删除",
+  "Copied": "已复制",
+  "Copy message": "复制",
+  "Refilled": "已发送",
+  "Refill message": "再次发送",
+  "User": "用户",
+  "Ask DevChat a question or type ‘/’ for workflow": "向 DevChat 提问或输入 '/' 以查看工作流",
+  "How do I use DevChat?": "如何使用 DevChat？",
+  "balance": "您的余额为 {{formatedCurrency}}，登录 <4>web.devchat.ai</4> 以获得更多 tokens"
 }

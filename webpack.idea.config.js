@@ -74,11 +74,6 @@ const webviewConfig = {
         include: /views/,
       },
       {
-        test: /\.json$/i,
-        use: "json-loader",
-        type: "asset/source",
-      },
-      {
         test: /\.(png|jpg|jpeg|gif|svg)$/, // 匹配文件类型
         type: "asset/inline",
       },
