@@ -377,6 +377,7 @@ class IdeaBridge {
   }
 
   resviceSettings(res) {
+    console.log("resviceSettings res: ", res);
     // 用户设置的回调
     const setting = res.payload.setting;
 

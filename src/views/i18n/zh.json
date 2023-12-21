@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "Delete message": "删除消息及回答",
   "Copied": "已复制",
   "Copy message": "复制回答",
@@ -17,4 +18,15 @@
   "commit changes with commit message in english.": "选择要提交的代码变更，总结英文提交消息，并提交到代码库。",
   "Generate a commit message for the given git diff.": "为给定的 git diff 生成提交消息。",
   "Generate a release note for the given commit log.": "为给定的提交日志生成发布说明。"
+=======
+  "Delete message": "删除",
+  "Copied": "已复制",
+  "Copy message": "复制",
+  "Refilled": "已发送",
+  "Refill message": "再次发送",
+  "User": "用户",
+  "Ask DevChat a question or type ‘/’ for workflow": "向 DevChat 提问或输入 '/' 以查看工作流",
+  "How do I use DevChat?": "如何使用 DevChat？",
+  "balance": "您的余额为 {{formatedCurrency}}，登录 <4>web.devchat.ai</4> 以获得更多 tokens"
+>>>>>>> 36a272b (Update language translations and fix UI issues)
 }
