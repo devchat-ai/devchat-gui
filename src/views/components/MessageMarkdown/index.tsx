@@ -1,8 +1,8 @@
 import { Button, Anchor, Stack, Group, Box, createStyles } from "@mantine/core";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { okaidia } from "react-syntax-highlighter/dist/esm/styles/prism";
 import CodeButtons from "./CodeButtons";
 import Step from "./Step";
@@ -10,12 +10,12 @@ import LanguageCorner from "./LanguageCorner";
 import { observer } from "mobx-react-lite";
 import { useMst } from "@/views/stores/RootStore";
 import { Message } from "@/views/stores/ChatStore";
-import messageUtil from '@/util/MessageUtil';
-import {fromMarkdown} from 'mdast-util-from-markdown';
-import {visit} from 'unist-util-visit';
+import messageUtil from "@/util/MessageUtil";
+import { fromMarkdown } from "mdast-util-from-markdown";
+import { visit } from "unist-util-visit";
 import ChatMark from "@/views/components/ChatMark";
 import { useSetState } from "@mantine/hooks";
-import { toMarkdown } from "mdast-util-to-markdown";
+import { Trans, useTranslation } from "react-i18next";
 
 const useStyles = createStyles((theme) => ({
     link:{
@@ -29,28 +29,30 @@ const useStyles = createStyles((theme) => ({
         }
     }
 }));
-interface MessageMarkdownProps extends React.ComponentProps<typeof ReactMarkdown> {
-    children: string,
-    className: string,
-    messageDone?: boolean,
-    activeStep?: boolean
+interface MessageMarkdownProps
+  extends React.ComponentProps<typeof ReactMarkdown> {
+  children: string | any;
+  className: string;
+  messageDone?: boolean;
+  temp?: boolean;
 }
 
 type Step = {
-    index: number,
-    content: string;
-    endsWithTripleBacktick: boolean;
+  index: number;
+  content: string;
+  endsWithTripleBacktick: boolean;
 };
 
 function parseMetaData(string) {
-    const regexp = /((?<k1>(?!=)\S+)=((?<v1>(["'`])(.*?)\5)|(?<v2>\S+)))|(?<k2>\S+)/g;    
-    const io = (string ?? '').matchAll(regexp);
+  const regexp =
+    /((?<k1>(?!=)\S+)=((?<v1>(["'`])(.*?)\5)|(?<v2>\S+)))|(?<k2>\S+)/g;
+  const io = (string ?? "").matchAll(regexp);
 
-    return new Map(
-        [...io]
-        .map((item) => item?.groups)
-        .map(({ k1, k2, v1, v2 }) => [k1 ?? k2, v1 ?? v2]),
-    );
+  return new Map(
+    [...io]
+      .map((item) => item?.groups)
+      .map(({ k1, k2, v1, v2 }) => [k1 ?? k2, v1 ?? v2])
+  );
 }
 
 const MessageMarkdown = observer((props: MessageMarkdownProps) => {
@@ -63,18 +65,18 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
     const [chatmarkValues,setChatmarkValues] = useSetState({});
     const {classes} = useStyles();
 
-    const handleExplain = (value: string | undefined) => {
-        console.log(value);
-        switch (value) {
-            case "#ask_code":
-                chat.addMessages([
-                    Message.create({
-                        type: 'user',
-                        message: 'Explain /ask-code'
-                    }),
-                    Message.create({
-                        type: 'bot',
-                        message: `***/ask-code***
+  const handleExplain = (value: string | undefined) => {
+    console.log(value);
+    switch (value) {
+      case "#ask_code":
+        chat.addMessages([
+          Message.create({
+            type: "user",
+            message: "Explain /ask-code",
+          }),
+          Message.create({
+            type: "bot",
+            message: `***/ask-code***
                         
 Ask anything about your codebase and get answers from our AI agent.
 
@@ -84,147 +86,198 @@ Sample questions:
 - Why does the lead time for changes sometimes show as null?
 - How is store.findAllAccounts implemented?
 - The recursive retriever currently drops any TextNodes and only queries the IndexNodes. It's a bug. How can we fix it?
-                        `
-                    }),
-                ]);
-                break;
-            case '#code':
-                chat.addMessages([
-                    Message.create({
-                        type: 'user',
-                        message: 'Explain /code'
-                    }),
-                    Message.create({
-                        type: 'bot',
-                        message: `***/code***
+                        `,
+          }),
+        ]);
+        break;
+      case "#code":
+        chat.addMessages([
+          Message.create({
+            type: "user",
+            message: "Explain /code",
+          }),
+          Message.create({
+            type: "bot",
+            message: `***/code***
 
 Use this DevChat workflow to request code writing. Please input your specific requirements and supply the appropriate context for implementation. You can select the relevant code or files and right-click to "Add to DevChat". If you find the context is still insufficient, you can enhance my understanding of your code by providing class/function definitions of the selected code. To do this, click the "+" button for the selected code and choose "symbol definitions". Please note, it may take a few seconds for this information to appear in DevChat.
-                    `
-                    }),
-                ]);
-                break;
-            case '#commit_message':
-                chat.addMessages([
-                    Message.create({
-                        type: 'user',
-                        message: 'Explain /commit_message'
-                    }),
-                    Message.create({
-                        type: 'bot',
-                        message: `***/commit_message***
+                    `,
+          }),
+        ]);
+        break;
+      case "#commit_message":
+        chat.addMessages([
+          Message.create({
+            type: "user",
+            message: "Explain /commit_message",
+          }),
+          Message.create({
+            type: "bot",
+            message: `***/commit_message***
     
 Use this DevChat workflow to request a commit message. Generally, you don't need to type anything else, but please give me the output of \`git diff\`. Of course, you don't need to manually execute the command and copy & paste its output. Simply click the "+" button and select \`git diff —cached\` to include only the staged changes, or \`git diff HEAD\` to include all changes.
-                        `
-                    }),
-                ]);
-                break;
-            case '#release_note':
-                chat.addMessages([
-                    Message.create({
-                        type: 'user',
-                        message: 'Explain /release_note'
-                    }),
-                    Message.create({
-                        type: 'bot',
-                        message: `***/release_note***
+                        `,
+          }),
+        ]);
+        break;
+      case "#release_note":
+        chat.addMessages([
+          Message.create({
+            type: "user",
+            message: "Explain /release_note",
+          }),
+          Message.create({
+            type: "bot",
+            message: `***/release_note***
         
 Generate a professionally written and formatted release note in markdown with this workflow. I just need some basic information about the commits for the release. Add this to the context by clicking the "+" button and selecting \`git_log_releasenote\`. If the scope of commits differs from the default command, you can also select \`<custom command>\` and input a command line such as \`git log 579398b^..HEAD --pretty=format:"%h - %B"\` to include the commit 579398b (inclusive) up to the latest.
-                            `
-                    }),
-                ]);
-                break;
-            case "#settings":
-                messageUtil.sendMessage({ command: 'doCommand', content: ['workbench.action.openSettings', 'DevChat'] });
-                break;
-        }
-        chat.goScrollBottom();
-    };
-    const handleButton = (value: string | number | readonly string[] | undefined) => {
-        switch (value) {
-            case "settings": messageUtil.sendMessage({ command: 'doCommand', content: ['workbench.action.openSettings', 'DevChat'] }); break;
-            case "setting_openai_key": messageUtil.sendMessage({ command: 'doCommand', content: ['DevChat.AccessKey.OpenAI'] }); break;
-            case "setting_devchat_key": messageUtil.sendMessage({ command: 'doCommand', content: ['DevChat.AccessKey.DevChat'] }); break;
-        }
-    };
-
-    useEffect(()=>{
-        let previousNode:any = null;
-        let chatmarkCount = 0;
-        visit(tree, function (node) {
-            if (node.type === 'code') {
-                // set meta data as props
-                const metaData = parseMetaData(node.meta);
-                let props = {...metaData};
-                if(node.lang ==='chatmark' || node.lang ==='ChatMark'){
-                    props['index'] = chatmarkCount;
-                } else if ((node.lang === 'yaml' || node.lang === 'YAML') && previousNode && previousNode.type === 'code' && previousNode.lang === 'chatmark') {
-                    setChatmarkValues({[`chatmark-${previousNode.data.hProperties.index}`]:node.value});
-                }
-                node.data={
-                    hProperties:{
-                        ...props
-                    }
-                };
-                // record node and count data for next loop
-                previousNode = node;
-                if(node.lang ==='chatmark' || node.lang ==='ChatMark'){
-                    chatmarkCount++;
-                }
-            }
+                            `,
+          }),
+        ]);
+        break;
+      case "#settings":
+        messageUtil.sendMessage({
+          command: "doCommand",
+          content: ["workbench.action.openSettings", "DevChat"],
         });
-    },[children]);
+        break;
+    }
+    chat.goScrollBottom();
+  };
+  const handleButton = (
+    value: string | number | readonly string[] | undefined
+  ) => {
+    switch (value) {
+      case "settings":
+        messageUtil.sendMessage({
+          command: "doCommand",
+          content: ["workbench.action.openSettings", "DevChat"],
+        });
+        break;
+      case "setting_openai_key":
+        messageUtil.sendMessage({
+          command: "doCommand",
+          content: ["DevChat.AccessKey.OpenAI"],
+        });
+        break;
+      case "setting_devchat_key":
+        messageUtil.sendMessage({
+          command: "doCommand",
+          content: ["DevChat.AccessKey.DevChat"],
+        });
+        break;
+    }
+  };
 
-    return <ReactMarkdown
-        {...props}
-        remarkPlugins={[()=> (tree) =>{
-            let stepCount = 0;
-            let chatmarkCount = 0;
-            let previousNode:any = null;
-            visit(tree, function (node) {
-                if (node.type === 'code') {
-                    // set meta data as props
-                    const metaData = parseMetaData(node.meta);
-                    let props = {...metaData};
-                    if(node.lang ==='step' || node.lang ==='Step'){
-                        props['index'] = stepCount;
-                    } else if(node.lang ==='chatmark' || node.lang ==='ChatMark'){
-                        props['id'] = `chatmark-${chatmarkCount}`;
-                        props['index'] = chatmarkCount;
-                    } else if ((node.lang === 'yaml' || node.lang === 'YAML') && previousNode && previousNode.type === 'code' && previousNode.lang === 'chatmark') {
-                        props['hidden'] = true;
-                    }
-                    node.data={
-                        hProperties:{
-                            ...props
-                        }
-                    };
-                    // record node and count data for next loop
-                    previousNode = node;
-                    if(node.lang ==='chatmark' || node.lang ==='ChatMark'){
-                        chatmarkCount++;
-                    }
-                    if(node.lang ==='step' || node.lang ==='Step'){
-                        stepCount++;
-                    }
-                }
-            });
-        }]}
+  useEffect(() => {
+    let previousNode: any = null;
+    let chatmarkCount = 0;
+    visit(tree, function (node) {
+      if (node.type === "code") {
+        // set meta data as props
+        const metaData = parseMetaData(node.meta);
+        let props = { ...metaData };
+        if (node.lang === "chatmark" || node.lang === "ChatMark") {
+          props["index"] = chatmarkCount;
+        } else if (
+          (node.lang === "yaml" || node.lang === "YAML") &&
+          previousNode &&
+          previousNode.type === "code" &&
+          previousNode.lang === "chatmark"
+        ) {
+          setChatmarkValues({
+            [`chatmark-${previousNode.data.hProperties.index}`]: node.value,
+          });
+        }
+        node.data = {
+          hProperties: {
+            ...props,
+          },
+        };
+        // record node and count data for next loop
+        previousNode = node;
+        if (node.lang === "chatmark" || node.lang === "ChatMark") {
+          chatmarkCount++;
+        }
+      }
+    });
+  }, [children]);
 
-        rehypePlugins={[rehypeRaw]}
-        components={{
-            code({ node, inline, className, children, index,  ...props }) {
+  const trasnlateChildren = useMemo(() => {
+    if (i18n && i18n.language === "zh") {
+      // 目前只有中文需要单独翻译
+      if (children) {
+        if (children.includes("You can configure DevChat from")) {
+          return t("devchat.help");
+        }
+        // DevChat key is missing from your environment or settings
+        if (
+          children.includes("DevChat key is missing from your environment ")
+        ) {
+          return t("devchat.setkey");
+        }
+      }
+    }
+    return children;
+  }, [children, i18n.language]);
 
-                const match = /language-(\w+)/.exec(className || '');
-                const value = String(children).replace(/\n$/, '');
-                let lanugage = match && match[1];
-				if (!lanugage) {
-					lanugage = "unknow";
-				}
+  return (
+    <ReactMarkdown
+      {...props}
+      remarkPlugins={[
+        () => (tree) => {
+          let stepCount = 1;
+          let chatmarkCount = 0;
+          let previousNode: any = null;
+          visit(tree, function (node) {
+            if (node.type === "code") {
+              // set meta data as props
+              const metaData = parseMetaData(node.meta);
+              let props = { ...metaData };
+              if (node.lang === "step" || node.lang === "Step") {
+                props["index"] = stepCount;
+              } else if (node.lang === "chatmark" || node.lang === "ChatMark") {
+                props["id"] = `chatmark-${chatmarkCount}`;
+                props["index"] = chatmarkCount;
+              } else if (
+                (node.lang === "yaml" || node.lang === "YAML") &&
+                previousNode &&
+                previousNode.type === "code" &&
+                previousNode.lang === "chatmark"
+              ) {
+                props["hidden"] = true;
+              }
+              node.data = {
+                hProperties: {
+                  ...props,
+                },
+              };
+              // record node and count data for next loop
+              previousNode = node;
+              if (node.lang === "chatmark" || node.lang === "ChatMark") {
+                chatmarkCount++;
+              }
+              if (node.lang === "step" || node.lang === "Step") {
+                stepCount++;
+              }
+            }
+          });
+        },
+      ]}
+      rehypePlugins={[rehypeRaw]}
+      components={{
+        code({ node, inline, className, children, index, ...props }) {
+          const match = /language-(\w+)/.exec(className || "");
+          const value = String(children).replace(/\n$/, "");
+          let lanugage = match && match[1];
+          if (!lanugage) {
+            lanugage = "unknow";
+          }
 
-                let wrapLongLines = false;
-                if (lanugage === 'markdown' || lanugage === 'text') {
-                    wrapLongLines = true;
-                }
+          let wrapLongLines = false;
+          if (lanugage === "markdown" || lanugage === "text") {
+            wrapLongLines = true;
+          }
 
                 if (lanugage === 'step' || lanugage === 'Step') {
                     const status = activeStep && Number(index) === codes.length - 1 && lastNode.type === 'code' ? "running" : "done";
@@ -236,9 +289,9 @@ Generate a professionally written and formatted release note in markdown with th
                     return <ChatMark value={chatmarkValue} messageDone={messageDone}>{value}</ChatMark>;
                 }
 
-                if ((lanugage === 'yaml' || lanugage === 'YAML') && props.hidden) {
-                    return <></>;
-                }
+          if ((lanugage === "yaml" || lanugage === "YAML") && props.hidden) {
+            return <></>;
+          }
 
                 return !inline && lanugage ? (
                     <div style={{ position: 'relative' }} className={classes.codeOverride}>

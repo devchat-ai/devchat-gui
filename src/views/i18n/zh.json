@@ -7,5 +7,14 @@
   "User": "用户",
   "Ask DevChat a question or type ‘/’ for workflow": "向 DevChat 提问或输入 '/' 以查看工作流",
   "How do I use DevChat?": "如何使用 DevChat？",
-  "balance": "您的余额为 {{formatedCurrency}}，登录 <4>web.devchat.ai</4> 以获得更多 tokens"
+  "balance": "您的余额为 {{formatedCurrency}}，登录 <4>web.devchat.ai</4> 以获得更多 tokens",
+  "devchat.help": "你想写一些代码还是对这个项目有疑问？只需右键单击您选择的文件或代码片段，然后将它们添加到 DevChat 中。请随时问我任何问题，或者让我帮你编码。<br> <br> 不要忘记检查输入左侧的“+”按钮，以添加更多上下文。要查看可以在上下文中运行的工作流列表，只需键入“/”。提示愉快！ <br> <br>首先，我可以为您做一些事情：<br> <br> [/code: 基于你的代码来写 prompt](#code) <br> [/commit_message: 根据代码更改编写提交消息](#commit_message) <br> <br> [/release_note: 根据您最近的提交来写提交说明](#release_note) <br> <br> [/ask-code: 询问任何关于您的代码库的信息，并从我们的人工智能代理那里获得答案](#ask_code) <br> <br>你可以点击[设置](#settings)来配置 DevChat",
+  "devchat.setkey": "您的环境或设置中缺少 DevChat key。请输入您的 DevChat key，我会确保 DevChat 将会正常工作。<br> <br> <button value=\"setting_devchat_key\">设置 DevChat key</button>",
+  "Is DevChat Access Key ready?": "是否已准备好 DevChat Access Key？",
+  "Ask questions about the current project's codebase, which requires proactive acquisition of additional context information to answer.": "询问关于当前项目代码库的问题，这需要主动获取额外的上下文信息来回答。",
+  "Generate code with a general template embedded into the prompt.": "使用嵌入到提示中的通用模板生成代码。",
+  "Generate code with a Python-specific template embedded into the prompt.": "使用嵌入到提示中的 Python 特定模板生成代码。",
+  "commit changes with commit message in english.": "使用英文提交更改。",
+  "Generate a commit message for the given git diff.": "为给定的 git diff 生成提交消息。",
+  "Generate a release note for the given commit log.": "为给定的提交日志生成发布说明。"
 }

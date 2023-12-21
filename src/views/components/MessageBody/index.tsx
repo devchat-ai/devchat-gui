@@ -3,7 +3,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import MessageMarkdown from "@/views/components/MessageMarkdown";
 import { useMst } from "@/views/stores/RootStore";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 interface IProps {
   messageType: string;
@@ -23,12 +23,22 @@ const useStyles = createStyles((theme, options: any) => ({
   },
 }));
 
+const trasnlateKey = (children: string) => {
+  if (children && children.includes("You can configure DevChat from")) {
+    return "devchat.help";
+  }
+  return "";
+};
+
 const MessageBody = observer((props: IProps) => {
   const { children, messageType, activeStep = false, messageDone } = props;
   const { chat } = useMst();
   const { classes } = useStyles({
     chatPanelWidth: chat.chatPanelWidth,
   });
+  const { t } = useTranslation();
+  const transkey = trasnlateKey(children);
+
   return messageType === "bot" ? (
     <MessageMarkdown
       className={classes.bodyWidth}
