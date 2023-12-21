@@ -4,6 +4,7 @@ import { ChatContext } from "@/views/stores/InputStore";
 import { features } from "process";
 import { Slice } from "@tiptap/pm/model";
 import yaml from "js-yaml";
+import { Step } from "@mantine/core";
 
 interface Context {
   content: string;
@@ -251,10 +252,16 @@ DevChat key is missing from your environment or settings. Kindly input your DevC
 ${yaml.dump(values)}
 \`\`\`
 `;
-      self.currentMessage = self.currentMessage + inputStr;
+      self.currentMessage = `
+${self.currentMessage}
+${inputStr}
+\`\`\`Step
+Thinking...123
+\`\`\`
+      `;
       messageUtil.sendMessage({
         command: "userInput",
-        text: inputStr,
+        text: inputStr
       });
       // goto bottom
       goScrollBottom();
