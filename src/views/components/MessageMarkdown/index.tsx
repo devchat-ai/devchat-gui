@@ -22,6 +22,11 @@ const useStyles = createStyles((theme) => ({
         '&:hover':{
             color:theme.colors.merico[6]
         }
+    },
+    codeOverride:{
+        code:{
+            padding: "1px 0px !important",
+        }
     }
 }));
 interface MessageMarkdownProps extends React.ComponentProps<typeof ReactMarkdown> {
@@ -223,7 +228,7 @@ Generate a professionally written and formatted release note in markdown with th
 
                 if (lanugage === 'step' || lanugage === 'Step') {
                     let done = Number(index) < codes.length? true : lastNode.type !== 'code';
-                    return <Step language={lanugage} done={temp?done:true}>{value}</Step>;
+                    return <Step language={lanugage} done={temp?done:true} index={index}>{value}</Step>;
                 }
 
                 if (lanugage === 'chatmark' || lanugage === 'ChatMark') {
@@ -236,12 +241,12 @@ Generate a professionally written and formatted release note in markdown with th
                 }
 
                 return !inline && lanugage ? (
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative' }} className={classes.codeOverride}>
                         <LanguageCorner language={lanugage} />
                         <CodeButtons language={lanugage} code={value} />
                         <SyntaxHighlighter {...props}
                             language={lanugage}
-                            customStyle={{ padding: '3em 1em 1em 2em' }}
+                            customStyle={{ padding: '35px 10px 10px 10px' }}
                             style={okaidia}
                             wrapLongLines={wrapLongLines}
                             PreTag="div">
