@@ -293,6 +293,10 @@ class IdeaBridge {
           break;
       }
     };
+    window.onInitializationFinish = () => {
+      // 初始化完成
+      JStoIdea.getCommandList();
+    };
   }
 
   resviceDeleteMessage(res) {
