@@ -351,6 +351,7 @@ class IdeaBridge {
   }
 
   resviceSettings(res) {
+    console.log("resviceSettings res: ", res);
     // 用户设置的回调
     const setting = res.payload.setting;
 
@@ -359,6 +360,9 @@ class IdeaBridge {
       value: setting.currentModel,
     });
     this.handle.getUserAccessKey({
+      accessKey: setting.apiKey,
+    });
+    this.handle.getUserSetting({
       endPoint: setting.apiBase,
       accessKey: setting.apiKey,
       keyType: setting.apiKey.startsWith("DC") ? "DevChat" : "OpenAi",

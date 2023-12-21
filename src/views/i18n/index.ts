@@ -3,8 +3,6 @@ import { initReactI18next } from "react-i18next";
 
 import enTranslations from "./en.json";
 import zhTranslations from "./zh.json";
-console.log("enTranslations: ", enTranslations);
-console.log("zhTranslations 233: ", zhTranslations);
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -19,7 +17,7 @@ i18n.use(initReactI18next).init({
       },
     },
   },
-  lng: "en",
+  lng: "zh",
   fallbackLng: "en",
   interpolation: {
     escapeValue: false,
