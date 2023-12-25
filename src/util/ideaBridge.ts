@@ -294,7 +294,7 @@ class IdeaBridge {
           this.resviesContext(res);
           break;
         case "getSetting/response":
-          // this.resviceSettings(res);
+          this.resviceSettings(res);
           break;
         case "listTopics/response":
           this.resviceTopicList(res);

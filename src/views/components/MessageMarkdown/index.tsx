@@ -18,16 +18,16 @@ import { useSetState } from "@mantine/hooks";
 import { Trans, useTranslation } from "react-i18next";
 
 const useStyles = createStyles((theme) => ({
-    link:{
-        '&:hover':{
-            color:theme.colors.merico[6]
-        }
+  link: {
+    "&:hover": {
+      color: theme.colors.merico[6],
     },
-    codeOverride:{
-        code:{
-            padding: "1px 0px !important",
-        }
-    }
+  },
+  codeOverride: {
+    code: {
+      padding: "1px 0px !important",
+    },
+  },
 }));
 interface MessageMarkdownProps
   extends React.ComponentProps<typeof ReactMarkdown> {
@@ -280,87 +280,109 @@ Generate a professionally written and formatted release note in markdown with th
             wrapLongLines = true;
           }
 
-                if (lanugage === 'step' || lanugage === 'Step') {
-                    let done = Number(index) < codes.length? true : lastNode.type !== 'code';
-                    return <Step language={lanugage} done={temp?done:true} index={index}>{value}</Step>;
-                }
+          if (lanugage === "step" || lanugage === "Step") {
+            let done =
+              Number(index) < codes.length ? true : lastNode.type !== "code";
+            return (
+              <Step language={lanugage} done={temp ? done : true} index={index}>
+                {value}
+              </Step>
+            );
+          }
 
-                if (lanugage === 'chatmark' || lanugage === 'ChatMark') {
-                    const chatmarkValue = chatmarkValues[`chatmark-${index}`];
-                    return <ChatMark value={chatmarkValue} messageDone={messageDone}>{value}</ChatMark>;
-                }
+          if (lanugage === "chatmark" || lanugage === "ChatMark") {
+            const chatmarkValue = chatmarkValues[`chatmark-${index}`];
+            return (
+              <ChatMark value={chatmarkValue} messageDone={messageDone}>
+                {value}
+              </ChatMark>
+            );
+          }
 
           if ((lanugage === "yaml" || lanugage === "YAML") && props.hidden) {
             return <></>;
           }
 
-                return !inline && lanugage ? (
-                    <div style={{ position: 'relative' }} className={classes.codeOverride}>
-                        <LanguageCorner language={lanugage} />
-                        <CodeButtons language={lanugage} code={value} />
-                        <SyntaxHighlighter {...props}
-                            language={lanugage}
-                            customStyle={{ padding: '35px 10px 10px 10px' }}
-                            style={okaidia}
-                            wrapLongLines={wrapLongLines}
-                            PreTag="div">
-                            {value}
-                        </SyntaxHighlighter>
-                    </div >
-                ) : (
-                    <code {...props} className={className}>
-                        {children}
-                    </code>
-                );
-            },
-            button({ node, className, children, value, ...props }) {
-                return (
-                    <Button
-                        size="compact-xs" 
-                        sx={{
-                            backgroundColor:"#ED6A45",
-                            fontFamily: 'var(--vscode-editor-font-familyy)',
-                            fontSize: 'var(--vscode-editor-font-size)',
-                            color:"#fff",
-                            "&:hover":{
-                                backgroundColor:"#ED6A45",
-                                opacity: 0.8,
-                            },
-                            "&:focus":{
-                                backgroundColor:"#ED6A45",
-                                opacity: 0.8,
-                            }
-                        }}
-                        onClick={() => {
-                            handleButton(value);
-                        }}>
-                        {children}
-                    </Button>
-                );
-            },
-            a({ node, className, children, href, ...props }) {
-                const customAnchors = ["#code",
-                    "#commit_message",
-                    "#release_note",
-                    "#ask_code",
-                    "#extension",
-                    "#settings"].filter((item) => item === href);
-                return customAnchors.length > 0
-                    ? <Anchor
-                        className={classes.link}
-                        href={href} onClick={() => {
-                        handleExplain(href);
-                    }}>
-                        {children}
-                    </Anchor>
-                    : <a {...props} href={href} className={className}>
-                        {children}
-                    </a>;
-            }
-        }
-    }>
-        {children}
-    </ReactMarkdown >;
+          return !inline && lanugage ? (
+            <div
+              style={{ position: "relative" }}
+              className={classes.codeOverride}
+            >
+              <LanguageCorner language={lanugage} />
+              <CodeButtons language={lanugage} code={value} />
+              <SyntaxHighlighter
+                {...props}
+                language={lanugage}
+                customStyle={{ padding: "35px 10px 10px 10px" }}
+                style={okaidia}
+                wrapLongLines={wrapLongLines}
+                PreTag="div"
+              >
+                {value}
+              </SyntaxHighlighter>
+            </div>
+          ) : (
+            <code {...props} className={className}>
+              {children}
+            </code>
+          );
+        },
+        button({ node, className, children, value, ...props }) {
+          return (
+            <Button
+              size="compact-xs"
+              sx={{
+                backgroundColor: "#ED6A45",
+                fontFamily: "var(--vscode-editor-font-familyy)",
+                fontSize: "var(--vscode-editor-font-size)",
+                color: "#fff",
+                "&:hover": {
+                  backgroundColor: "#ED6A45",
+                  opacity: 0.8,
+                },
+                "&:focus": {
+                  backgroundColor: "#ED6A45",
+                  opacity: 0.8,
+                },
+              }}
+              onClick={() => {
+                handleButton(value);
+              }}
+            >
+              {children}
+            </Button>
+          );
+        },
+        a({ node, className, children, href, ...props }) {
+          const customAnchors = [
+            "#code",
+            "#commit_message",
+            "#release_note",
+            "#ask_code",
+            "#extension",
+            "#settings",
+          ].filter((item) => item === href);
+          return customAnchors.length > 0 ? (
+            <Anchor
+              className={classes.link}
+              href={href}
+              onClick={() => {
+                handleExplain(href);
+              }}
+            >
+              {children}
+            </Anchor>
+          ) : (
+            <a {...props} href={href} className={className}>
+              {children}
+            </a>
+          );
+        },
+      }}
+    >
+      {children}
+    </ReactMarkdown>
+  );
 });
 
 export default MessageMarkdown;
