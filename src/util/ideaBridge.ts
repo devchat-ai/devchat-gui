@@ -242,6 +242,20 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
+  userInput: (message) => {
+    const params = {
+      action: "userInput/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {
+        data: message?.text || "",
+      },
+    };
+    console.log("userInput params: ", params);
+
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
 };
 
 class IdeaBridge {
@@ -497,6 +511,9 @@ class IdeaBridge {
         break;
       case "openLink":
         JStoIdea.openLink(message);
+        break;
+      case "userInput":
+        JStoIdea.userInput(message);
         break;
       default:
         break;

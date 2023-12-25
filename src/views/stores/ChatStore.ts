@@ -258,7 +258,7 @@ Thinking...123
       `;
       messageUtil.sendMessage({
         command: "userInput",
-        text: inputStr
+        text: inputStr,
       });
       // goto bottom
       goScrollBottom();
