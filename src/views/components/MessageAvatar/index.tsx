@@ -72,7 +72,7 @@ const MessageAvatar = observer((props: IProps) => {
         >
           <Tooltip
             sx={{ padding: "3px", fontSize: "var(--vscode-editor-font-size)" }}
-            label={done ? "Refilled" : "Refill prompt"}
+            label={done ? t("Refilled") : t("Refill prompt")}
             withArrow
             position="left"
             color="gray"
