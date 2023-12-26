@@ -451,6 +451,7 @@ class IdeaBridge {
   }
 
   sendMessage(message: any) {
+    console.log("sendMessage message: ", message);
     // 根据 command 分发到不同的方法·
     switch (message.command) {
       // 发送消息
