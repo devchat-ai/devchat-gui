@@ -244,7 +244,7 @@ const JStoIdea = {
   },
   userInput: (message) => {
     const params = {
-      action: "userInput/request",
+      action: "input/request",
       metadata: {
         callback: "IdeaToJSMessage",
       },
@@ -252,7 +252,7 @@ const JStoIdea = {
         data: message?.text || "",
       },
     };
-    console.log("userInput params: ", params);
+    console.log("input params: ", params);
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },

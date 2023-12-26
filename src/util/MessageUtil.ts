@@ -68,6 +68,7 @@ class MessageUtil {
     if (process.env.platform === "idea") {
       IdeaBridge.sendMessage(message);
     } else {
+      console.log("Sending message to VSCode: ", message);
       this.vscodeApi.postMessage(message);
     }
   }
