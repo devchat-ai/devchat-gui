@@ -161,8 +161,11 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
-  updateSetting: (value: string) => {
-    // 因为现在只有更换模型，所以直接取 value
+  updateSetting: (message: { value: string; key2: string }) => {
+    if (message.key2 === "Language") {
+      JStoIdea.setLanguage(message.value);
+      return;
+    }
     const params = {
       action: "updateSetting/request",
       metadata: {
@@ -170,7 +173,7 @@ const JStoIdea = {
       },
       payload: {
         setting: {
-          currentModel: value,
+          currentModel: message.value,
         },
       },
     };
@@ -242,14 +245,14 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
-  setLanguage: (message) => {
+  setLanguage: (language) => {
     const params = {
       action: "updateLanguage/request",
       metadata: {
         callback: "IdeaToJSMessage",
       },
       payload: {
-        language: message?.language || "en",
+        language: language || "en",
       },
     };
     console.log("setLanguage params: ", params);
@@ -405,8 +408,9 @@ class IdeaBridge {
       accessKey: setting.apiKey,
       keyType: setting.apiKey.startsWith("DC") ? "DevChat" : "OpenAi",
     });
-    this.handle.getLanguage({
-      language: setting.language,
+    this.handle.getSetting({
+      value: setting.language,
+      key2: "Language",
     });
   }
 
@@ -524,7 +528,7 @@ class IdeaBridge {
         JStoIdea.viewDiff(message.content);
         break;
       case "updateSetting":
-        JStoIdea.updateSetting(message.value);
+        JStoIdea.updateSetting(message);
         break;
       case "doCommit":
         JStoIdea.commit(message.content);
@@ -543,9 +547,6 @@ class IdeaBridge {
         break;
       case "openLink":
         JStoIdea.openLink(message);
-        break;
-      case "setLanguage":
-        JStoIdea.setLanguage(message);
         break;
       case "userInput":
         JStoIdea.userInput(message);

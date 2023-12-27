@@ -25,13 +25,24 @@ export default function Head() {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    messageUtil.registerHandler("getLanguage", (data: { language: string }) => {
-      if (data.language && data.language.toLocaleLowerCase() === "en") {
-        i18n.changeLanguage("en");
-      } else {
-        i18n.changeLanguage("zh");
-      }
+    messageUtil.sendMessage({
+      command: "getSetting",
+      key1: "DevChat",
+      key2: "Language",
     });
+    messageUtil.registerHandler(
+      "getSetting",
+      (data: { key2: string; value: string }) => {
+        console.log("data: ", data);
+        if (data.key2 === "Language") {
+          if (data.value && data.value.toLocaleLowerCase() === "en") {
+            i18n.changeLanguage("en");
+          } else {
+            i18n.changeLanguage("zh");
+          }
+        }
+      }
+    );
   }, []);
 
   const openSetting = () => {
@@ -45,9 +56,12 @@ export default function Head() {
     const currentLang = i18n.language;
     const newLang = currentLang === "en" ? "zh" : "en";
     i18n.changeLanguage(newLang);
+
     messageUtil.sendMessage({
-      command: "setLanguage",
-      language: newLang,
+      command: "updateSetting",
+      key1: "DevChat",
+      key2: "Language",
+      value: newLang,
     });
   };
 
