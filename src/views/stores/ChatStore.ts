@@ -253,12 +253,12 @@ ${yaml.dump(values)}
 ${self.currentMessage}
 ${inputStr}
 \`\`\`Step
-Thinking...123
+Thinking...
 \`\`\`
       `;
       messageUtil.sendMessage({
         command: "userInput",
-        text: inputStr
+        text: inputStr,
       });
       // goto bottom
       goScrollBottom();

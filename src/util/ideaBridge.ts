@@ -242,6 +242,19 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
+  userInput: (message) => {
+    const params = {
+      action: "input/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {
+        data: message?.text || "",
+      },
+    };
+
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
 };
 
 class IdeaBridge {
@@ -437,6 +450,7 @@ class IdeaBridge {
   }
 
   sendMessage(message: any) {
+    console.log("sendMessage message: ", message);
     // 根据 command 分发到不同的方法·
     switch (message.command) {
       // 发送消息
@@ -497,6 +511,9 @@ class IdeaBridge {
         break;
       case "openLink":
         JStoIdea.openLink(message);
+        break;
+      case "userInput":
+        JStoIdea.userInput(message);
         break;
       default:
         break;
