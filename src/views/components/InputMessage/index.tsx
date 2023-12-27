@@ -456,7 +456,7 @@ const InputMessage = observer((props: any) => {
           <Menu.Dropdown>
             {modelMenus.map((modelName) => {
               return (
-                <Menu.Item onClick={() => changeModel(modelName)}>
+                <Menu.Item key={modelName} onClick={() => changeModel(modelName)}>
                   {getModelShowName(modelName)}
                 </Menu.Item>
               );

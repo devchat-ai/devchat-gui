@@ -12,13 +12,13 @@ import { keyframes,css } from "@emotion/react";
 interface StepProps {
     language: string;
     children: string;
-    done: boolean;
+    status: string;
     index: number|undefined;
 }
 
 const Step = observer((props:StepProps) => {
   const { chat } = useMst();
-  const {language,children,done,index} = props;
+  const {language,children,status,index} = props;
   const [opened, { toggle }] = useDisclosure(false);
 
   // extract first line with # as button label
@@ -85,7 +85,7 @@ const Step = observer((props:StepProps) => {
         >
           <Accordion.Item value={'step'+index} mah='200'>
               <Accordion.Control icon={
-                  done
+                  status === "done"
                   ?<IconCheck size="1.125rem"/>
                   :<Loader size="xs" color="#ED6A45" speed={1} />
                 }
