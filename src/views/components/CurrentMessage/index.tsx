@@ -84,7 +84,7 @@ const CurrentMessage = observer((props: any) => {
                     whiteSpace: 'break-spaces'
                 },
             }}>
-            <MessageBody messageType="bot" temp={true} >
+            <MessageBody messageType="bot" activeStep={true} >
                 {renderBlocks.length>0?toMarkdown(renderBlocks[0]):''}
             </MessageBody>
             <MessageBlink />

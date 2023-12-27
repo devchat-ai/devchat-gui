@@ -8,7 +8,7 @@ interface IProps {
     messageType: string,
     children: string,
     messageDone?: boolean,
-    temp?: boolean
+    activeStep?: boolean
 }
 
 
@@ -24,14 +24,14 @@ const useStyles = createStyles((theme, options:any) => ({
 }));
 
 const MessageBody = observer((props: IProps) => {
-    const { children, messageType, temp=false ,messageDone} = props;
+    const { children, messageType, activeStep=false ,messageDone} = props;
     const { chat } = useMst();
     const {classes} = useStyles({
         chatPanelWidth:chat.chatPanelWidth
     });
     return (
         messageType === 'bot'
-            ? <MessageMarkdown className={classes.bodyWidth} temp={temp} messageDone={messageDone}>
+            ? <MessageMarkdown className={classes.bodyWidth} activeStep={activeStep} messageDone={messageDone}>
                 {children}
             </MessageMarkdown>
             : <Container

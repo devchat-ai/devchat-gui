@@ -33,7 +33,7 @@ interface MessageMarkdownProps extends React.ComponentProps<typeof ReactMarkdown
     children: string,
     className: string,
     messageDone?: boolean,
-    temp?: boolean
+    activeStep?: boolean
 }
 
 type Step = {
@@ -54,7 +54,7 @@ function parseMetaData(string) {
 }
 
 const MessageMarkdown = observer((props: MessageMarkdownProps) => {
-    const { children,temp=false,messageDone } = props;
+    const { children,activeStep=false,messageDone } = props;
     const { chat } = useMst();
     const [steps, setSteps] = useState<Step[]>([]);
     const tree = fromMarkdown(children);
@@ -177,7 +177,7 @@ Generate a professionally written and formatted release note in markdown with th
     return <ReactMarkdown
         {...props}
         remarkPlugins={[()=> (tree) =>{
-            let stepCount = 1;
+            let stepCount = 0;
             let chatmarkCount = 0;
             let previousNode:any = null;
             visit(tree, function (node) {
@@ -227,8 +227,8 @@ Generate a professionally written and formatted release note in markdown with th
                 }
 
                 if (lanugage === 'step' || lanugage === 'Step') {
-                    let done = Number(index) < codes.length? true : lastNode.type !== 'code';
-                    return <Step language={lanugage} done={temp?done:true} index={index}>{value}</Step>;
+                    const status = activeStep && Number(index) === codes.length - 1 && lastNode.type === 'code' ? "running" : "done";
+                    return <Step language={lanugage} status={status} index={index}>{value}</Step>;
                 }
 
                 if (lanugage === 'chatmark' || lanugage === 'ChatMark') {
