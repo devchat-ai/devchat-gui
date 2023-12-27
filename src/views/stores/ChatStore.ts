@@ -322,6 +322,7 @@ Thinking...
         self.generating = false;
         self.responsed = false;
         self.hasDone = hasDone;
+        self.currentMessage = message;
         const messagesLength = self.messages.length;
         if (hasDone) {
           if (messagesLength > 1) {
