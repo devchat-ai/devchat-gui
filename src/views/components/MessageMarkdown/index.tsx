@@ -380,7 +380,7 @@ Generate a professionally written and formatted release note in markdown with th
         },
       }}
     >
-      {children}
+      {trasnlateChildren}
     </ReactMarkdown>
   );
 });
