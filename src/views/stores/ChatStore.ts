@@ -253,7 +253,7 @@ ${yaml.dump(values)}
 ${self.currentMessage}
 ${inputStr}
 \`\`\`Step
-Thinking...123
+Thinking...
 \`\`\`
       `;
       messageUtil.sendMessage({

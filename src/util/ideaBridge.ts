@@ -252,7 +252,6 @@ const JStoIdea = {
         data: message?.text || "",
       },
     };
-    console.log("input params: ", params);
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
