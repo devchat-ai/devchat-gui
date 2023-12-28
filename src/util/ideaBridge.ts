@@ -386,6 +386,7 @@ class IdeaBridge {
     // 当前的默认模型
     this.handle.getSetting({
       value: setting.currentModel,
+      key2: "defaultModel",
     });
     this.handle.getUserAccessKey({
       accessKey: setting.apiKey,

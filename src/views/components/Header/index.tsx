@@ -33,7 +33,6 @@ export default function Head() {
     messageUtil.registerHandler(
       "getSetting",
       (data: { key2: string; value: string }) => {
-        console.log("data: ", data);
         if (data.key2 === "Language") {
           if (data.value && data.value.toLocaleLowerCase() === "en") {
             i18n.changeLanguage("en");
