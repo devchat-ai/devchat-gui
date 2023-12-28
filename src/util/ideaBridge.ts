@@ -271,19 +271,6 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
-  setLanguage: (message) => {
-    const params = {
-      action: "updateLanguage/request",
-      metadata: {
-        callback: "IdeaToJSMessage",
-      },
-      payload: {
-        language: message?.language || "en",
-      },
-    };
-    console.log("setLanguage params: ", params);
-    window.JSJavaBridge.callJava(JSON.stringify(params));
-  },
 };
 
 class IdeaBridge {

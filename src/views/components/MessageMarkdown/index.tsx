@@ -35,6 +35,7 @@ interface MessageMarkdownProps
   className: string;
   messageDone?: boolean;
   temp?: boolean;
+  activeStep?: boolean;
 }
 
 type Step = {
@@ -64,6 +65,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
   const lastNode = tree.children[tree.children.length - 1];
   const [chatmarkValues, setChatmarkValues] = useSetState({});
   const { classes } = useStyles();
+  const { i18n, t } = useTranslation();
 
   const handleExplain = (value: string | undefined) => {
     console.log(value);
