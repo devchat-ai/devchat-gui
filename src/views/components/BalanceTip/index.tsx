@@ -9,6 +9,7 @@ import {
   Group,
   LoadingOverlay,
 } from "@mantine/core";
+import { Trans } from "react-i18next";
 
 const currencyMap = {
   USD: "$",
@@ -19,7 +20,10 @@ function formatBalance(balance: number) {
   return Math.round(balance * 1000) / 1000;
 }
 
-function formatCurrency(balance: number, currency: string) {
+function formatCurrency(balance: number | null, currency: string) {
+  if (balance === null || balance === undefined) {
+    return "";
+  }
   return `${currencyMap[currency] || currency}${balance}`;
 }
 
@@ -34,13 +38,13 @@ const envMap = {
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export default function WechatTip() {
   const [bindWechat, setBindWechat] = useState(false);
   const [balance, setBalance] = useState<null | number>(null);
   const [currency, setCurrency] = useState("USD");
   const [accessKey, setAccessKey] = useState("");
   const [env, setEnv] = useState("prod");
+
   const [loading, setLoading] = useState(false);
   const platform = process.env.platform;
 
@@ -82,7 +86,7 @@ export default function WechatTip() {
   useEffect(() => {
     getSettings();
     messageUtil.registerHandler(
-      "getUserAccessKey",
+      "getUserSetting",
       (message: { endPoint: string; accessKey: string; keyType: string }) => {
         if (message.keyType === "DevChat" && message.accessKey) {
           if (message.endPoint.includes("api-test.devchat.ai")) {
@@ -104,6 +108,8 @@ export default function WechatTip() {
       url: envMap[env].link,
     });
   };
+
+  const formatedCurrency = formatCurrency(balance, currency);
 
   if (balance === null || balance === undefined) {
     return null;
@@ -138,18 +144,19 @@ export default function WechatTip() {
       >
         <Group style={{ width: "90%" }}>
           <Text size="sm">
-            Your remaining credit is {formatCurrency(balance, currency)}. Sign
-            in to{" "}
-            {platform === "idea" ? (
-              <Text td="underline" c="blue" onClick={(e) => openLink(e)}>
-                web.devchat.ai{" "}
-              </Text>
-            ) : (
-              <a href={envMap[env].link} target="_blank">
-                web.devchat.ai{" "}
-              </a>
-            )}
-            to {bindWechat ? "purchase more tokens." : "earn additional ¥8"}
+            <Trans i18nKey="balance" formatedCurrency={formatedCurrency}>
+              Your remaining credit is {{ formatedCurrency }}. Sign in to{" "}
+              {platform === "idea" ? (
+                <Text td="underline" c="blue" onClick={(e) => openLink(e)}>
+                  web.devchat.ai{" "}
+                </Text>
+              ) : (
+                <a href={envMap[env].link} target="_blank">
+                  web.devchat.ai{" "}
+                </a>
+              )}
+              to purchase more tokens.
+            </Trans>
           </Text>
           <LoadingOverlay visible={loading} />
         </Group>

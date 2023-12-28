@@ -1,20 +1,23 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
+import enTranslations from "./en.json";
+import zhTranslations from "./zh.json";
+
 i18n.use(initReactI18next).init({
   resources: {
     en: {
       translation: {
-        "Delete message": "Delete message",
+        ...enTranslations,
       },
     },
     zh: {
       translation: {
-        "Delete message": "删除消息",
+        ...zhTranslations,
       },
     },
   },
-  lng: "en",
+  lng: "zh",
   fallbackLng: "en",
   interpolation: {
     escapeValue: false,

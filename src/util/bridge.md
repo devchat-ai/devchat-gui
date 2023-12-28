@@ -13,7 +13,7 @@
   // 1. 打开设置
   // 2. 启动 ask code 安装
   // 3. 设置 access key
-- featureToggles ？？
+- featureToggles // 判断有没有 ask code
 - isDevChatInstalled // 判断 ask code 是否安装
 
 - historyMessages // 页面的历史消息
@@ -41,6 +41,10 @@
 - receiveMessagePartial // 部分对话
 - receiveMessage // 对话
 - systemMessage // 没用了
+
+## 函数
+
+onInitializationFinish // 初始化完成之后服务端掉用
 
 # css
 

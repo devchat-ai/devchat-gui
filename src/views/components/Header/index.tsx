@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Header,
   Avatar,
@@ -22,7 +22,28 @@ const useStyles = createStyles((theme) => ({
 
 export default function Head() {
   const { classes } = useStyles();
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    messageUtil.sendMessage({
+      command: "getSetting",
+      key1: "DevChat",
+      key2: "Language",
+    });
+    messageUtil.registerHandler(
+      "getSetting",
+      (data: { key2: string; value: string }) => {
+        console.log("data: ", data);
+        if (data.key2 === "Language") {
+          if (data.value && data.value.toLocaleLowerCase() === "en") {
+            i18n.changeLanguage("en");
+          } else {
+            i18n.changeLanguage("zh");
+          }
+        }
+      }
+    );
+  }, []);
 
   const openSetting = () => {
     messageUtil.sendMessage({
@@ -35,6 +56,13 @@ export default function Head() {
     const currentLang = i18n.language;
     const newLang = currentLang === "en" ? "zh" : "en";
     i18n.changeLanguage(newLang);
+
+    messageUtil.sendMessage({
+      command: "updateSetting",
+      key1: "DevChat",
+      key2: "Language",
+      value: newLang,
+    });
   };
 
   return (
@@ -68,11 +96,11 @@ export default function Head() {
               <IconSettings size="1.125rem" />
             </ActionIcon>
           </div>
-          {/* <div>
+          <div>
             <ActionIcon size="sm" onClick={switchLang}>
               <IconLanguage size="1.125rem" />
             </ActionIcon>
-          </div> */}
+          </div>
         </Flex>
       </Flex>
     </Header>

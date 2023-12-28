@@ -34,7 +34,7 @@ import Topic from "./Topic";
 import { observer } from "mobx-react-lite";
 import { useMst } from "@/views/stores/RootStore";
 import { ChatContext } from "@/views/stores/InputStore";
-import { Message } from "@/views/stores/ChatStore";
+import { Trans, useTranslation } from "react-i18next";
 
 const useStyles = createStyles((theme) => ({
   actionIcon: {
@@ -60,6 +60,7 @@ const useStyles = createStyles((theme) => ({
 const InputMessage = observer((props: any) => {
   const { classes } = useStyles();
   const { input, chat } = useMst();
+  const { t } = useTranslation();
   const {
     contexts,
     menuOpend,
@@ -311,7 +312,7 @@ const InputMessage = observer((props: any) => {
                 color: theme.colors.gray[6],
               }}
             >
-              {description}
+              <Trans>{description}</Trans>
             </Text>
           </Stack>
         </Flex>
@@ -456,7 +457,10 @@ const InputMessage = observer((props: any) => {
           <Menu.Dropdown>
             {modelMenus.map((modelName) => {
               return (
-                <Menu.Item key={modelName} onClick={() => changeModel(modelName)}>
+                <Menu.Item
+                  key={modelName}
+                  onClick={() => changeModel(modelName)}
+                >
                   {getModelShowName(modelName)}
                 </Menu.Item>
               );
@@ -515,7 +519,7 @@ const InputMessage = observer((props: any) => {
               marginTop: 5,
               marginBottom: 5,
             }}
-            placeholder="Ask DevChat a question or type ‘/’ for workflow"
+            placeholder={t("Ask DevChat a question or type ‘/’ for workflow")}
             styles={{
               rightSection: {
                 alignItems: "flex-end",

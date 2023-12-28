@@ -60,7 +60,7 @@ const MessageAvatar = observer((props: IProps) => {
       ) : (
         <Avatar color="cyan" size={25} radius="xl" src={SvgAvatarUser} />
       )}
-      <Text weight="bold">{avatarType === "bot" ? "DevChat" : "User"}</Text>
+      <Text weight="bold">{avatarType === "bot" ? "DevChat" : t("User")}</Text>
       {avatarType === "user" ? (
         <Flex
           gap="xs"
@@ -72,7 +72,7 @@ const MessageAvatar = observer((props: IProps) => {
         >
           <Tooltip
             sx={{ padding: "3px", fontSize: "var(--vscode-editor-font-size)" }}
-            label={done ? "Refilled" : "Refill prompt"}
+            label={done ? t("Refilled") : t("Refill prompt")}
             withArrow
             position="left"
             color="gray"
@@ -142,7 +142,7 @@ const MessageAvatar = observer((props: IProps) => {
                 padding: "3px",
                 fontSize: "var(--vscode-editor-font-size)",
               }}
-              label={copied ? "Copied" : "Copy message"}
+              label={copied ? t("Copied") : t("Copy message")}
               withArrow
               position="left"
               color="gray"
