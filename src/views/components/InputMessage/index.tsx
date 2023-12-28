@@ -34,11 +34,7 @@ import Topic from "./Topic";
 import { observer } from "mobx-react-lite";
 import { useMst } from "@/views/stores/RootStore";
 import { ChatContext } from "@/views/stores/InputStore";
-<<<<<<< HEAD
 import { Trans, useTranslation } from "react-i18next";
-=======
-import { useTranslation } from "react-i18next";
->>>>>>> 36a272b (Update language translations and fix UI issues)
 
 const useStyles = createStyles((theme) => ({
   actionIcon: {
@@ -461,7 +457,10 @@ const InputMessage = observer((props: any) => {
           <Menu.Dropdown>
             {modelMenus.map((modelName) => {
               return (
-                <Menu.Item key={modelName} onClick={() => changeModel(modelName)}>
+                <Menu.Item
+                  key={modelName}
+                  onClick={() => changeModel(modelName)}
+                >
                   {getModelShowName(modelName)}
                 </Menu.Item>
               );
