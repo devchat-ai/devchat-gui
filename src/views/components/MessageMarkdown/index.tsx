@@ -73,6 +73,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
   const [chatmarkProps, setChatmarkProps] = useSetState({});
   const { classes } = useStyles();
   const { i18n, t } = useTranslation();
+  const platform = process.env.platform;
 
   const handleExplain = (value: string | undefined) => {
     console.log(value);
@@ -176,6 +177,13 @@ Generate a professionally written and formatted release note in markdown with th
         });
         break;
     }
+  };
+
+  const openLink = (link) => {
+    messageUtil.sendMessage({
+      command: "openLink",
+      url: link,
+    });
   };
 
   useEffect(() => {
@@ -347,8 +355,7 @@ Generate a professionally written and formatted release note in markdown with th
           );
         },
         button({ node, className, children, value, ...props }) {
-          return (
-            <Button
+          return (<Button
               size="compact-xs"
               sx={{
                 backgroundColor: "#ED6A45",
@@ -358,15 +365,20 @@ Generate a professionally written and formatted release note in markdown with th
                 "&:hover": {
                   backgroundColor: "#ED6A45",
                   opacity: 0.8,
+                  color: "#fff",
                 },
                 "&:focus": {
                   backgroundColor: "#ED6A45",
                   opacity: 0.8,
+                  color: "#fff",
                 },
               }}
               onClick={() => {
-                handleButton(value);
+                value === "get_devchat_key" && platform === "idea"
+                ? openLink("https://web.devchat.ai")
+                : handleButton(value);
               }}
+              {...props}
             >
               {children}
             </Button>
