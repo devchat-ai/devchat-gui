@@ -245,7 +245,7 @@ Generate a professionally written and formatted release note in markdown with th
         }
         if (
           children.includes(
-            "OPEN_API_KEY is missing from your environment or settings"
+            "OPENAI_API_KEY is missing from your environment or settings"
           )
         ) {
           return t("devchat.setOpenAIkey");
