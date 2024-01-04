@@ -34,6 +34,8 @@ const useStyles = createStyles((theme) => ({
   },
   label: {
     color: "var(--vscode-editor-foreground)",
+    fontFamily: "var(--vscode-editor-font-family)",
+    fontSize: 'var(--vscode-editor-font-size)',
   },
   radio: {
     marginTop: theme.spacing.xs,
