@@ -57,7 +57,7 @@ function parseMetaData(string) {
 
   let props = {};
   for (let [key, value] of resultMap) {
-      props[key] = value;
+    props[key] = value;
   }
 
   return props;
@@ -192,14 +192,14 @@ Generate a professionally written and formatted release note in markdown with th
     visit(tree, function (node) {
       if (node.type === "code") {
         // set meta data as props
-        let props = { };
+        let props = {};
         if (node.lang === "chatmark" || node.lang === "ChatMark") {
           props["index"] = chatmarkCount;
           const metaData = parseMetaData(node.meta);
           setChatmarkProps({
             [`chatmark-${chatmarkCount}`]: {
-              ...metaData
-            }
+              ...metaData,
+            },
           });
         } else if (
           (node.lang === "yaml" || node.lang === "YAML") &&
@@ -209,9 +209,11 @@ Generate a professionally written and formatted release note in markdown with th
         ) {
           setChatmarkProps({
             [`chatmark-${previousNode.data.hProperties.index}`]: {
-              ...chatmarkProps[`chatmark-${previousNode.data.hProperties.index}`],
-              value:node.value
-            }
+              ...chatmarkProps[
+                `chatmark-${previousNode.data.hProperties.index}`
+              ],
+              value: node.value,
+            },
           });
         }
         node.data = {
@@ -240,6 +242,13 @@ Generate a professionally written and formatted release note in markdown with th
           children.includes("DevChat key is missing from your environment ")
         ) {
           return t("devchat.setkey");
+        }
+        if (
+          children.includes(
+            "OPEN_API_KEY is missing from your environment or settings"
+          )
+        ) {
+          return t("devchat.setOpenAIkey");
         }
       }
     }
@@ -355,7 +364,8 @@ Generate a professionally written and formatted release note in markdown with th
           );
         },
         button({ node, className, children, value, ...props }) {
-          return (<Button
+          return (
+            <Button
               size="compact-xs"
               sx={{
                 backgroundColor: "#ED6A45",
@@ -375,8 +385,8 @@ Generate a professionally written and formatted release note in markdown with th
               }}
               onClick={() => {
                 value === "get_devchat_key" && platform === "idea"
-                ? openLink("https://web.devchat.ai")
-                : handleButton(value);
+                  ? openLink("https://web.devchat.ai")
+                  : handleButton(value);
               }}
               {...props}
             >
