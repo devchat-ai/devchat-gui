@@ -57,9 +57,11 @@ interface Wdiget {
   value: string;
   title?: string;
   type: "editor" | "checkbox" | "radio" | "button" | "text";
+  submit?: string;
+  cancel?: string;
 }
 
-const ChatMark = ({ children, value, messageDone }) => {
+const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'Cancel' }) => {
   const { classes } = useStyles();
   const [widgets, widgetsHandlers] = useListState<Wdiget>();
   const { chat } = useMst();
@@ -315,10 +317,10 @@ const ChatMark = ({ children, value, messageDone }) => {
           {renderWidgets(widgets)}
           <Box>
             <Button className={classes.submit} size="xs" onClick={handleSubmit}>
-              Submit
+              {submit}
             </Button>
             <Button className={classes.cancel} size="xs" onClick={handleCancel}>
-              Cancel
+              {cancel}
             </Button>
           </Box>
         </form>
