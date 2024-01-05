@@ -157,9 +157,17 @@ You can configure DevChat from [Settings](#settings).`;
       const setKeyMessage = `
       OPENAI_API_KEY is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
 
+${process.env.platform === 'vscode'
+?`
+<button value="get_devchat_key" href="https://web.devchat.ai">Register DevChat key</button>
 <button value="setting_devchat_key">Set DevChat key</button>
+<button value="setting_openai_key">Set OpenAI key</button>
+`
+:`
+<button value="get_devchat_key" href="https://web.devchat.ai">Register DevChat key</button>
+<button value="setting_devchat_key">Set DevChat key</button>
+`}
 
-<button value="get_devchat_key" href="https://web.devchat.ai" component="a">Register DevChat key</button>
 `;
 
       const setKeyUser = `Is DevChat Access Key ready?`;
