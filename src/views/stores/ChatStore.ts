@@ -155,7 +155,7 @@ ${
 You can configure DevChat from [Settings](#settings).`;
 
       const setKeyMessage = `
-DevChat key is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
+      OPENAI_API_KEY is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
 
 <button value="setting_devchat_key">Set DevChat key</button>
 
