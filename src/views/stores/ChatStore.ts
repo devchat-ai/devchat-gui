@@ -159,7 +159,7 @@ You can configure DevChat from [Settings](#settings).`;
 
 ${process.env.platform === 'vscode'
 ?`
-<button value="get_devchat_key" href="https://web.devchat.ai">Register DevChat key</button>
+<button value="get_devchat_key" href="https://web.devchat.ai" component="a">Register DevChat key</button>
 <button value="setting_devchat_key">Set DevChat key</button>
 <button value="setting_openai_key">Set OpenAI key</button>
 `
