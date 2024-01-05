@@ -49,11 +49,18 @@ function parseMetaData(string) {
     /((?<k1>(?!=)\S+)=((?<v1>(["'`])(.*?)\5)|(?<v2>\S+)))|(?<k2>\S+)/g;
   const io = (string ?? "").matchAll(regexp);
 
-  return new Map(
+  const resultMap = new Map(
     [...io]
       .map((item) => item?.groups)
       .map(({ k1, k2, v1, v2 }) => [k1 ?? k2, v1 ?? v2])
   );
+
+  let props = {};
+  for (let [key, value] of resultMap) {
+    props[key] = value;
+  }
+
+  return props;
 }
 
 const MessageMarkdown = observer((props: MessageMarkdownProps) => {
@@ -63,9 +70,10 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
   const tree = fromMarkdown(children);
   const codes = tree.children.filter((node) => node.type === "code");
   const lastNode = tree.children[tree.children.length - 1];
-  const [chatmarkValues, setChatmarkValues] = useSetState({});
+  const [chatmarkProps, setChatmarkProps] = useSetState({});
   const { classes } = useStyles();
   const { i18n, t } = useTranslation();
+  const platform = process.env.platform;
 
   const handleExplain = (value: string | undefined) => {
     console.log(value);
@@ -171,24 +179,41 @@ Generate a professionally written and formatted release note in markdown with th
     }
   };
 
+  const openLink = (link) => {
+    messageUtil.sendMessage({
+      command: "openLink",
+      url: link,
+    });
+  };
+
   useEffect(() => {
     let previousNode: any = null;
     let chatmarkCount = 0;
     visit(tree, function (node) {
       if (node.type === "code") {
         // set meta data as props
-        const metaData = parseMetaData(node.meta);
-        let props = { ...metaData };
+        let props = {};
         if (node.lang === "chatmark" || node.lang === "ChatMark") {
           props["index"] = chatmarkCount;
+          const metaData = parseMetaData(node.meta);
+          setChatmarkProps({
+            [`chatmark-${chatmarkCount}`]: {
+              ...metaData,
+            },
+          });
         } else if (
           (node.lang === "yaml" || node.lang === "YAML") &&
           previousNode &&
           previousNode.type === "code" &&
           previousNode.lang === "chatmark"
         ) {
-          setChatmarkValues({
-            [`chatmark-${previousNode.data.hProperties.index}`]: node.value,
+          setChatmarkProps({
+            [`chatmark-${previousNode.data.hProperties.index}`]: {
+              ...chatmarkProps[
+                `chatmark-${previousNode.data.hProperties.index}`
+              ],
+              value: node.value,
+            },
           });
         }
         node.data = {
@@ -218,6 +243,13 @@ Generate a professionally written and formatted release note in markdown with th
         ) {
           return t("devchat.setkey");
         }
+        if (
+          children.includes(
+            "OPENAI_API_KEY is missing from your environment or settings"
+          )
+        ) {
+          return t("devchat.setOpenAIkey");
+        }
       }
     }
     return children;
@@ -234,8 +266,7 @@ Generate a professionally written and formatted release note in markdown with th
           visit(tree, function (node) {
             if (node.type === "code") {
               // set meta data as props
-              const metaData = parseMetaData(node.meta);
-              let props = { ...metaData };
+              let props = {};
               if (node.lang === "step" || node.lang === "Step") {
                 props["index"] = stepCount;
               } else if (node.lang === "chatmark" || node.lang === "ChatMark") {
@@ -296,9 +327,9 @@ Generate a professionally written and formatted release note in markdown with th
           }
 
           if (lanugage === "chatmark" || lanugage === "ChatMark") {
-            const chatmarkValue = chatmarkValues[`chatmark-${index}`];
+            const chatmarkValue = chatmarkProps[`chatmark-${index}`];
             return (
-              <ChatMark value={chatmarkValue} messageDone={messageDone}>
+              <ChatMark messageDone={messageDone} {...chatmarkValue}>
                 {value}
               </ChatMark>
             );
@@ -344,15 +375,20 @@ Generate a professionally written and formatted release note in markdown with th
                 "&:hover": {
                   backgroundColor: "#ED6A45",
                   opacity: 0.8,
+                  color: "#fff",
                 },
                 "&:focus": {
                   backgroundColor: "#ED6A45",
                   opacity: 0.8,
+                  color: "#fff",
                 },
               }}
               onClick={() => {
-                handleButton(value);
+                value === "get_devchat_key" && platform === "idea"
+                  ? openLink("https://web.devchat.ai")
+                  : handleButton(value);
               }}
+              {...props}
             >
               {children}
             </Button>
