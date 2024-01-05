@@ -2,8 +2,7 @@ import { Button, Anchor, Stack, Group, Box, createStyles } from "@mantine/core";
 import React, { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { okaidia } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Highlight, themes } from "prism-react-renderer";
 import CodeButtons from "./CodeButtons";
 import Step from "./Step";
 import LanguageCorner from "./LanguageCorner";
@@ -355,7 +354,7 @@ Generate a professionally written and formatted release note in markdown with th
             >
               <LanguageCorner language={lanugage} />
               <CodeButtons language={lanugage} code={value} />
-              <SyntaxHighlighter
+              {/* <SyntaxHighlighter
                 {...props}
                 language={lanugage}
                 customStyle={{ padding: "35px 10px 10px 10px" }}
@@ -364,7 +363,39 @@ Generate a professionally written and formatted release note in markdown with th
                 PreTag="div"
               >
                 {value}
-              </SyntaxHighlighter>
+              </SyntaxHighlighter> */}
+              <Highlight
+                code={value}
+                theme={themes.okaidia}
+                language={lanugage}
+              >
+                {({
+                  className,
+                  style,
+                  tokens,
+                  getLineProps,
+                  getTokenProps,
+                }) => (
+                  <pre
+                    className={className}
+                    style={{
+                      ...style,
+                      padding: "35px 10px 10px 10px",
+                      borderRadius: "5px",
+                      ...props.style,
+                    }}
+                    {...props}
+                  >
+                    {tokens.map((line, i) => (
+                      <div {...getLineProps({ line, key: i })}>
+                        {line.map((token, key) => (
+                          <span {...getTokenProps({ token, key })} />
+                        ))}
+                      </div>
+                    ))}
+                  </pre>
+                )}
+              </Highlight>
             </div>
           ) : (
             <code {...props} className={className}>
@@ -392,10 +423,10 @@ Generate a professionally written and formatted release note in markdown with th
                   color: "#fff",
                 },
               }}
-              styles = {{
-                root:{
+              styles={{
+                root: {
                   marginBottom: 10,
-                }
+                },
               }}
               onClick={() => {
                 value === "get_devchat_key" && platform === "idea"

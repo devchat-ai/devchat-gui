@@ -1,107 +1,132 @@
-import { Accordion, Box, Button, Collapse, Group,Loader,Text } from "@mantine/core";
+import { Accordion, Loader, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import React from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import LanguageCorner from "./LanguageCorner";
+import { Highlight, themes } from "prism-react-renderer";
 import { okaidia } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { IconCheck, IconChevronDown, IconFileDiff, IconLoader } from "@tabler/icons-react";
+import { IconCheck } from "@tabler/icons-react";
 import { observer } from "mobx-react-lite";
 import { useMst } from "@/views/stores/RootStore";
-import { keyframes,css } from "@emotion/react";
+import { keyframes, css } from "@emotion/react";
 
 interface StepProps {
-    language: string;
-    children: string;
-    status: string;
-    index: number|undefined;
+  language: string;
+  children: string;
+  status: string;
+  index: number | undefined;
 }
 
-const Step = observer((props:StepProps) => {
+const Step = observer((props: StepProps) => {
   const { chat } = useMst();
-  const {language,children,status,index} = props;
+  const { language, children, status, index } = props;
   const [opened, { toggle }] = useDisclosure(false);
 
   // extract first line with # as button label
-  const lines = children.split('\n');
-  const title = lines.length>0&&lines[0].indexOf('#')>=0?lines[0].split('#')[1]:'Thinking...';
-  const contents = lines.slice(1,lines.length-1);
+  const lines = children.split("\n");
+  const title =
+    lines.length > 0 && lines[0].indexOf("#") >= 0
+      ? lines[0].split("#")[1]
+      : "Thinking...";
+  const contents = lines.slice(1, lines.length - 1);
 
   const spin = keyframes`
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   `;
 
-  return <Accordion 
-          variant="contained"
-          chevronPosition="right"
-          sx={{
-              marginTop: 5,
-              borderRadius: 5,
-              backgroundColor: 'var(--vscode-menu-background)',
-          }}
-          styles={{
-              item: {
-                  borderColor: 'var(--vscode-menu-border)',
-                  backgroundColor: 'var(--vscode-menu-background)',
-                  '&[data-active]': {
-                      backgroundColor: 'var(--vscode-menu-background)',
-                  }
-              },
-              control: {
-                  height: 30,
-                  borderRadius: 3,
-                  backgroundColor: 'var(--vscode-menu-background)',
-                  '&[aria-expanded="true"]': {
-                      borderBottomLeftRadius: 0,
-                      borderBottomRightRadius: 0,
-                  },
-                  '&:hover': {
-                      backgroundColor: 'var(--vscode-menu-background)',
-                  },
-                  paddingLeft: '0.5rem',
-                  paddingRight: '0.5rem',
-                  fontFamily: 'var(--vscode-editor-font-familyy)',
-                  fontSize: 'var(--vscode-editor-font-size)',
-              },
-              chevron: {
-                  color: 'var(--vscode-menu-foreground)',
-              },
-              icon: {
-                  color: 'var(--vscode-menu-foreground)',
-              },
-              label: {
-                  color: 'var(--vscode-menu-foreground)',
-              },
-              panel: {
-                  color: 'var(--vscode-menu-foreground)',
-                  backgroundColor: 'var(--vscode-menu-background)',
-              },
-              content: {
-                  borderRadius: 3,
-                  backgroundColor: 'var(--vscode-menu-background)',
-                  padding:'0.5rem'
-              }
-          }}
+  return (
+    <Accordion
+      variant="contained"
+      chevronPosition="right"
+      sx={{
+        marginTop: 5,
+        borderRadius: 5,
+        backgroundColor: "var(--vscode-menu-background)",
+      }}
+      styles={{
+        item: {
+          borderColor: "var(--vscode-menu-border)",
+          backgroundColor: "var(--vscode-menu-background)",
+          "&[data-active]": {
+            backgroundColor: "var(--vscode-menu-background)",
+          },
+        },
+        control: {
+          height: 30,
+          borderRadius: 3,
+          backgroundColor: "var(--vscode-menu-background)",
+          '&[aria-expanded="true"]': {
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+          },
+          "&:hover": {
+            backgroundColor: "var(--vscode-menu-background)",
+          },
+          paddingLeft: "0.5rem",
+          paddingRight: "0.5rem",
+          fontFamily: "var(--vscode-editor-font-familyy)",
+          fontSize: "var(--vscode-editor-font-size)",
+        },
+        chevron: {
+          color: "var(--vscode-menu-foreground)",
+        },
+        icon: {
+          color: "var(--vscode-menu-foreground)",
+        },
+        label: {
+          color: "var(--vscode-menu-foreground)",
+        },
+        panel: {
+          color: "var(--vscode-menu-foreground)",
+          backgroundColor: "var(--vscode-menu-background)",
+        },
+        content: {
+          borderRadius: 3,
+          backgroundColor: "var(--vscode-menu-background)",
+          padding: "0.5rem",
+        },
+      }}
+    >
+      <Accordion.Item value={"step" + index} mah="200">
+        <Accordion.Control
+          icon={
+            status === "done" ? (
+              <IconCheck size="1.125rem" />
+            ) : (
+              <Loader size="xs" color="#ED6A45" speed={1} />
+            )
+          }
         >
-          <Accordion.Item value={'step'+index} mah='200'>
-              <Accordion.Control icon={
-                  status === "done"
-                  ?<IconCheck size="1.125rem"/>
-                  :<Loader size="xs" color="#ED6A45" speed={1} />
-                }
+          <Text truncate="end" w={chat.chatPanelWidth - 100}>
+            {title}
+          </Text>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <Highlight code={children} theme={themes.okaidia} language="markdown">
+            {({ className, style, tokens, getLineProps, getTokenProps }) => (
+              <pre
+                className={className}
+                style={{
+                  ...style,
+                  borderRadius: "5px",
+                  padding: "10px 15px",
+                }}
+                {...props}
               >
-                <Text truncate='end' w={chat.chatPanelWidth-100}>{title}</Text>  
-              </Accordion.Control>
-              <Accordion.Panel>
-                <SyntaxHighlighter {...props}
-                    language="markdown"
-                    style={okaidia}
-                    PreTag="div">
-                    {children}
-                </SyntaxHighlighter>
-              </Accordion.Panel>
-          </Accordion.Item>
-      </Accordion>;
-  });
+                {tokens.map((line, i) => (
+                  <div {...getLineProps({ line, key: i })}>
+                    {line.map((token, key) => (
+                      <span {...getTokenProps({ token, key })} />
+                    ))}
+                  </div>
+                ))}
+              </pre>
+            )}
+          </Highlight>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+  );
+});
 
-  export default Step;
+export default Step;
