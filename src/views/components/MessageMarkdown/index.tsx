@@ -248,7 +248,13 @@ Generate a professionally written and formatted release note in markdown with th
             "OPENAI_API_KEY is missing from your environment or settings"
           )
         ) {
-          return t("devchat.setOpenAIkey");
+          // vscode 用
+          if (children.includes("Set OpenAI key")) {
+            return t("devchat.setOpenAIkey");
+          } else {
+            // idea 用
+            return t("devchat.setkey");
+          }
         }
       }
     }
