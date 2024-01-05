@@ -2,9 +2,7 @@ import { Button, Anchor, Stack, Group, Box, createStyles } from "@mantine/core";
 import React, { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { Highlight, themes } from "prism-react-renderer";
-import { okaidia } from "react-syntax-highlighter/dist/esm/styles/prism";
 import CodeButtons from "./CodeButtons";
 import Step from "./Step";
 import LanguageCorner from "./LanguageCorner";
@@ -380,6 +378,7 @@ Generate a professionally written and formatted release note in markdown with th
                     style={{
                       ...style,
                       padding: "35px 10px 10px 10px",
+                      borderRadius: "5px",
                       ...props.style,
                     }}
                     {...props}
