@@ -158,6 +158,8 @@ You can configure DevChat from [Settings](#settings).`;
 DevChat key is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
 
 <button value="setting_devchat_key">Set DevChat key</button>
+
+<button value="get_devchat_key" href="https://web.devchat.ai" component="a">Register DevChat key</button>
 `;
 
       const setKeyUser = `Is DevChat Access Key ready?`;
