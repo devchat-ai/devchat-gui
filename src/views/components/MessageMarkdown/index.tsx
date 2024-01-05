@@ -389,6 +389,11 @@ Generate a professionally written and formatted release note in markdown with th
                   color: "#fff",
                 },
               }}
+              styles = {{
+                root:{
+                  marginBottom: 10,
+                }
+              }}
               onClick={() => {
                 value === "get_devchat_key" && platform === "idea"
                   ? openLink("https://web.devchat.ai")
