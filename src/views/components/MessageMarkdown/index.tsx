@@ -176,6 +176,9 @@ Generate a professionally written and formatted release note in markdown with th
           content: ["DevChat.AccessKey.DevChat"],
         });
         break;
+      case "get_devchat_key":
+        window.open('https://web.devchat.ai');
+        break;
     }
   };
 
