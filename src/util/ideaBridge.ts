@@ -383,18 +383,25 @@ class IdeaBridge {
     // 用户设置的回调
     const setting = res.payload.setting;
 
+    let key = setting?.apiKey || "";
+    // idea 默认的 key 是 change_me,所以这里要清空
+    if (setting?.apiKey.includes("change")) {
+      key = "";
+    }
+
     // 当前的默认模型
     this.handle.getSetting({
       value: setting.currentModel,
       key2: "defaultModel",
     });
+
     this.handle.getUserAccessKey({
-      accessKey: setting.apiKey,
+      accessKey: key,
     });
     this.handle.getUserSetting({
       endPoint: setting.apiBase,
-      accessKey: setting.apiKey,
-      keyType: setting.apiKey.startsWith("DC") ? "DevChat" : "OpenAi",
+      accessKey: key,
+      keyType: key.startsWith("DC") ? "DevChat" : "OpenAi",
     });
     this.handle.getSetting({
       value: setting.language,
