@@ -111,7 +111,7 @@ const InputMessage = observer((props: any) => {
       // Clear the input field
       input.setValue("");
       input.clearContexts();
-      event.preventDefault();
+      // event.preventDefault();
     }
   };
 

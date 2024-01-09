@@ -26,7 +26,6 @@ const JStoIdea = {
         model,
       },
     };
-    console.log("ready to send message: ", params);
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
   getModel: () => {
@@ -279,10 +278,13 @@ class IdeaBridge {
 
   constructor() {
     this.handle = {};
-    // 注册全局的回调函数，用于接收来自IDEA的消息
+    // 注册全局的回调函数，用于接收来自 IDEA 的消息
     window.IdeaToJSMessage = (res: any) => {
       console.log("IdeaToJSMessage: ", res);
       switch (res.action) {
+        case "sendUserMessage/response":
+          this.resviceSendUserMessage(res);
+          break;
         case "deleteLastConversation/response":
           this.resviceDeleteMessage(res);
           break;
@@ -326,6 +328,13 @@ class IdeaBridge {
       // 初始化完成
       JStoIdea.getCommandList();
     };
+  }
+
+  resviceSendUserMessage(res) {
+    this.handle.chatWithDevChat({
+      command: "chatWithDevChat",
+      message: res.payload.message || "",
+    });
   }
 
   resviceDeleteMessage(res) {
