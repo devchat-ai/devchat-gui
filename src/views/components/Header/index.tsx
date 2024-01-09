@@ -47,7 +47,7 @@ export default function Head() {
   const openSetting = () => {
     messageUtil.sendMessage({
       command: "doCommand",
-      content: ["workbench.action.openSettings", "DevChat"],
+      content: ["workbench.action.openSettings", "@ext:merico.devchat"],
     });
   };
 
