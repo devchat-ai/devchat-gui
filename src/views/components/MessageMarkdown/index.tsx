@@ -147,7 +147,7 @@ Generate a professionally written and formatted release note in markdown with th
       case "#settings":
         messageUtil.sendMessage({
           command: "doCommand",
-          content: ["workbench.action.openSettings", "DevChat"],
+          content: ["workbench.action.openSettings", "@ext:merico.devchat"],
         });
         break;
     }
@@ -160,7 +160,7 @@ Generate a professionally written and formatted release note in markdown with th
       case "settings":
         messageUtil.sendMessage({
           command: "doCommand",
-          content: ["workbench.action.openSettings", "DevChat"],
+          content: ["workbench.action.openSettings", "@ext:merico.devchat"],
         });
         break;
       case "setting_openai_key":
