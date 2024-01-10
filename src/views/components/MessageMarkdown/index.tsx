@@ -176,7 +176,7 @@ Generate a professionally written and formatted release note in markdown with th
         });
         break;
       case "get_devchat_key":
-        window.open('https://web.devchat.ai');
+        window.open("https://web.devchat.ai");
         break;
     }
   };
@@ -312,7 +312,7 @@ Generate a professionally written and formatted release note in markdown with th
           const value = String(children).replace(/\n$/, "");
           let lanugage = match && match[1];
           if (!lanugage) {
-            lanugage = "unknow";
+            lanugage = "plaintext";
           }
 
           let wrapLongLines = false;
