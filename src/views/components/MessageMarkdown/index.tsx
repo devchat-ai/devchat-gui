@@ -114,21 +114,6 @@ Use this DevChat workflow to request code writing. Please input your specific re
           }),
         ]);
         break;
-      case "#commit_message":
-        chat.addMessages([
-          Message.create({
-            type: "user",
-            message: "Explain /commit_message",
-          }),
-          Message.create({
-            type: "bot",
-            message: `***/commit_message***
-    
-Use this DevChat workflow to request a commit message. Generally, you don't need to type anything else, but please give me the output of \`git diff\`. Of course, you don't need to manually execute the command and copy & paste its output. Simply click the "+" button and select \`git diff —cached\` to include only the staged changes, or \`git diff HEAD\` to include all changes.
-                        `,
-          }),
-        ]);
-        break;
       case "#release_note":
         chat.addMessages([
           Message.create({
@@ -239,24 +224,29 @@ Generate a professionally written and formatted release note in markdown with th
         if (children.includes("You can configure DevChat from")) {
           return t("devchat.help");
         }
-        // DevChat key is missing from your environment or settings
-        if (
-          children.includes("DevChat key is missing from your environment ")
-        ) {
+        if (children.includes("DevChat key is missing from your environment")) {
           return t("devchat.setkey");
         }
         if (
           children.includes(
-            "OPENAI_API_KEY is missing from your environment or settings"
+            "DevChat intelligently navigates your codebase using GPT-4."
           )
         ) {
-          // vscode 用
-          if (children.includes("Set OpenAI key")) {
-            return t("devchat.setOpenAIkey");
-          } else {
-            // idea 用
-            return t("devchat.setkey");
-          }
+          return t("ask-code-explain");
+        }
+        if (
+          children.includes(
+            "Use this DevChat workflow to request code writing. Please input your specific requirement"
+          )
+        ) {
+          return t("code-explain");
+        }
+        if (
+          children.includes(
+            "Generate a professionally written and formatted release note in markdown with this workflow. I just need some basic information"
+          )
+        ) {
+          return t("note-explain");
         }
       }
     }

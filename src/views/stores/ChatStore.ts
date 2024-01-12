@@ -1,10 +1,7 @@
 import { types, flow, Instance } from "mobx-state-tree";
 import messageUtil from "@/util/MessageUtil";
 import { ChatContext } from "@/views/stores/InputStore";
-import { features } from "process";
-import { Slice } from "@tiptap/pm/model";
 import yaml from "js-yaml";
-import { Step } from "@mantine/core";
 
 interface Context {
   content: string;
@@ -142,8 +139,6 @@ To get started, here are some of the things that I can do for you:
 
 [/code: write code based on your prompt](#code)
 
-[/commit_message: compose a commit message based on your code changes](#commit_message)
-
 [/release_note: draft a release note based on your latest commits](#release_note)
 
 ${
@@ -155,19 +150,9 @@ ${
 You can configure DevChat from [Settings](#settings).`;
 
       const setKeyMessage = `
-      OPENAI_API_KEY is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
-
-${process.env.platform === 'vscode'
-?`
+Devchat key is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
 <button value="get_devchat_key" href="https://web.devchat.ai" component="a">Register DevChat key</button>
 <button value="setting_devchat_key">Set DevChat key</button>
-<button value="setting_openai_key">Set OpenAI key</button>
-`
-:`
-<button value="get_devchat_key" href="https://web.devchat.ai">Register DevChat key</button>
-<button value="setting_devchat_key">Set DevChat key</button>
-`}
-
 `;
 
       const setKeyUser = `Is DevChat Access Key ready?`;

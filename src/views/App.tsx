@@ -6,6 +6,8 @@ import "./App.css";
 import "./i18n";
 
 export default function App() {
+  // vscode
+
   return (
     <AppShell
       header={<Head />}
