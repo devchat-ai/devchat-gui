@@ -123,6 +123,8 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
     widget["value"] = event.currentTarget.value;
     widgetsHandlers.setItem(index, widget);
   };
+  const allChecked = widgets.every((w) => w.type === "checkbox" ? w.value === "checked" : true);
+  const indeterminate = widgets.some((w) => w.type === "checkbox" ? w.value === "checked" : false) && !allChecked;
 
   useEffect(() => {
     const lines = children.split("\n");
@@ -219,6 +221,7 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
     let radioGroupTemp: any = [];
     let radioValuesTemp: any = [];
     let wdigetsTemp: any = [];
+    let isFirstCheckbox = true; 
     widgets.map((widget, index) => {
       if (widget.type === "text") {
         wdigetsTemp.push(<Text key={index}>{widget.value}</Text>);
@@ -238,6 +241,23 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
           </Button>
         );
       } else if (widget.type === "checkbox") {
+        if(isFirstCheckbox) {
+          wdigetsTemp.push(<Checkbox
+            classNames={{ root: classes.checkbox, label: classes.label }}
+            disabled={disabled}
+            key={"widget-all-" + index}
+            label={"Select all"}
+            size="xs"
+            checked={allChecked}
+            indeterminate={indeterminate}
+            onChange={() =>
+              widgetsHandlers.setState((current) =>
+                current.map((w) => ( w.type==="checkbox" ? { ...w, value: allChecked ? "unchecked" : "checked" } : w ))
+              )
+            }
+          />);
+          isFirstCheckbox = false;
+        }
         wdigetsTemp.push(
           <Checkbox
             classNames={{ root: classes.checkbox, label: classes.label }}

@@ -23,7 +23,7 @@ import {
   IconTextPlus,
   IconRobot,
 } from "@tabler/icons-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   IconGitBranchChecked,
   IconShellCommand,
@@ -72,6 +72,7 @@ const InputMessage = observer((props: any) => {
   } = input;
   const { generating } = chat;
   const showTopic = process.env.platform === "idea";
+  const viewport = useRef<HTMLDivElement>(null);
 
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] =
     useDisclosure(false);
@@ -130,18 +131,24 @@ const InputMessage = observer((props: any) => {
       }
       if (menuType === "commands") {
         if (event.key === "ArrowDown") {
+          event.preventDefault();
           const newIndex = currentMenuIndex + 1;
           input.setCurrentMenuIndex(
             newIndex < commandMenusNode.length ? newIndex : 0
           );
-          event.preventDefault();
+          viewport.current
+            ?.querySelectorAll('[data-list-item]')
+            ?.[newIndex]?.scrollIntoView({ block: 'nearest' });
         }
         if (event.key === "ArrowUp") {
+          event.preventDefault();
           const newIndex = currentMenuIndex - 1;
           input.setCurrentMenuIndex(
             newIndex < 0 ? commandMenusNode.length - 1 : newIndex
           );
-          event.preventDefault();
+          viewport.current
+            ?.querySelectorAll('[data-list-item]')
+            ?.[newIndex]?.scrollIntoView({ block: 'nearest' });
         }
         if ((event.key === "Enter" || event.key === "Tab") && !event.shiftKey) {
           const commandNode = commandMenusNode[currentMenuIndex];
@@ -270,6 +277,7 @@ const InputMessage = observer((props: any) => {
       return (
         <Flex
           key={`command-menus-${index}`}
+          data-list-item
           mih={40}
           gap="md"
           justify="flex-start"
@@ -595,7 +603,7 @@ const InputMessage = observer((props: any) => {
           }}
         >
           <Text sx={{ padding: "5px 5px 5px 10px" }}>DevChat Workflows</Text>
-          <ScrollArea.Autosize mah={240} type="always" placeholder="">
+          <ScrollArea.Autosize mah={240} type="always" placeholder="" viewportRef={viewport}>
             {commandMenusNode}
           </ScrollArea.Autosize>
         </Popover.Dropdown>
