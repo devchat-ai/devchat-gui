@@ -86,8 +86,9 @@ export default function WechatTip() {
   useEffect(() => {
     getSettings();
     messageUtil.registerHandler(
-      "getUserSetting",
+      "getUserAccessKey",
       (message: { endPoint: string; accessKey: string; keyType: string }) => {
+        console.log("message: ", message);
         if (message.keyType === "DevChat" && message.accessKey) {
           if (message.endPoint.includes("api-test.devchat.ai")) {
             setEnv("dev");

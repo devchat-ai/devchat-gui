@@ -405,9 +405,6 @@ class IdeaBridge {
     });
 
     this.handle.getUserAccessKey({
-      accessKey: key,
-    });
-    this.handle.getUserSetting({
       endPoint: setting.apiBase,
       accessKey: key,
       keyType: key.startsWith("DC") ? "DevChat" : "OpenAi",
