@@ -75,7 +75,6 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
   const platform = process.env.platform;
 
   const handleExplain = (value: string | undefined) => {
-    console.log(value);
     switch (value) {
       case "#ask_code":
         chat.addMessages([
@@ -317,7 +316,7 @@ Generate a professionally written and formatted release note in markdown with th
           if (lanugage === "step" || lanugage === "Step") {
             const status =
               activeStep &&
-              Number(index) === codes.length - 1 &&
+              Number(index) === codes.length &&
               lastNode.type === "code"
                 ? "running"
                 : "done";
