@@ -1,14 +1,32 @@
 import * as React from "react";
-import { AppShell } from "@mantine/core";
+import { AppShell, LoadingOverlay } from "@mantine/core";
 import ChatPanel from "@/views/pages/ChatPanel";
 import Head from "@/views/components/Header";
 import "./App.css";
 import "./i18n";
 
 export default function App() {
+  const [ready, setReady] = React.useState(false);
+
+  React.useEffect(() => {
+    if (process.env.platform === "vscode") {
+      setReady(true);
+      return;
+    }
+    const checkReady = () => {
+      console.log("window.JSJavaBridge: ", window.JSJavaBridge);
+      if (window.JSJavaBridge) {
+        setReady(true);
+      } else {
+        setTimeout(checkReady, 200);
+      }
+    };
+    checkReady();
+  }, []);
+
   return (
     <AppShell
-      header={<Head />}
+      header={ready ? <Head /> : <div></div>}
       styles={{
         main: {
           padding: "40px 0 0 0",
@@ -17,7 +35,7 @@ export default function App() {
         },
       }}
     >
-      <ChatPanel />
+      {ready ? <ChatPanel /> : <LoadingOverlay visible />}
     </AppShell>
   );
 }

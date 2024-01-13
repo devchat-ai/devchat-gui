@@ -122,6 +122,7 @@ const chatPanel = observer(() => {
     messageUtil.registerHandler(
       "getSetting",
       (message: { value: string; key2: string }) => {
+        console.log("message: ", message);
         if (message.key2 === "defaultModel") {
           chat.changeChatModel(message.value);
         }

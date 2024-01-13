@@ -75,7 +75,6 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
   const platform = process.env.platform;
 
   const handleExplain = (value: string | undefined) => {
-    console.log(value);
     switch (value) {
       case "#ask_code":
         chat.addMessages([
@@ -111,21 +110,6 @@ Sample questions:
 
 Use this DevChat workflow to request code writing. Please input your specific requirements and supply the appropriate context for implementation. You can select the relevant code or files and right-click to "Add to DevChat". If you find the context is still insufficient, you can enhance my understanding of your code by providing class/function definitions of the selected code. To do this, click the "+" button for the selected code and choose "symbol definitions". Please note, it may take a few seconds for this information to appear in DevChat.
                     `,
-          }),
-        ]);
-        break;
-      case "#commit_message":
-        chat.addMessages([
-          Message.create({
-            type: "user",
-            message: "Explain /commit_message",
-          }),
-          Message.create({
-            type: "bot",
-            message: `***/commit_message***
-    
-Use this DevChat workflow to request a commit message. Generally, you don't need to type anything else, but please give me the output of \`git diff\`. Of course, you don't need to manually execute the command and copy & paste its output. Simply click the "+" button and select \`git diff —cached\` to include only the staged changes, or \`git diff HEAD\` to include all changes.
-                        `,
           }),
         ]);
         break;
@@ -239,24 +223,33 @@ Generate a professionally written and formatted release note in markdown with th
         if (children.includes("You can configure DevChat from")) {
           return t("devchat.help");
         }
-        // DevChat key is missing from your environment or settings
         if (
-          children.includes("DevChat key is missing from your environment ")
+          children.includes(
+            "Devchat key is missing from your environment or settings"
+          )
         ) {
           return t("devchat.setkey");
         }
         if (
           children.includes(
-            "OPENAI_API_KEY is missing from your environment or settings"
+            "DevChat intelligently navigates your codebase using GPT-4."
           )
         ) {
-          // vscode 用
-          if (children.includes("Set OpenAI key")) {
-            return t("devchat.setOpenAIkey");
-          } else {
-            // idea 用
-            return t("devchat.setkey");
-          }
+          return t("ask-code-explain");
+        }
+        if (
+          children.includes(
+            "Use this DevChat workflow to request code writing. Please input your specific requirement"
+          )
+        ) {
+          return t("code-explain");
+        }
+        if (
+          children.includes(
+            "Generate a professionally written and formatted release note in markdown with this workflow. I just need some basic information"
+          )
+        ) {
+          return t("note-explain");
         }
       }
     }
@@ -323,7 +316,7 @@ Generate a professionally written and formatted release note in markdown with th
           if (lanugage === "step" || lanugage === "Step") {
             const status =
               activeStep &&
-              Number(index) === codes.length - 1 &&
+              Number(index) === codes.length &&
               lastNode.type === "code"
                 ? "running"
                 : "done";
