@@ -14,8 +14,8 @@ export default function Topic({ styleName }) {
     messageUtil.sendMessage({
       command: "listTopics",
     });
-    messageUtil.registerHandler("listTopics", (data) => {
-      setTopicList(data);
+    messageUtil.registerHandler("listTopics", ({ list }: { list: any }) => {
+      setTopicList(list);
     });
   }, []);
 

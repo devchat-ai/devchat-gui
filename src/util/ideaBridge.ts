@@ -303,11 +303,6 @@ class IdeaBridge {
         case "listCommands/response":
           this.resviceCommandList(res);
           break;
-        // 这里暂时不用，因为获取到的只有 key，信息不全
-        // 所以用 resviceSettings 来获取
-        // case "getKey/response":
-        //   this.resviceAccessKey(res.payload.key);
-        //   break;
         case "addContext/notify":
           this.resviesContext(res);
           break;
@@ -331,7 +326,7 @@ class IdeaBridge {
   }
 
   resviceSendUserMessage(res) {
-    this.handle.chatWithDevChat({
+    this.executeHandlers("chatWithDevChat", {
       command: "chatWithDevChat",
       message: res.payload.message || "",
     });
@@ -339,7 +334,10 @@ class IdeaBridge {
 
   resviceDeleteMessage(res) {
     const hash = res?.payload?.promptHash || "";
-    this.handle.deletedChatMessage({
+    // this.handle.deletedChatMessage({
+    //   hash,
+    // });
+    this.executeHandlers("deletedChatMessage", {
       hash,
     });
   }
@@ -354,8 +352,11 @@ class IdeaBridge {
         });
       });
     }
-
-    this.handle.reloadMessage({
+    // this.handle.reloadMessage({
+    //   entries: list.reverse(),
+    //   pageIndex: 0,
+    // });
+    this.executeHandlers("reloadMessage", {
       entries: list.reverse(),
       pageIndex: 0,
     });
@@ -371,7 +372,10 @@ class IdeaBridge {
 
   resviceTopicList(res) {
     const list = res.payload.topics;
-    this.handle.listTopics(list);
+    // this.handle.listTopics(list);
+    this.executeHandlers("listTopics", {
+      list,
+    });
   }
 
   resviesContext(res) {
@@ -385,7 +389,8 @@ class IdeaBridge {
       command: "",
     };
     params.result = JSON.stringify(contextObj);
-    this.handle.contextDetailResponse(params);
+    // this.handle.contextDetailResponse(params);
+    this.executeHandlers("contextDetailResponse", params);
   }
 
   resviceSettings(res) {
@@ -399,29 +404,34 @@ class IdeaBridge {
     }
 
     // 当前的默认模型
-    this.handle.getSetting({
+    // this.handle.getSetting({});
+
+    this.executeHandlers("getSetting", {
       value: setting.currentModel,
       key2: "defaultModel",
     });
 
-    this.handle.getUserAccessKey({
+    // this.handle.getUserAccessKey({
+    //   endPoint: setting.apiBase,
+    //   accessKey: key,
+    //   keyType: key.startsWith("DC") ? "DevChat" : "OpenAi",
+    // });
+
+    this.executeHandlers("getUserAccessKey", {
       endPoint: setting.apiBase,
       accessKey: key,
       keyType: key.startsWith("DC") ? "DevChat" : "OpenAi",
     });
-    this.handle.getSetting({
+
+    // this.handle.getSetting({
+    //   value: setting.language,
+    //   key2: "Language",
+    // });
+
+    this.executeHandlers("getSetting", {
       value: setting.language,
       key2: "Language",
     });
-  }
-
-  resviceAccessKey(res: string = "") {
-    const params = {
-      endPoint: "",
-      accessKey: res,
-      keyType: res.startsWith("DC") ? "DevChat" : "OpenAi",
-    };
-    this.handle.getUserAccessKey(params);
   }
 
   resviceCommandList(res) {
@@ -430,45 +440,57 @@ class IdeaBridge {
       pattern: item.name,
       description: item.description,
     }));
-    this.handle.regCommandList({
+    // this.handle.regCommandList({
+    //   result,
+    // });
+    this.executeHandlers("regCommandList", {
       result,
     });
   }
 
   resviceContextList(res) {
     // 接受到的上下文列表
-
     const result = res.payload.contexts.map((item) => ({
       name: item.command,
       pattern: item.command,
       description: item.description,
     }));
 
-    this.handle.regContextList({ result });
+    // this.handle.regContextList({ result });
+    this.executeHandlers("regContextList", {
+      result,
+    });
   }
 
   resviceModelList(response: any) {
     // 接受到模型列表
-    this.handle["regModelList"]({
+    // this.handle["regModelList"]({
+    //   result: response.payload.models,
+    // });
+    this.executeHandlers("regModelList", {
       result: response.payload.models,
     });
   }
 
   resviceMessage(response: any) {
-    console.log(
-      "response.metadata.isFinalChunk: ",
-      response.metadata.isFinalChunk
-    );
     // 接受到消息
     if (response.metadata?.isFinalChunk) {
       // 结束对话
-      this.handle["receiveMessage"]({
+      // this.handle["receiveMessage"]({
+      //   text: response.payload?.message || response.metadata?.error || "",
+      //   isError: response.metadata?.error.length > 0,
+      //   hash: response.payload?.promptHash || "",
+      // });
+      this.executeHandlers("receiveMessage", {
         text: response.payload?.message || response.metadata?.error || "",
         isError: response.metadata?.error.length > 0,
         hash: response.payload?.promptHash || "",
       });
     } else {
-      this.handle["receiveMessagePartial"]({
+      // this.handle["receiveMessagePartial"]({
+      //   text: response?.payload?.message || "",
+      // });
+      this.executeHandlers("receiveMessagePartial", {
         text: response?.payload?.message || "",
       });
     }
@@ -482,8 +504,18 @@ class IdeaBridge {
   }
 
   registerHandler(messageType: string, handler: any) {
-    // 注册回调函数
-    this.handle[messageType] = handler;
+    if (!this.handle[messageType]) {
+      this.handle[messageType] = [];
+    }
+    this.handle[messageType].push(handler);
+  }
+
+  executeHandlers(messageType: string, data: any) {
+    if (this.handle[messageType]) {
+      this.handle[messageType].forEach((handler) => {
+        handler(data);
+      });
+    }
   }
 
   sendMessage(message: any) {

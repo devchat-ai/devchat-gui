@@ -224,7 +224,11 @@ Generate a professionally written and formatted release note in markdown with th
         if (children.includes("You can configure DevChat from")) {
           return t("devchat.help");
         }
-        if (children.includes("DevChat key is missing from your environment")) {
+        if (
+          children.includes(
+            "Devchat key is missing from your environment or settings"
+          )
+        ) {
           return t("devchat.setkey");
         }
         if (
