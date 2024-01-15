@@ -14,7 +14,6 @@ export default function App() {
       return;
     }
     const checkReady = () => {
-      console.log("window.JSJavaBridge: ", window.JSJavaBridge);
       if (window.JSJavaBridge) {
         setReady(true);
       } else {
