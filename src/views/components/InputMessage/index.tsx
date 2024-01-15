@@ -137,8 +137,8 @@ const InputMessage = observer((props: any) => {
             newIndex < commandMenusNode.length ? newIndex : 0
           );
           viewport.current
-            ?.querySelectorAll('[data-list-item]')
-            ?.[newIndex]?.scrollIntoView({ block: 'nearest' });
+            ?.querySelectorAll("[data-list-item]")
+            ?.[newIndex]?.scrollIntoView({ block: "nearest" });
         }
         if (event.key === "ArrowUp") {
           event.preventDefault();
@@ -147,8 +147,8 @@ const InputMessage = observer((props: any) => {
             newIndex < 0 ? commandMenusNode.length - 1 : newIndex
           );
           viewport.current
-            ?.querySelectorAll('[data-list-item]')
-            ?.[newIndex]?.scrollIntoView({ block: 'nearest' });
+            ?.querySelectorAll("[data-list-item]")
+            ?.[newIndex]?.scrollIntoView({ block: "nearest" });
         }
         if ((event.key === "Enter" || event.key === "Tab") && !event.shiftKey) {
           const commandNode = commandMenusNode[currentMenuIndex];
@@ -415,32 +415,36 @@ const InputMessage = observer((props: any) => {
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown>
-            {[...contextMenus]
-              .sort((a, b) => {
-                if (a.name === "<custom command>") {
-                  return 1; // Placing '<custom command>' at the end
-                } else if (b.name === "<custom command>") {
-                  return -1; // Placing '<custom command>' at the front
-                } else {
-                  return (a.name || "").localeCompare(b.name || ""); // Sorting alphabetically for other cases
-                }
-              })
-              .map(({ pattern, description, name }, index) => {
-                return (
-                  <Menu.Item
-                    key={`contexts-menus-${index}`}
-                    icon={contextMenuIcon(name)}
-                    onClick={() => {
-                      handleContextClick(name);
-                    }}
-                  >
-                    {name}
-                    <Text sx={{ fontSize: "9pt", color: theme.colors.gray[6] }}>
-                      {description}
-                    </Text>
-                  </Menu.Item>
-                );
-              })}
+            <ScrollArea.Autosize placeholder="" type="always" mah={240}>
+              {[...contextMenus]
+                .sort((a, b) => {
+                  if (a.name === "<custom command>") {
+                    return 1; // Placing '<custom command>' at the end
+                  } else if (b.name === "<custom command>") {
+                    return -1; // Placing '<custom command>' at the front
+                  } else {
+                    return (a.name || "").localeCompare(b.name || ""); // Sorting alphabetically for other cases
+                  }
+                })
+                .map(({ pattern, description, name }, index) => {
+                  return (
+                    <Menu.Item
+                      key={`contexts-menus-${index}`}
+                      icon={contextMenuIcon(name)}
+                      onClick={() => {
+                        handleContextClick(name);
+                      }}
+                    >
+                      {name}
+                      <Text
+                        sx={{ fontSize: "9pt", color: theme.colors.gray[6] }}
+                      >
+                        {description}
+                      </Text>
+                    </Menu.Item>
+                  );
+                })}
+            </ScrollArea.Autosize>
           </Menu.Dropdown>
         </Menu>
         <Menu
@@ -463,16 +467,18 @@ const InputMessage = observer((props: any) => {
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
-            {modelMenus.map((modelName) => {
-              return (
-                <Menu.Item
-                  key={modelName}
-                  onClick={() => changeModel(modelName)}
-                >
-                  {getModelShowName(modelName)}
-                </Menu.Item>
-              );
-            })}
+            <ScrollArea.Autosize placeholder="" type="always" mah={240}>
+              {modelMenus.map((modelName) => {
+                return (
+                  <Menu.Item
+                    key={modelName}
+                    onClick={() => changeModel(modelName)}
+                  >
+                    {getModelShowName(modelName)}
+                  </Menu.Item>
+                );
+              })}
+            </ScrollArea.Autosize>
           </Menu.Dropdown>
         </Menu>
         {showTopic && <Topic styleName={classes.actionIcon} />}
@@ -603,7 +609,12 @@ const InputMessage = observer((props: any) => {
           }}
         >
           <Text sx={{ padding: "5px 5px 5px 10px" }}>DevChat Workflows</Text>
-          <ScrollArea.Autosize mah={240} type="always" placeholder="" viewportRef={viewport}>
+          <ScrollArea.Autosize
+            mah={240}
+            type="always"
+            placeholder=""
+            viewportRef={viewport}
+          >
             {commandMenusNode}
           </ScrollArea.Autosize>
         </Popover.Dropdown>
