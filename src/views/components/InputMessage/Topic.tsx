@@ -18,7 +18,6 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import messageUtil from "@/util/MessageUtil";
 import dayjs from "dayjs";
-import { t } from "mobx-state-tree";
 
 export default function Topic({ styleName }) {
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] =
@@ -27,14 +26,19 @@ export default function Topic({ styleName }) {
   const [topicList, setTopicList] = useState<any>([]);
 
   useEffect(() => {
-    messageUtil.sendMessage({
-      command: "listTopics",
-    });
     messageUtil.registerHandler("listTopics", ({ list }: { list: any }) => {
       setTopicList(list);
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    if (drawerOpened) {
+      messageUtil.sendMessage({
+        command: "listTopics",
+      });
+    }
+  }, [drawerOpened]);
 
   const showTopic = (root_prompt: any) => {
     closeDrawer();
