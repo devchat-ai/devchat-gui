@@ -373,7 +373,7 @@ Thinking...
         self.isTop = false;
         self.isBottom = false;
       },
-      reloadMessage: ({ entries, pageIndex }) => {
+      reloadMessage: ({ entries, pageIndex, reset }) => {
         if (entries.length > 0) {
           self.pageIndex = pageIndex;
           const messages = entries
@@ -401,6 +401,9 @@ Thinking...
           }
         } else {
           self.isLastPage = true;
+          if (reset) {
+            self.messages = [] as any;
+          }
           if (self.messages.length === 0) {
             helpMessage(true);
           }

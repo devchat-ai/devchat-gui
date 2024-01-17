@@ -202,6 +202,32 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
+  setNewTopic: () => {
+    const params = {
+      action: "loadConversations/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+        topicHash: "",
+      },
+      payload: {},
+    };
+
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
+  deleteTopic: (topicHash: string) => {
+    const params = {
+      action: "deleteTopic/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+        topicHash: topicHash,
+      },
+      payload: {
+        topicHash: topicHash,
+      },
+    };
+
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
   historyMessages: (message) => {
     const params = {
       action: "loadHistoryMessages/request",
@@ -266,6 +292,28 @@ const JStoIdea = {
       payload: {
         data: message?.text || "",
       },
+    };
+
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
+  stopDevChat: () => {
+    const params = {
+      action: "stopGeneration/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {},
+    };
+
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
+  regeneration: () => {
+    const params = {
+      action: "regeneration/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {},
     };
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
@@ -359,6 +407,7 @@ class IdeaBridge {
     this.executeHandlers("reloadMessage", {
       entries: list.reverse(),
       pageIndex: 0,
+      reset: list.length === 0,
     });
   }
 
@@ -533,7 +582,7 @@ class IdeaBridge {
         break;
       // 重新生成消息，用于发送失败时再次发送
       case "regeneration":
-        JStoIdea.sendMessage(message.text, message.context, message.parent);
+        JStoIdea.regeneration();
         break;
       // 请求 model 列表
       case "regModelList":
@@ -586,6 +635,15 @@ class IdeaBridge {
         break;
       case "setLanguage":
         JStoIdea.setLanguage(message);
+        break;
+      case "setNewTopic":
+        JStoIdea.setNewTopic();
+        break;
+      case "deleteTopic":
+        JStoIdea.deleteTopic(message.topicHash);
+        break;
+      case "stopDevChat":
+        JStoIdea.stopDevChat();
         break;
       default:
         break;
