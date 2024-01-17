@@ -1,14 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { ActionIcon, Drawer, Text, Box, Flex, Divider } from "@mantine/core";
-import { IconClock, IconChevronDown } from "@tabler/icons-react";
+import {
+  ActionIcon,
+  Drawer,
+  Text,
+  Box,
+  Flex,
+  Divider,
+  LoadingOverlay,
+} from "@mantine/core";
+import {
+  IconClock,
+  IconChevronDown,
+  IconPlus,
+  IconRefresh,
+  IconTrash,
+} from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import messageUtil from "@/util/MessageUtil";
 import dayjs from "dayjs";
+import { t } from "mobx-state-tree";
 
 export default function Topic({ styleName }) {
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] =
     useDisclosure(false);
-  const [topicList, setTopicList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [topicList, setTopicList] = useState<any>([]);
 
   useEffect(() => {
     messageUtil.sendMessage({
@@ -16,6 +32,7 @@ export default function Topic({ styleName }) {
     });
     messageUtil.registerHandler("listTopics", ({ list }: { list: any }) => {
       setTopicList(list);
+      setLoading(false);
     });
   }, []);
 
@@ -27,12 +44,49 @@ export default function Topic({ styleName }) {
     });
   };
 
+  const refreshTopicList = () => {
+    setLoading(true);
+    messageUtil.sendMessage({
+      command: "listTopics",
+    });
+  };
+
+  const setNewTopic = () => {
+    messageUtil.sendMessage({
+      command: "setNewTopic",
+    });
+    closeDrawer();
+  };
+
+  const deleteTopic = (topicHash: string) => {
+    const newTopicList = topicList.filter(
+      (topic) => topic.root_prompt.hash !== topicHash
+    );
+    setTopicList(newTopicList);
+    messageUtil.sendMessage({
+      command: "deleteTopic",
+      topicHash: topicHash,
+    });
+  };
+
   return (
     <>
       <Drawer
         opened={drawerOpened}
         position="bottom"
-        title="Devchat Topic"
+        title={
+          <Flex justify="space-between">
+            <Text>Devchat Topic</Text>
+            <Flex>
+              <ActionIcon onClick={setNewTopic}>
+                <IconPlus size="1rem" />
+              </ActionIcon>
+              <ActionIcon onClick={refreshTopicList}>
+                <IconRefresh size="1rem" />
+              </ActionIcon>
+            </Flex>
+          </Flex>
+        }
         onClose={closeDrawer}
         overlayProps={{ opacity: 0.5, blur: 4 }}
         closeButtonProps={{ children: <IconChevronDown size="1rem" /> }}
@@ -46,57 +100,81 @@ export default function Topic({ styleName }) {
             background: "var(--vscode-sideBar-background)",
             color: "var(--vscode-editor-foreground)",
           },
+          title: {
+            flex: 1,
+          },
         }}
       >
         {topicList.map((item: any, index) => (
-          <Box
-            sx={{
-              cursor: "pointer",
-            }}
-            onClick={() => showTopic(item?.root_prompt)}
-          >
-            <Flex justify="space-between" gap="sm">
-              <Text
-                fz="sm"
-                fw={700}
+          <Box>
+            <Flex sx={{ width: "100%" }} gap="sm">
+              <Box
                 sx={{
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
+                  cursor: "pointer",
                   flex: 1,
-                }}
-              >
-                {item?.root_prompt.title}
-              </Text>
-              <Text
-                fz="sm"
-                c="dimmed"
-                sx={{
-                  whiteSpace: "nowrap",
                   overflow: "hidden",
-                  textOverflow: "ellipsis",
                 }}
+                onClick={() => showTopic(item?.root_prompt)}
               >
-                {dayjs(item?.latest_time * 1000).format("MM-DD HH:mm:ss")}
-              </Text>
-            </Flex>
+                <Flex justify="space-between" gap="sm">
+                  <Text
+                    fz="sm"
+                    fw={700}
+                    sx={{
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      flex: 1,
+                    }}
+                  >
+                    {item?.root_prompt.title}
+                  </Text>
+                  <Text
+                    fz="sm"
+                    c="dimmed"
+                    sx={{
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {dayjs(item?.latest_time * 1000).format("MM-DD HH:mm:ss")}
+                  </Text>
+                </Flex>
 
-            <Text
-              c="dimmed"
-              fz="sm"
-              sx={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {item?.root_prompt.responses?.[0]}
-            </Text>
+                <Text
+                  c="dimmed"
+                  fz="sm"
+                  sx={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {item?.root_prompt.responses?.[0]}
+                </Text>
+              </Box>
+              <Flex align="center">
+                <ActionIcon
+                  onClick={() => {
+                    deleteTopic(item?.root_prompt.hash);
+                  }}
+                >
+                  <IconTrash size="1rem" />
+                </ActionIcon>
+              </Flex>
+            </Flex>
             {index !== topicList.length - 1 && (
               <Divider variant="solid" my={6} opacity="0.5" />
             )}
           </Box>
         ))}
+        <LoadingOverlay
+          visible={loading}
+          overlayBlur={3}
+          overlayOpacity={0}
+          keepMounted={true}
+        />
       </Drawer>
       <ActionIcon
         className={styleName}
