@@ -105,76 +105,72 @@ export default function Topic({ styleName }) {
           },
         }}
       >
-        {topicList.map((item: any, index) => (
-          <Box>
-            <Flex sx={{ width: "100%" }} gap="sm">
-              <Box
-                sx={{
-                  cursor: "pointer",
-                  flex: 1,
-                  overflow: "hidden",
-                }}
-                onClick={() => showTopic(item?.root_prompt)}
-              >
-                <Flex justify="space-between" gap="sm">
-                  <Text
-                    fz="sm"
-                    fw={700}
-                    sx={{
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      flex: 1,
-                    }}
-                  >
-                    {item?.root_prompt.title}
-                  </Text>
-                  <Text
-                    fz="sm"
-                    c="dimmed"
-                    sx={{
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {dayjs(item?.latest_time * 1000).format("MM-DD HH:mm:ss")}
-                  </Text>
-                </Flex>
-
-                <Text
-                  c="dimmed"
-                  fz="sm"
+        <Box>
+          {topicList.map((item: any, index) => (
+            <Box>
+              <Flex sx={{ width: "100%" }} gap="sm">
+                <Box
                   sx={{
-                    whiteSpace: "nowrap",
+                    cursor: "pointer",
+                    flex: 1,
                     overflow: "hidden",
-                    textOverflow: "ellipsis",
                   }}
+                  onClick={() => showTopic(item?.root_prompt)}
                 >
-                  {item?.root_prompt.responses?.[0]}
-                </Text>
-              </Box>
-              <Flex align="center">
-                <ActionIcon
-                  onClick={() => {
-                    deleteTopic(item?.root_prompt.hash);
-                  }}
-                >
-                  <IconTrash size="1rem" />
-                </ActionIcon>
+                  <Flex justify="space-between" gap="sm">
+                    <Text
+                      fz="sm"
+                      fw={700}
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        flex: 1,
+                      }}
+                    >
+                      {item?.root_prompt.title}
+                    </Text>
+                    <Text
+                      fz="sm"
+                      c="dimmed"
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {dayjs(item?.latest_time * 1000).format("MM-DD HH:mm:ss")}
+                    </Text>
+                  </Flex>
+
+                  <Text
+                    c="dimmed"
+                    fz="sm"
+                    sx={{
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {item?.root_prompt.responses?.[0]}
+                  </Text>
+                </Box>
+                <Flex align="center">
+                  <ActionIcon
+                    onClick={() => {
+                      deleteTopic(item?.root_prompt.hash);
+                    }}
+                  >
+                    <IconTrash size="1rem" />
+                  </ActionIcon>
+                </Flex>
               </Flex>
-            </Flex>
-            {index !== topicList.length - 1 && (
-              <Divider variant="solid" my={6} opacity="0.5" />
-            )}
-          </Box>
-        ))}
-        <LoadingOverlay
-          visible={loading}
-          overlayBlur={3}
-          overlayOpacity={0}
-          keepMounted={true}
-        />
+              {index !== topicList.length - 1 && (
+                <Divider variant="solid" my={6} opacity="0.5" />
+              )}
+            </Box>
+          ))}
+        </Box>
       </Drawer>
       <ActionIcon
         className={styleName}
@@ -184,6 +180,20 @@ export default function Topic({ styleName }) {
       >
         <IconClock size="1rem" />
       </ActionIcon>
+      <LoadingOverlay
+        style={{
+          height: "380px",
+          inset: "auto",
+          bottom: "0",
+          left: "0",
+          right: "0",
+          position: "fixed",
+        }}
+        visible={loading}
+        overlayBlur={3}
+        overlayOpacity={0}
+        keepMounted={true}
+      />
     </>
   );
 }
