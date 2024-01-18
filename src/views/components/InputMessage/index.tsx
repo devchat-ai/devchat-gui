@@ -31,6 +31,7 @@ import {
 import messageUtil from "@/util/MessageUtil";
 import InputContexts from "./InputContexts";
 import Topic from "./Topic";
+import AddTopic from "./AddTopic";
 import { observer } from "mobx-react-lite";
 import { useMst } from "@/views/stores/RootStore";
 import { ChatContext } from "@/views/stores/InputStore";
@@ -481,7 +482,18 @@ const InputMessage = observer((props: any) => {
             </ScrollArea.Autosize>
           </Menu.Dropdown>
         </Menu>
-        {showTopic && <Topic styleName={classes.actionIcon} />}
+        {showTopic && (
+          <>
+            <Topic
+              styleName={classes.actionIcon}
+              disabled={generating || chat.disabled}
+            />
+            <AddTopic
+              buttonStyles={buttonStyles}
+              disabled={generating || chat.disabled}
+            />
+          </>
+        )}
       </Group>
       {contexts && contexts.length > 0 && (
         <Drawer

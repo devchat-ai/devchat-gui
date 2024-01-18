@@ -11,7 +11,6 @@ import {
 import {
   IconClock,
   IconChevronDown,
-  IconPlus,
   IconRefresh,
   IconTrash,
 } from "@tabler/icons-react";
@@ -19,7 +18,7 @@ import { useDisclosure } from "@mantine/hooks";
 import messageUtil from "@/util/MessageUtil";
 import dayjs from "dayjs";
 
-export default function Topic({ styleName }) {
+export default function Topic({ styleName, disabled }) {
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [loading, setLoading] = useState(false);
@@ -55,13 +54,6 @@ export default function Topic({ styleName }) {
     });
   };
 
-  const setNewTopic = () => {
-    messageUtil.sendMessage({
-      command: "setNewTopic",
-    });
-    closeDrawer();
-  };
-
   const deleteTopic = (topicHash: string) => {
     const newTopicList = topicList.filter(
       (topic) => topic.root_prompt.hash !== topicHash
@@ -82,9 +74,6 @@ export default function Topic({ styleName }) {
           <Flex justify="space-between">
             <Text>Devchat Topic</Text>
             <Flex>
-              <ActionIcon onClick={setNewTopic}>
-                <IconPlus size="1rem" />
-              </ActionIcon>
               <ActionIcon onClick={refreshTopicList}>
                 <IconRefresh size="1rem" />
               </ActionIcon>
@@ -178,6 +167,7 @@ export default function Topic({ styleName }) {
       </Drawer>
       <ActionIcon
         className={styleName}
+        disabled={disabled}
         radius="xl"
         variant="default"
         onClick={openDrawer}
