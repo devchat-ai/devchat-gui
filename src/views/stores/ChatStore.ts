@@ -403,6 +403,7 @@ Thinking...
           self.isLastPage = true;
           if (reset) {
             self.messages = [] as any;
+            self.errorMessage = "";
           }
           if (self.messages.length === 0) {
             helpMessage(true);
