@@ -81,9 +81,12 @@ const chatPanel = observer(() => {
   useEffect(() => {
     getSettings();
     getFeatureToggles();
-    chat.fetchHistoryMessages({ pageIndex: 0 }).then();
     messageUtil.registerHandler("getUserAccessKey", (message: any) => {
       chat.setKey(message.accessKey);
+	  // The history records need to be obtained after setting the key,
+	  // as the display information in the history record requires adjustment 
+	  // based on whether the key is present.
+	  chat.fetchHistoryMessages({ pageIndex: 0 }).then();
     });
     messageUtil.registerHandler("reloadMessage", (message: any) => {
       chat.reloadMessage(message);
