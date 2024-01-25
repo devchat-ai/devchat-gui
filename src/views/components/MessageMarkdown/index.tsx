@@ -228,6 +228,9 @@ Generate a professionally written and formatted release note in markdown with th
             "Devchat key is missing from your environment or settings"
           )
         ) {
+          if(process.env.platform === "vscode") {
+            return t("devchat.setkey_vscode");
+          }
           return t("devchat.setkey");
         }
         if (

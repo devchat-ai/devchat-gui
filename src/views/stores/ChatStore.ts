@@ -152,7 +152,7 @@ You can configure DevChat from [Settings](#settings).`;
       const setKeyMessage = `
 Devchat key is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
 
-<button value="get_devchat_key" href="https://web.devchat.ai">Register DevChat key</button>
+<button value="get_devchat_key" ${process.env.platform === "vscode" ?'href="https://web.devchat.ai" component="a"':''}>Register DevChat key</button>
 <button value="setting_devchat_key">Set DevChat key</button>
 `;
 
