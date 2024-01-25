@@ -397,57 +397,59 @@ const InputMessage = observer((props: any) => {
           marginTop: 5,
         }}
       >
-        <Menu
-          width={chat.chatPanelWidth - 10}
-          position="bottom-start"
-          shadow="sm"
-          withArrow
-          styles={menuStyles}
-          disabled={contextMenus.length === 0}
-        >
-          <Menu.Target>
-            <ActionIcon
-              radius="xl"
-              variant="default"
-              disabled={generating || chat.disabled}
-              className={classes.actionIcon}
-            >
-              <IconTextPlus size="1rem" />
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <ScrollArea.Autosize placeholder="" type="always" mah={240}>
-              {[...contextMenus]
-                .sort((a, b) => {
-                  if (a.name === "<custom command>") {
-                    return 1; // Placing '<custom command>' at the end
-                  } else if (b.name === "<custom command>") {
-                    return -1; // Placing '<custom command>' at the front
-                  } else {
-                    return (a.name || "").localeCompare(b.name || ""); // Sorting alphabetically for other cases
-                  }
-                })
-                .map(({ pattern, description, name }, index) => {
-                  return (
-                    <Menu.Item
-                      key={`contexts-menus-${index}`}
-                      icon={contextMenuIcon(name)}
-                      onClick={() => {
-                        handleContextClick(name);
-                      }}
-                    >
-                      {name}
-                      <Text
-                        sx={{ fontSize: "9pt", color: theme.colors.gray[6] }}
+        {!showTopic && (
+          <Menu
+            width={chat.chatPanelWidth - 10}
+            position="bottom-start"
+            shadow="sm"
+            withArrow
+            styles={menuStyles}
+            disabled={contextMenus.length === 0}
+          >
+            <Menu.Target>
+              <ActionIcon
+                radius="xl"
+                variant="default"
+                disabled={generating || chat.disabled}
+                className={classes.actionIcon}
+              >
+                <IconTextPlus size="1rem" />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <ScrollArea.Autosize placeholder="" type="always" mah={240}>
+                {[...contextMenus]
+                  .sort((a, b) => {
+                    if (a.name === "<custom command>") {
+                      return 1; // Placing '<custom command>' at the end
+                    } else if (b.name === "<custom command>") {
+                      return -1; // Placing '<custom command>' at the front
+                    } else {
+                      return (a.name || "").localeCompare(b.name || ""); // Sorting alphabetically for other cases
+                    }
+                  })
+                  .map(({ pattern, description, name }, index) => {
+                    return (
+                      <Menu.Item
+                        key={`contexts-menus-${index}`}
+                        icon={contextMenuIcon(name)}
+                        onClick={() => {
+                          handleContextClick(name);
+                        }}
                       >
-                        {description}
-                      </Text>
-                    </Menu.Item>
-                  );
-                })}
-            </ScrollArea.Autosize>
-          </Menu.Dropdown>
-        </Menu>
+                        {name}
+                        <Text
+                          sx={{ fontSize: "9pt", color: theme.colors.gray[6] }}
+                        >
+                          {description}
+                        </Text>
+                      </Menu.Item>
+                    );
+                  })}
+              </ScrollArea.Autosize>
+            </Menu.Dropdown>
+          </Menu>
+        )}
         <Menu
           position="bottom-start"
           withArrow
@@ -484,12 +486,12 @@ const InputMessage = observer((props: any) => {
         </Menu>
         {showTopic && (
           <>
-            <Topic
-              styleName={classes.actionIcon}
-              disabled={generating || chat.disabled}
-            />
             <AddTopic
               buttonStyles={buttonStyles}
+              disabled={generating || chat.disabled}
+            />
+            <Topic
+              styleName={classes.actionIcon}
               disabled={generating || chat.disabled}
             />
           </>
