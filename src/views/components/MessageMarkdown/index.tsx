@@ -2,7 +2,7 @@ import { Button, Anchor, Stack, Group, Box, createStyles } from "@mantine/core";
 import React, { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import { Highlight, themes } from "prism-react-renderer";
+import { Highlight, themes, Prism } from "prism-react-renderer";
 import CodeButtons from "./CodeButtons";
 import Step from "./Step";
 import LanguageCorner from "./LanguageCorner";
@@ -14,7 +14,10 @@ import { fromMarkdown } from "mdast-util-from-markdown";
 import { visit } from "unist-util-visit";
 import ChatMark from "@/views/components/ChatMark";
 import { useSetState } from "@mantine/hooks";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
+
+(typeof global !== "undefined" ? global : window).Prism = Prism;
+require("prismjs/components/prism-java");
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -228,7 +231,7 @@ Generate a professionally written and formatted release note in markdown with th
             "Devchat key is missing from your environment or settings"
           )
         ) {
-          if(process.env.platform === "vscode") {
+          if (process.env.platform === "vscode") {
             return t("devchat.setkey_vscode");
           }
           return t("devchat.setkey");
@@ -307,6 +310,7 @@ Generate a professionally written and formatted release note in markdown with th
           const match = /language-(\w+)/.exec(className || "");
           const value = String(children).replace(/\n$/, "");
           let lanugage = match && match[1];
+
           if (!lanugage) {
             lanugage = "plaintext";
           }
