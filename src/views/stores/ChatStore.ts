@@ -1,7 +1,8 @@
-import { types, flow, Instance } from "mobx-state-tree";
+import { types, flow, Instance ,getParent} from "mobx-state-tree";
 import messageUtil from "@/util/MessageUtil";
 import { ChatContext } from "@/views/stores/InputStore";
 import yaml from "js-yaml";
+import { RootInstance } from "./RootStore";
 
 interface Context {
   content: string;
@@ -104,6 +105,17 @@ export const ChatStore = types
       self.scrollBottom++;
     };
 
+    const helpWorkflowCommands = () =>{
+      const rootStore = getParent<RootInstance>(self);
+
+      return rootStore.input.commandMenus.map((item) => {
+        if(item.name === "help"){
+          return "";
+        }
+        return `<a class="workflow_command" href="${item.pattern}">/${item.name}: ${item.description}</a>`;
+      }).join("\n\n");
+    };
+
     const lastNonEmptyHash = () => {
       let lastNonEmptyHash;
       for (let i = self.messages.length - 1; i >= 0; i--) {
@@ -130,6 +142,7 @@ export const ChatStore = types
       });
 
     const helpMessage = (originalMessage = false) => {
+
       let helps = `
 Do you want to write some code or have a question about the project? Simply right-click on your chosen files or code snippets and add them to DevChat. Feel free to ask me anything or let me help you with coding.
     
@@ -137,17 +150,7 @@ Don't forget to check out the "+" button on the left of the input to add more co
 
 To get started, here are some of the things that I can do for you:
 
-[/code: write code based on your prompt](#code)
-
-[/release_note: draft a release note based on your latest commits](#release_note)
-
-${
-  self.features["ask-code"]
-    ? "[/ask-code: ask anything about your codebase and get answers from our AI agent](#ask_code)"
-    : ""
-}
-
-You can configure DevChat from [Settings](#settings).`;
+${helpWorkflowCommands()}`;
 
       const setKeyMessage = `
 Devchat key is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
@@ -268,6 +271,7 @@ Thinking...
       startGenerating,
       commonMessage,
       userInput,
+      helpWorkflowCommands,
       devchatAsk: flow(function* (userMessage, chatContexts) {
         self.messages.push({
           type: "user",

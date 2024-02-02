@@ -44,6 +44,9 @@ const chatPanel = observer(() => {
       key1: "devchat",
       key2: "defaultModel",
     });
+    messageUtil.sendMessage({
+      command: "getUserAccessKey",
+    });
   };
 
   const getFeatureToggles = () => {
@@ -78,18 +81,25 @@ const chatPanel = observer(() => {
     }
   };
 
-  useEffect(() => {
-    getSettings();
-    getFeatureToggles();
-    messageUtil.registerHandler("getUserAccessKey", (message: any) => {
-      chat.setKey(message.accessKey);
-	  // The history records need to be obtained after setting the key,
-	  // as the display information in the history record requires adjustment 
-	  // based on whether the key is present.
-	  chat.fetchHistoryMessages({ pageIndex: 0 }).then();
-    });
-    messageUtil.registerHandler("reloadMessage", (message: any) => {
-      chat.reloadMessage(message);
+  useEffect(() => {   
+    // Fetch the command menus, before history records are obtained,
+    // because the display information in the history record requires adjustment
+    input.fetchCommandMenus().then(()=>{
+      messageUtil.registerHandler("reloadMessage", (message: any) => {
+        chat.reloadMessage(message);
+      });
+       // The history records need to be obtained after setting the key,
+      // as the display information in the history record requires adjustment 
+      // based on whether the key is present.
+      messageUtil.registerHandler("getUserAccessKey", (message: any) => {
+        chat.setKey(message.accessKey);
+        chat.fetchHistoryMessages({ pageIndex: 0 }).then();
+      });
+      // The history records need to be obtained after setting the key,
+      input.fetchContextMenus().then();
+      input.fetchModelMenus().then();
+      getFeatureToggles();
+      getSettings();
     });
     messageUtil.registerHandler(
       "receiveMessagePartial",
