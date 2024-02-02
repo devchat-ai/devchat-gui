@@ -165,7 +165,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
         }
         if (
           children.includes(
-            "Devchat key is missing from your environment or settings"
+            "Your DevChat Access Key is not detected in the current settings."
           )
         ) {
           if (process.env.platform === "vscode") {
