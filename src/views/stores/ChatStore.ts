@@ -153,9 +153,9 @@ To get started, here are some of the things that I can do for you:
 ${helpWorkflowCommands()}`;
 
       const setKeyMessage = `
-Devchat key is missing from your environment or settings. Kindly input your DevChat key, and I'll ensure DevChat is all set for you.
+Your DevChat Access Key is not detected in the current settings. Please set your Access Key below, and we'll have everything set up for you in no time.
 
-<button value="get_devchat_key" ${process.env.platform === "vscode" ?'href="https://web.devchat.ai" component="a"':''}>Register DevChat key</button>
+<button value="get_devchat_key" ${process.env.platform === "vscode" ?'href="https://web.devchat.ai" component="a"':''}>Get DevChat key</button>
 <button value="setting_devchat_key">Set DevChat key</button>
 `;
 
