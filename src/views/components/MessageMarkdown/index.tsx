@@ -77,69 +77,6 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
   const { i18n, t } = useTranslation();
   const platform = process.env.platform;
 
-  const handleExplain = (value: string | undefined) => {
-    switch (value) {
-      case "#ask_code":
-        chat.addMessages([
-          Message.create({
-            type: "user",
-            message: "Explain /ask-code",
-          }),
-          Message.create({
-            type: "bot",
-            message: `***/ask-code***
-                        
-Ask anything about your codebase and get answers from our AI agent.
-
-DevChat intelligently navigates your codebase using GPT-4. It automatically selects and analyzes up to ten most relevant source files to answer your question. Stay tuned — we're soon integrating the more cost-efficient LLama 2 - 70B model.
-
-Sample questions:
-- Why does the lead time for changes sometimes show as null?
-- How is store.findAllAccounts implemented?
-- The recursive retriever currently drops any TextNodes and only queries the IndexNodes. It's a bug. How can we fix it?
-                        `,
-          }),
-        ]);
-        break;
-      case "#code":
-        chat.addMessages([
-          Message.create({
-            type: "user",
-            message: "Explain /code",
-          }),
-          Message.create({
-            type: "bot",
-            message: `***/code***
-
-Use this DevChat workflow to request code writing. Please input your specific requirements and supply the appropriate context for implementation. You can select the relevant code or files and right-click to "Add to DevChat". If you find the context is still insufficient, you can enhance my understanding of your code by providing class/function definitions of the selected code. To do this, click the "+" button for the selected code and choose "symbol definitions". Please note, it may take a few seconds for this information to appear in DevChat.
-                    `,
-          }),
-        ]);
-        break;
-      case "#release_note":
-        chat.addMessages([
-          Message.create({
-            type: "user",
-            message: "Explain /release_note",
-          }),
-          Message.create({
-            type: "bot",
-            message: `***/release_note***
-        
-Generate a professionally written and formatted release note in markdown with this workflow. I just need some basic information about the commits for the release. Add this to the context by clicking the "+" button and selecting \`git_log_releasenote\`. If the scope of commits differs from the default command, you can also select \`<custom command>\` and input a command line such as \`git log 579398b^..HEAD --pretty=format:"%h - %B"\` to include the commit 579398b (inclusive) up to the latest.
-                            `,
-          }),
-        ]);
-        break;
-      case "#settings":
-        messageUtil.sendMessage({
-          command: "doCommand",
-          content: ["workbench.action.openSettings", "@ext:merico.devchat"],
-        });
-        break;
-    }
-    chat.goScrollBottom();
-  };
   const handleButton = (
     value: string | number | readonly string[] | undefined
   ) => {
@@ -223,8 +160,8 @@ Generate a professionally written and formatted release note in markdown with th
     if (i18n && i18n.language === "zh") {
       // 目前只有中文需要单独翻译
       if (children) {
-        if (children.includes("You can configure DevChat from")) {
-          return t("devchat.help");
+        if (children.includes("Do you want to write some code or have a question about the project? ")) {
+          return t("devchat.help") + chat.helpWorkflowCommands();
         }
         if (
           children.includes(
@@ -440,20 +377,14 @@ Generate a professionally written and formatted release note in markdown with th
           );
         },
         a({ node, className, children, href, ...props }) {
-          const customAnchors = [
-            "#code",
-            "#commit_message",
-            "#release_note",
-            "#ask_code",
-            "#extension",
-            "#settings",
-          ].filter((item) => item === href);
-          return customAnchors.length > 0 ? (
+          return className === "workflow_command" ? (
             <Anchor
               className={classes.link}
-              href={href}
+              href="javascript:void()"
               onClick={() => {
-                handleExplain(href);
+                if(href){
+                  chat.commonMessage(`/${href}`,[]);
+                }
               }}
             >
               {children}
