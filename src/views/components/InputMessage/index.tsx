@@ -188,15 +188,6 @@ const InputMessage = observer((props: any) => {
   };
 
   useEffect(() => {
-    input.fetchContextMenus().then();
-    input.fetchCommandMenus().then();
-    input.fetchModelMenus().then();
-    messageUtil.registerHandler(
-      "regCommandList",
-      (message: { result: object[] }) => {
-        input.updateCommands(message.result);
-      }
-    );
     messageUtil.registerHandler(
       "chatWithDevChat",
       (message: { command: string; message: string }) => {
