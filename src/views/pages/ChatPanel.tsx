@@ -81,15 +81,22 @@ const chatPanel = observer(() => {
     }
   };
 
-  useEffect(() => {   
+  useEffect(() => {
     // Fetch the command menus, before history records are obtained,
     // because the display information in the history record requires adjustment
-    input.fetchCommandMenus().then(()=>{
+    input.fetchCommandMenus().then(() => {
       messageUtil.registerHandler("reloadMessage", (message: any) => {
         chat.reloadMessage(message);
       });
-       // The history records need to be obtained after setting the key,
-      // as the display information in the history record requires adjustment 
+      messageUtil.registerHandler("loadHistoryMessages", (message: any) => {
+        chat.reloadMessage({
+          entries: message.entries,
+          pageIndex: 0,
+          reset: message.entries.length === 0,
+        });
+      });
+      // The history records need to be obtained after setting the key,
+      // as the display information in the history record requires adjustment
       // based on whether the key is present.
       messageUtil.registerHandler("getUserAccessKey", (message: any) => {
         chat.setKey(message.accessKey);

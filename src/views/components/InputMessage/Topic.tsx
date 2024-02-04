@@ -29,28 +29,39 @@ export default function Topic({ styleName, disabled }) {
       setTopicList(list);
       setLoading(false);
     });
+    messageUtil.registerHandler(
+      "getTopics",
+      (detail: { topicEntries: any }) => {
+        setTopicList(detail.topicEntries?.reverse());
+        setLoading(false);
+      }
+    );
   }, []);
 
   useEffect(() => {
     if (drawerOpened) {
-      messageUtil.sendMessage({
-        command: "listTopics",
-      });
+      refreshTopicList();
     }
   }, [drawerOpened]);
 
   const showTopic = (root_prompt: any) => {
     closeDrawer();
+    // messageUtil.sendMessage({
+    //   command: "getTopicDetail",
+    //   topicHash: root_prompt.hash,
+    // });
     messageUtil.sendMessage({
-      command: "getTopicDetail",
-      topicHash: root_prompt.hash,
+      command: "historyMessages",
+      topicId: root_prompt.hash,
     });
   };
 
   const refreshTopicList = () => {
     setLoading(true);
     messageUtil.sendMessage({
-      command: "listTopics",
+      // new getTopics
+      // old listTopics
+      command: "getTopics",
     });
   };
 
@@ -61,6 +72,7 @@ export default function Topic({ styleName, disabled }) {
     setTopicList(newTopicList);
     messageUtil.sendMessage({
       command: "deleteTopic",
+      topicId: topicHash,
       topicHash: topicHash,
     });
   };
@@ -121,7 +133,7 @@ export default function Topic({ styleName, disabled }) {
                         flex: 1,
                       }}
                     >
-                      {item?.root_prompt.title}
+                      {item?.root_prompt.request}
                     </Text>
                     <Text
                       fz="sm"
@@ -145,7 +157,9 @@ export default function Topic({ styleName, disabled }) {
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {item?.root_prompt.responses?.[0]}
+                    {Array.isArray(item?.root_prompt.responses)
+                      ? item?.root_prompt.responses?.[0]
+                      : item?.root_prompt.response}
                   </Text>
                 </Box>
                 <Flex align="center">

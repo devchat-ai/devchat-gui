@@ -72,7 +72,7 @@ const InputMessage = observer((props: any) => {
     modelMenus,
   } = input;
   const { generating } = chat;
-  const showTopic = process.env.platform === "idea";
+  const isVscode = process.env.platform === "vscode";
   const viewport = useRef<HTMLDivElement>(null);
 
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] =
@@ -386,7 +386,7 @@ const InputMessage = observer((props: any) => {
           marginTop: 5,
         }}
       >
-        {!showTopic && (
+        {isVscode && (
           <Menu
             width={chat.chatPanelWidth - 10}
             position="bottom-start"
@@ -473,18 +473,16 @@ const InputMessage = observer((props: any) => {
             </ScrollArea.Autosize>
           </Menu.Dropdown>
         </Menu>
-        {showTopic && (
-          <>
-            <AddTopic
-              buttonStyles={buttonStyles}
-              disabled={generating || chat.disabled}
-            />
-            <Topic
-              styleName={classes.actionIcon}
-              disabled={generating || chat.disabled}
-            />
-          </>
-        )}
+        <>
+          <AddTopic
+            buttonStyles={buttonStyles}
+            disabled={generating || chat.disabled}
+          />
+          <Topic
+            styleName={classes.actionIcon}
+            disabled={generating || chat.disabled}
+          />
+        </>
       </Group>
       {contexts && contexts.length > 0 && (
         <Drawer

@@ -615,7 +615,7 @@ class IdeaBridge {
       case "doCommit":
         JStoIdea.commit(message.content);
         break;
-      case "listTopics":
+      case "getTopics":
         JStoIdea.getTopicList();
         break;
       case "getTopicDetail":

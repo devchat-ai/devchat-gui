@@ -1,4 +1,4 @@
-import { types, flow, Instance ,getParent} from "mobx-state-tree";
+import { types, flow, Instance, getParent } from "mobx-state-tree";
 import messageUtil from "@/util/MessageUtil";
 import { ChatContext } from "@/views/stores/InputStore";
 import yaml from "js-yaml";
@@ -36,6 +36,7 @@ export const fetchHistoryMessages = async (params) => {
         messageUtil.registerHandler(
           "loadHistoryMessages",
           (message: LoadHistoryMessage) => {
+            console.log("message: ", message);
             resolve({
               pageIndex: pageIndex,
               entries: message.entries,
@@ -105,15 +106,17 @@ export const ChatStore = types
       self.scrollBottom++;
     };
 
-    const helpWorkflowCommands = () =>{
+    const helpWorkflowCommands = () => {
       const rootStore = getParent<RootInstance>(self);
 
-      return rootStore.input.commandMenus.map((item) => {
-        if(item.name === "help"){
-          return "";
-        }
-        return `<a class="workflow_command" href="${item.pattern}">/${item.name}: ${item.description}</a>`;
-      }).join("\n\n");
+      return rootStore.input.commandMenus
+        .map((item) => {
+          if (item.name === "help") {
+            return "";
+          }
+          return `<a class="workflow_command" href="${item.pattern}">/${item.name}: ${item.description}</a>`;
+        })
+        .join("\n\n");
     };
 
     const lastNonEmptyHash = () => {
@@ -142,7 +145,6 @@ export const ChatStore = types
       });
 
     const helpMessage = (originalMessage = false) => {
-
       let helps = `
 Do you want to write some code or have a question about the project? Simply right-click on your chosen files or code snippets and add them to DevChat. Feel free to ask me anything or let me help you with coding.
     
@@ -155,7 +157,11 @@ ${helpWorkflowCommands()}`;
       const setKeyMessage = `
 Your DevChat Access Key is not detected in the current settings. Please set your Access Key below, and we'll have everything set up for you in no time.
 
-<button value="get_devchat_key" ${process.env.platform === "vscode" ?'href="https://web.devchat.ai" component="a"':''}>Get DevChat key</button>
+<button value="get_devchat_key" ${
+        process.env.platform === "vscode"
+          ? 'href="https://web.devchat.ai" component="a"'
+          : ""
+      }>Get DevChat key</button>
 <button value="setting_devchat_key">Set DevChat key</button>
 `;
 
