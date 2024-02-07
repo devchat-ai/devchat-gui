@@ -84,7 +84,7 @@ export default function Topic({ styleName, disabled }) {
         position="bottom"
         title={
           <Flex justify="space-between">
-            <Text>Devchat Topic</Text>
+            <Text>DevChat Topics</Text>
             <Flex>
               <ActionIcon onClick={refreshTopicList}>
                 <IconRefresh size="1rem" />

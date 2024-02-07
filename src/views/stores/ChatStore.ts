@@ -36,7 +36,6 @@ export const fetchHistoryMessages = async (params) => {
         messageUtil.registerHandler(
           "loadHistoryMessages",
           (message: LoadHistoryMessage) => {
-            console.log("message: ", message);
             resolve({
               pageIndex: pageIndex,
               entries: message.entries,
@@ -420,40 +419,12 @@ Thinking...
           }
         }
       },
-      fetchHistoryMessages: flow(function* (params: { pageIndex: number }) {
-        const { pageIndex, entries } = yield fetchHistoryMessages(params);
-        if (entries.length > 0) {
-          self.pageIndex = pageIndex;
-          const messages = entries
-            .map((entry, index) => {
-              const { hash, user, date, request, response, context } = entry;
-              const chatContexts = context?.map(({ content }) => {
-                return JSON.parse(content);
-              });
-              return [
-                {
-                  type: "user",
-                  message: request,
-                  contexts: chatContexts,
-                  date: date,
-                  hash: hash,
-                },
-                { type: "bot", message: response, date: date, hash: hash },
-              ];
-            })
-            .flat();
-          if (self.pageIndex === 0) {
-            self.messages.push(...messages);
-          } else if (self.pageIndex > 0) {
-            self.messages.concat(...messages);
-          }
-        } else {
-          self.isLastPage = true;
-          if (self.messages.length === 0) {
-            helpMessage(true);
-          }
+      fetchHistoryMessages: () => {
+        self.isLastPage = true;
+        if (self.messages.length === 0) {
+          helpMessage(true);
         }
-      }),
+      },
       deleteMessage: flow(function* (messageHash: string) {
         const { hash } = yield deleteMessage(messageHash);
         const index = self.messages.findIndex(

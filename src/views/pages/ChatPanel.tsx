@@ -100,7 +100,7 @@ const chatPanel = observer(() => {
       // based on whether the key is present.
       messageUtil.registerHandler("getUserAccessKey", (message: any) => {
         chat.setKey(message.accessKey);
-        chat.fetchHistoryMessages({ pageIndex: 0 }).then();
+        chat.fetchHistoryMessages();
       });
       // The history records need to be obtained after setting the key,
       input.fetchContextMenus().then();
