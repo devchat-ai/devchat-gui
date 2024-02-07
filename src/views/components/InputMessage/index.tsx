@@ -195,6 +195,12 @@ const InputMessage = observer((props: any) => {
       }
     );
     messageUtil.registerHandler(
+      "focusDevChatInput",
+      (message: { command: string; message: string }) => {
+        inputRef.current.focus();
+      }
+    );
+    messageUtil.registerHandler(
       "appendContext",
       (message: { command: string; context: string }) => {
         // context is a temp file path
