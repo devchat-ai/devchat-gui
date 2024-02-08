@@ -72,7 +72,6 @@ const InputMessage = observer((props: any) => {
     modelMenus,
   } = input;
   const { generating } = chat;
-  const isVscode = process.env.platform === "vscode";
   const viewport = useRef<HTMLDivElement>(null);
 
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] =
@@ -173,18 +172,6 @@ const InputMessage = observer((props: any) => {
         handleSendClick(event as any);
       }
     }
-  };
-
-  const contextMenuIcon = (name: string) => {
-    if (name === "git diff --cached") {
-      return (
-        <IconGitBranchChecked size={14} color="var(--vscode-menu-foreground)" />
-      );
-    }
-    if (name === "git diff HEAD") {
-      return <IconGitBranch size={14} color="var(--vscode-menu-foreground)" />;
-    }
-    return <IconShellCommand size={14} color="var(--vscode-menu-foreground)" />;
   };
 
   useEffect(() => {
@@ -399,59 +386,6 @@ const InputMessage = observer((props: any) => {
           marginTop: 5,
         }}
       >
-        {isVscode && (
-          <Menu
-            width={chat.chatPanelWidth - 10}
-            position="bottom-start"
-            shadow="sm"
-            withArrow
-            styles={menuStyles}
-            disabled={contextMenus.length === 0}
-          >
-            <Menu.Target>
-              <ActionIcon
-                radius="xl"
-                variant="default"
-                disabled={generating || chat.disabled}
-                className={classes.actionIcon}
-              >
-                <IconTextPlus size="1rem" />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <ScrollArea.Autosize placeholder="" type="always" mah={240}>
-                {[...contextMenus]
-                  .sort((a, b) => {
-                    if (a.name === "<custom command>") {
-                      return 1; // Placing '<custom command>' at the end
-                    } else if (b.name === "<custom command>") {
-                      return -1; // Placing '<custom command>' at the front
-                    } else {
-                      return (a.name || "").localeCompare(b.name || ""); // Sorting alphabetically for other cases
-                    }
-                  })
-                  .map(({ pattern, description, name }, index) => {
-                    return (
-                      <Menu.Item
-                        key={`contexts-menus-${index}`}
-                        icon={contextMenuIcon(name)}
-                        onClick={() => {
-                          handleContextClick(name);
-                        }}
-                      >
-                        {name}
-                        <Text
-                          sx={{ fontSize: "9pt", color: theme.colors.gray[6] }}
-                        >
-                          {description}
-                        </Text>
-                      </Menu.Item>
-                    );
-                  })}
-              </ScrollArea.Autosize>
-            </Menu.Dropdown>
-          </Menu>
-        )}
         <Menu
           position="bottom-start"
           withArrow

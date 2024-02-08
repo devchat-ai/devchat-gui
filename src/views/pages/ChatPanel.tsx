@@ -14,6 +14,7 @@ import RegenerationButton from "@/views/components/RegenerationButton";
 import { observer } from "mobx-react-lite";
 import { useMst } from "@/views/stores/RootStore";
 import { Message } from "@/views/stores/ChatStore";
+import type { Item } from "@/views/stores/InputStore";
 
 import InputMessage from "@/views/components/InputMessage";
 import MessageList from "@/views/components/MessageList";
@@ -84,30 +85,36 @@ const chatPanel = observer(() => {
   useEffect(() => {
     // Fetch the command menus, before history records are obtained,
     // because the display information in the history record requires adjustment
-    input.fetchCommandMenus().then(() => {
-      messageUtil.registerHandler("reloadMessage", (message: any) => {
-        chat.reloadMessage(message);
-      });
-      messageUtil.registerHandler("loadHistoryMessages", (message: any) => {
-        chat.reloadMessage({
-          entries: message.entries,
-          pageIndex: 0,
-          reset: message.entries.length === 0,
-        });
-      });
-      // The history records need to be obtained after setting the key,
-      // as the display information in the history record requires adjustment
-      // based on whether the key is present.
-      messageUtil.registerHandler("getUserAccessKey", (message: any) => {
-        chat.setKey(message.accessKey);
-        chat.fetchHistoryMessages();
-      });
-      // The history records need to be obtained after setting the key,
-      input.fetchContextMenus().then();
-      input.fetchModelMenus().then();
-      getFeatureToggles();
-      getSettings();
+    messageUtil.sendMessage({ command: "regCommandList" });
+    messageUtil.registerHandler(
+      "regCommandList",
+      (message: { result: Item[] }) => {
+        console.log("regCommandList message: ", message);
+        input.fetchCommandMenus(message.result);
+      }
+    );
+    messageUtil.registerHandler("reloadMessage", (message: any) => {
+      chat.reloadMessage(message);
     });
+    messageUtil.registerHandler("loadHistoryMessages", (message: any) => {
+      chat.reloadMessage({
+        entries: message.entries,
+        pageIndex: 0,
+        reset: message.entries.length === 0,
+      });
+    });
+    // The history records need to be obtained after setting the key,
+    // as the display information in the history record requires adjustment
+    // based on whether the key is present.
+    messageUtil.registerHandler("getUserAccessKey", (message: any) => {
+      chat.setKey(message.accessKey);
+      chat.fetchHistoryMessages();
+    });
+    // The history records need to be obtained after setting the key,
+    input.fetchContextMenus().then();
+    input.fetchModelMenus().then();
+    getFeatureToggles();
+    getSettings();
     messageUtil.registerHandler(
       "receiveMessagePartial",
       (message: { text: string }) => {
