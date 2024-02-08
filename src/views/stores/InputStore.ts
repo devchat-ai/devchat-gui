@@ -128,7 +128,6 @@ export const InputStore = types
       }
     }),
     fetchCommandMenus: (items: Item[]) => {
-      console.log("items: ", items);
       self.commandMenus.clear();
       self.commandMenus.push(...items);
       self.commandMenus.push({
