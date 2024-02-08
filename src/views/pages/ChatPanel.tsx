@@ -30,6 +30,7 @@ const chatPanel = observer(() => {
   const scrollViewport = useRef<HTMLDivElement>(null);
   const { height } = useViewportSize();
   const { ref: inputAreatRef, height: inputAreaHeight } = useElementSize();
+  const isFirstRender = useRef(true);
 
   const chatPanelWidth = chatContainerRect.width;
 
@@ -90,30 +91,34 @@ const chatPanel = observer(() => {
       "regCommandList",
       (message: { result: Item[] }) => {
         input.fetchCommandMenus(message.result);
+        if (!isFirstRender.current) {
+          return;
+        }
+        isFirstRender.current = false;
+        messageUtil.registerHandler("reloadMessage", (message: any) => {
+          chat.reloadMessage(message);
+        });
+        messageUtil.registerHandler("loadHistoryMessages", (message: any) => {
+          chat.reloadMessage({
+            entries: message.entries,
+            pageIndex: 0,
+            reset: message.entries.length === 0,
+          });
+        });
+        // The history records need to be obtained after setting the key,
+        // as the display information in the history record requires adjustment
+        // based on whether the key is present.
+        messageUtil.registerHandler("getUserAccessKey", (message: any) => {
+          chat.setKey(message.accessKey);
+          chat.fetchHistoryMessages();
+        });
+        // The history records need to be obtained after setting the key,
+        input.fetchContextMenus().then();
+        input.fetchModelMenus().then();
+        getFeatureToggles();
+        getSettings();
       }
     );
-    messageUtil.registerHandler("reloadMessage", (message: any) => {
-      chat.reloadMessage(message);
-    });
-    messageUtil.registerHandler("loadHistoryMessages", (message: any) => {
-      chat.reloadMessage({
-        entries: message.entries,
-        pageIndex: 0,
-        reset: message.entries.length === 0,
-      });
-    });
-    // The history records need to be obtained after setting the key,
-    // as the display information in the history record requires adjustment
-    // based on whether the key is present.
-    messageUtil.registerHandler("getUserAccessKey", (message: any) => {
-      chat.setKey(message.accessKey);
-      chat.fetchHistoryMessages();
-    });
-    // The history records need to be obtained after setting the key,
-    input.fetchContextMenus().then();
-    input.fetchModelMenus().then();
-    getFeatureToggles();
-    getSettings();
     messageUtil.registerHandler(
       "receiveMessagePartial",
       (message: { text: string }) => {
