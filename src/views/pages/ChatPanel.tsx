@@ -68,7 +68,7 @@ const chatPanel = observer(() => {
     const gap = sh - vh - y;
     const isBottom = sh < vh ? true : gap < 100;
     const isTop = y === 0;
-    // console.log(`sh:${sh},vh:${vh},x:${x},y:${y},gap:${gap}`);
+    //
     if (isBottom) {
       chat.onMessagesBottom();
     } else if (isTop) {
@@ -89,7 +89,6 @@ const chatPanel = observer(() => {
     messageUtil.registerHandler(
       "regCommandList",
       (message: { result: Item[] }) => {
-        console.log("regCommandList message: ", message);
         input.fetchCommandMenus(message.result);
       }
     );
@@ -149,7 +148,6 @@ const chatPanel = observer(() => {
     messageUtil.registerHandler(
       "getSetting",
       (message: { value: string; key2: string }) => {
-        console.log("message: ", message);
         if (message.key2 === "defaultModel") {
           chat.changeChatModel(message.value);
         }
