@@ -23,6 +23,7 @@ export default function Topic({ styleName, disabled }) {
     useDisclosure(false);
   const [loading, setLoading] = useState(false);
   const [topicList, setTopicList] = useState<any>([]);
+  const isVscode = process.env.platform === "vscode";
 
   useEffect(() => {
     messageUtil.registerHandler("listTopics", ({ list }: { list: any }) => {
@@ -46,14 +47,17 @@ export default function Topic({ styleName, disabled }) {
 
   const showTopic = (root_prompt: any) => {
     closeDrawer();
-    // messageUtil.sendMessage({
-    //   command: "getTopicDetail",
-    //   topicHash: root_prompt.hash,
-    // });
-    messageUtil.sendMessage({
-      command: "historyMessages",
-      topicId: root_prompt.hash,
-    });
+    if (isVscode) {
+      messageUtil.sendMessage({
+        command: "historyMessages",
+        topicId: root_prompt.hash,
+      });
+    } else {
+      messageUtil.sendMessage({
+        command: "getTopicDetail",
+        topicHash: root_prompt.hash,
+      });
+    }
   };
 
   const refreshTopicList = () => {
