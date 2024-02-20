@@ -9,14 +9,15 @@ export default function Topic({ buttonStyles, disabled }) {
   const isVscode = process.env.platform === "vscode";
 
   const setNewTopic = () => {
-    messageUtil.sendMessage({
-      command: "setNewTopic",
-    });
     if (isVscode) {
       chat.reloadMessage({
         entries: [],
         pageIndex: 0,
         reset: true,
+      });
+    } else {
+      messageUtil.sendMessage({
+        command: "setNewTopic",
       });
     }
   };
