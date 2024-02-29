@@ -8,11 +8,12 @@ import {
   createStyles,
 } from "@mantine/core";
 import BalanceTip from "@/views/components/BalanceTip";
-import { IconSettings, IconLanguage } from "@tabler/icons-react";
+import { IconSettings, IconLanguage, IconMessages } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 // @ts-ignore
 import SvgAvatarDevChat from "../MessageAvatar/avatar_devchat.svg";
 import messageUtil from "@/util/MessageUtil";
+import { useRouter } from "@/views/router";
 
 const useStyles = createStyles((theme) => ({
   logoName: {
@@ -21,6 +22,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function Head() {
+  const router = useRouter();
   const { classes } = useStyles();
   const { i18n } = useTranslation();
 
@@ -46,10 +48,21 @@ export default function Head() {
   }, []);
 
   const openSetting = () => {
-    messageUtil.sendMessage({
-      command: "doCommand",
-      content: ["workbench.action.openSettings", "@ext:merico.devchat"],
-    });
+    if (router.currentRoute === "config") return;
+    router.updateRoute("config");
+    // messageUtil.sendMessage({
+    //   command: "doCommand",
+    //   content: ["workbench.action.openSettings", "@ext:merico.devchat"],
+    // });
+  };
+
+  const openChat = () => {
+    if (router.currentRoute === "chat") return;
+    router.updateRoute("chat");
+    // messageUtil.sendMessage({
+    //   command: "doCommand",
+    //   content: ["workbench.action.openSettings", "@ext:merico.devchat"],
+    // });
   };
 
   const switchLang = () => {
@@ -89,10 +102,22 @@ export default function Head() {
         </Flex>
         <Flex align="center" gap="xs" sx={{ paddingRight: 10 }}>
           <div>
-            <BalanceTip />
+            <ActionIcon
+              size="sm"
+              onClick={openChat}
+              color={router.currentRoute === "chat" ? "merico" : "gray"}
+              variant={router.currentRoute === "chat" ? "filled" : "subtle"}
+            >
+              <IconMessages size="1.125rem" />
+            </ActionIcon>
           </div>
           <div>
-            <ActionIcon size="sm" onClick={openSetting}>
+            <ActionIcon
+              size="sm"
+              onClick={openSetting}
+              color={router.currentRoute === "config" ? "merico" : "gray"}
+              variant={router.currentRoute === "config" ? "filled" : "subtle"}
+            >
               <IconSettings size="1.125rem" />
             </ActionIcon>
           </div>
@@ -100,6 +125,9 @@ export default function Head() {
             <ActionIcon size="sm" onClick={switchLang}>
               <IconLanguage size="1.125rem" />
             </ActionIcon>
+          </div>
+          <div>
+            <BalanceTip />
           </div>
         </Flex>
       </Flex>

@@ -318,6 +318,28 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
+  readConfig: () => {
+    // 获取完整的用户设置
+    const params = {
+      action: "getSetting/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {},
+    };
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
+  saveConfig: (data) => {
+    const params = {
+      action: "updateSettings/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: data,
+    };
+    console.log("saveConfig params: ", params);
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
 };
 
 class IdeaBridge {
@@ -444,7 +466,10 @@ class IdeaBridge {
 
   resviceSettings(res) {
     // 用户设置的回调
-    const setting = res.payload.setting;
+    const setting = res?.payload || {};
+    console.log("setting: ", setting);
+    this.executeHandlers("readConfig", setting);
+    return;
 
     let key = setting?.apiKey || "";
     // idea 默认的 key 是 change_me,所以这里要清空
@@ -460,22 +485,11 @@ class IdeaBridge {
       key2: "defaultModel",
     });
 
-    // this.handle.getUserAccessKey({
-    //   endPoint: setting.apiBase,
-    //   accessKey: key,
-    //   keyType: key.startsWith("DC") ? "DevChat" : "OpenAi",
-    // });
-
     this.executeHandlers("getUserAccessKey", {
       endPoint: setting.apiBase,
       accessKey: key,
       keyType: key.startsWith("DC") ? "DevChat" : "OpenAi",
     });
-
-    // this.handle.getSetting({
-    //   value: setting.language,
-    //   key2: "Language",
-    // });
 
     this.executeHandlers("getSetting", {
       value: setting.language,
@@ -644,6 +658,13 @@ class IdeaBridge {
         break;
       case "stopDevChat":
         JStoIdea.stopDevChat();
+        break;
+      case "readConfig":
+        JStoIdea.readConfig();
+        break;
+      case "saveConfig":
+        // 保存用户设置
+        JStoIdea.saveConfig(message.data);
         break;
       default:
         break;
