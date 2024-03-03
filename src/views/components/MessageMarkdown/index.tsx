@@ -15,6 +15,7 @@ import { visit } from "unist-util-visit";
 import ChatMark from "@/views/components/ChatMark";
 import { useSetState } from "@mantine/hooks";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "@/views/router";
 
 (typeof global !== "undefined" ? global : window).Prism = Prism;
 require("prismjs/components/prism-java");
@@ -68,6 +69,7 @@ function parseMetaData(string) {
 const MessageMarkdown = observer((props: MessageMarkdownProps) => {
   const { children, activeStep = false, messageDone } = props;
   const { chat } = useMst();
+  const router = useRouter();
   const [steps, setSteps] = useState<Step[]>([]);
   const tree = fromMarkdown(children);
   const codes = tree.children.filter((node) => node.type === "code");
@@ -82,22 +84,13 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
   ) => {
     switch (value) {
       case "settings":
-        messageUtil.sendMessage({
-          command: "doCommand",
-          content: ["workbench.action.openSettings", "@ext:merico.devchat"],
-        });
+        router.updateRoute("config");
         break;
       case "setting_openai_key":
-        messageUtil.sendMessage({
-          command: "doCommand",
-          content: ["DevChat.AccessKey.OpenAI"],
-        });
+        router.updateRoute("config");
         break;
       case "setting_devchat_key":
-        messageUtil.sendMessage({
-          command: "doCommand",
-          content: ["DevChat.AccessKey.DevChat"],
-        });
+        router.updateRoute("config");
         break;
       case "get_devchat_key":
         window.open("https://web.devchat.ai");
@@ -160,7 +153,11 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
     if (i18n && i18n.language === "zh") {
       // 目前只有中文需要单独翻译
       if (children) {
-        if (children.includes("Do you want to write some code or have a question about the project? ")) {
+        if (
+          children.includes(
+            "Do you want to write some code or have a question about the project? "
+          )
+        ) {
           return t("devchat.help") + chat.helpWorkflowCommands();
         }
         if (
@@ -382,8 +379,8 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
               className={classes.link}
               href="javascript:void()"
               onClick={() => {
-                if(href){
-                  chat.commonMessage(`/${href}`,[]);
+                if (href) {
+                  chat.commonMessage(`/${href}`, []);
                 }
               }}
             >

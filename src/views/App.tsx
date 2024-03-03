@@ -1,30 +1,48 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { AppShell, LoadingOverlay } from "@mantine/core";
 import ChatPanel from "@/views/pages/ChatPanel";
-import Config from "./pages/Config";
+import ConfigPanel from "@/views/pages/Config";
 import Head from "@/views/components/Header";
 import { CurrentRouteType, IRouter, RouterContext } from "./router";
+import { useMst } from "./stores/RootStore";
+import MessageUtil from "@/util/MessageUtil";
 import "./App.css";
 import "./i18n";
 
 export default function App() {
-  const [ready, setReady] = React.useState(false);
-  const [currentRoute, setCurrentRoute] =
-    React.useState<CurrentRouteType>("chat");
+  const [ready, setReady] = useState(false);
+  const { config } = useMst();
+  const [currentRoute, setCurrentRoute] = useState<CurrentRouteType>("chat");
+  const [lastRoute, setLastRoute] = useState<CurrentRouteType>("chat");
 
   const router: IRouter = {
     currentRoute,
-    updateRoute: setCurrentRoute,
+    lastRoute,
+    updateRoute: (route: CurrentRouteType) => {
+      setLastRoute(currentRoute);
+      setCurrentRoute(route);
+    },
   };
 
-  React.useEffect(() => {
-    if (process.env.platform === "vscode") {
+  const getConfig = () => {
+    console.log("getConfig");
+    MessageUtil.sendMessage({ command: "readConfig" });
+    MessageUtil.registerHandler("readConfig", (data: any) => {
+      console.log("readConfig: ", data);
+      config.setConfig(data);
       setReady(true);
+    });
+  };
+
+  useEffect(() => {
+    if (process.env.platform === "vscode") {
+      getConfig();
       return;
     }
+
     const checkReady = () => {
       if (window.JSJavaBridge) {
-        setReady(true);
+        getConfig();
       } else {
         setTimeout(checkReady, 200);
       }
@@ -47,7 +65,7 @@ export default function App() {
         {ready ? (
           <>
             <ChatPanel />
-            <Config />
+            <ConfigPanel />
           </>
         ) : (
           <LoadingOverlay visible />

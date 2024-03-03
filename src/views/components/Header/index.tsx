@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import SvgAvatarDevChat from "../MessageAvatar/avatar_devchat.svg";
 import messageUtil from "@/util/MessageUtil";
 import { useRouter } from "@/views/router";
+import { useMst } from "@/views/stores/RootStore";
 
 const useStyles = createStyles((theme) => ({
   logoName: {
@@ -25,44 +26,25 @@ export default function Head() {
   const router = useRouter();
   const { classes } = useStyles();
   const { i18n } = useTranslation();
+  const { config } = useMst();
 
   useEffect(() => {
-    messageUtil.sendMessage({
-      command: "getSetting",
-      key1: "DevChat",
-      key2: "Language",
-    });
-    messageUtil.registerHandler(
-      "getSetting",
-      (data: { key2: string; value: string }) => {
-        console.log("data: ", data);
-        if (data.key2 === "Language") {
-          if (data.value && data.value.toLocaleLowerCase() === "en") {
-            i18n.changeLanguage("en");
-          } else {
-            i18n.changeLanguage("zh");
-          }
-        }
-      }
-    );
+    const lang = config.getLanguage();
+    if (lang && lang.toLocaleLowerCase() === "en") {
+      i18n.changeLanguage("en");
+    } else {
+      i18n.changeLanguage("zh");
+    }
   }, []);
 
   const openSetting = () => {
     if (router.currentRoute === "config") return;
     router.updateRoute("config");
-    // messageUtil.sendMessage({
-    //   command: "doCommand",
-    //   content: ["workbench.action.openSettings", "@ext:merico.devchat"],
-    // });
   };
 
   const openChat = () => {
     if (router.currentRoute === "chat") return;
     router.updateRoute("chat");
-    // messageUtil.sendMessage({
-    //   command: "doCommand",
-    //   content: ["workbench.action.openSettings", "@ext:merico.devchat"],
-    // });
   };
 
   const switchLang = () => {
@@ -70,12 +52,7 @@ export default function Head() {
     const newLang = currentLang === "en" ? "zh" : "en";
     i18n.changeLanguage(newLang);
 
-    messageUtil.sendMessage({
-      command: "updateSetting",
-      key1: "DevChat",
-      key2: "Language",
-      value: newLang,
-    });
+    config.setConfigValue("language", newLang);
   };
 
   return (

@@ -3,6 +3,7 @@ import messageUtil from "@/util/MessageUtil";
 import { ChatContext } from "@/views/stores/InputStore";
 import yaml from "js-yaml";
 import { RootInstance } from "./RootStore";
+import { get } from "http";
 
 interface Context {
   content: string;
@@ -166,7 +167,9 @@ Your DevChat Access Key is not detected in the current settings. Please set your
 
       const setKeyUser = `Is DevChat Access Key ready?`;
 
-      if (self.key === "") {
+      const accessKey = getParent<RootInstance>(self).config.getUserKey();
+
+      if (accessKey === "") {
         self.messages.push(
           Message.create({
             type: "user",
@@ -204,12 +207,13 @@ Your DevChat Access Key is not detected in the current settings. Please set your
       self.hasDone = false;
       self.errorMessage = "";
       self.currentMessage = "";
+      const chatModel = getParent<RootInstance>(self).config.getDefaultModel();
       messageUtil.sendMessage({
         command: "sendMessage",
         text: text,
         contextInfo: contextInfo(chatContexts),
         parent_hash: lastNonEmptyHash(),
-        model: self.chatModel,
+        model: chatModel,
       });
     };
 
@@ -297,7 +301,8 @@ Thinking...
         self.chatPanelWidth = width;
       },
       changeChatModel: (chatModel: string) => {
-        self.chatModel = chatModel;
+        const rootStore = getParent<RootInstance>(self);
+        rootStore.config.setConfigValue("default_model", chatModel);
       },
       updateFeatures: (features: any) => {
         self.features = features;
@@ -343,9 +348,6 @@ Thinking...
       startResponsing: (message: string) => {
         self.responsed = true;
         self.currentMessage = message;
-      },
-      setKey: (key: string) => {
-        self.key = key;
       },
       newMessage: (message: IMessage) => {
         self.messages.push(message);

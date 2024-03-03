@@ -12,13 +12,17 @@ import {
   Button,
   Drawer,
   NumberInput,
+  LoadingOverlay,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "@/views/router";
 import MessageUtil from "@/util/MessageUtil";
 import { useMst } from "@/views/stores/RootStore";
-import getModelShowName from "@/util/modelName";
+import getModelShowName from "@/util/getModelShowName";
 import isEqual from "lodash.isequal";
+import { useTranslation } from "react-i18next";
+import { useDisclosure } from "@mantine/hooks";
+import { observer } from "mobx-react-lite";
 
 const commonInputStyle = {
   label: {
@@ -56,22 +60,23 @@ const selectStyle = {
   },
 };
 
-export default function Config() {
+const Config = function () {
+  const [loading, { open: startLoading, close: closeLoading }] =
+    useDisclosure(false);
   const { config } = useMst();
   const router = useRouter();
+  const { i18n, t } = useTranslation();
   const form = useForm({
     initialValues: {
       providers: {},
       models: {},
-      language: "zh",
-      python_for_chat: "",
-      python_for_command: "",
+      ...config.config,
     },
     validate: {
       providers: {
         devchat: {
-          api_key: (value) =>
-            value.length > 0 ? null : "Please enter access key",
+          // api_key: (value) =>
+          //   value.length > 0 ? null : "Please enter access key",
           api_base: (value) =>
             value.length > 0 ? null : "Please enter api base",
         },
@@ -83,26 +88,37 @@ export default function Config() {
   const [current, setCurrent] = useState("");
 
   useEffect(() => {
-    if (router.currentRoute !== "config") return;
-    MessageUtil.sendMessage({ command: "readConfig" });
-    MessageUtil.registerHandler("readConfig", (data: any) => {
-      console.log("readConfig data: ", data);
-      config.setConfig(data);
-      const modelName = Object.keys(data.models);
-      const modelArray = modelName.map((item) => ({
-        value: item,
-        label: getModelShowName(item),
-      }));
-      setModels(modelArray);
-      setCurrent(modelArray[0].value);
-      form.setValues(data);
+    MessageUtil.registerHandler("updateSetting", (data) => {
+      // 保存后的回调
+
+      MessageUtil.sendMessage({ command: "readConfig" });
     });
+    if (router.currentRoute !== "config") return;
+    const modelName = config.getModelList();
+
+    const modelArray = modelName.map((item) => ({
+      value: item,
+      label: getModelShowName(item),
+    }));
+    setModels(modelArray);
+    setCurrent(modelArray[0].value);
   }, [router.currentRoute]);
+
+  useEffect(() => {
+    if (router.currentRoute !== "config") return;
+    if (config.settle && loading) {
+      setTimeout(() => {
+        router.updateRoute("chat");
+        closeLoading();
+      }, 1000);
+    }
+  }, [config.settle]);
 
   const onSave = (values) => {
     if (!isEqual(values, config.config)) {
+      config.updateSettle(false);
+      startLoading();
       MessageUtil.sendMessage({ command: "saveConfig", data: values });
-      //   MessageUtil.sendMessage({ command: "readConfig" });
     }
   };
 
@@ -112,6 +128,11 @@ export default function Config() {
       ...form.values.models,
       [current]: newModel,
     });
+  };
+
+  const languageChange = (value: string) => {
+    i18n.changeLanguage(value);
+    form.setFieldValue("language", value);
   };
 
   const disabledSubmit = isEqual(form.values, config.config);
@@ -144,8 +165,9 @@ export default function Config() {
       withCloseButton={false}
       withOverlay={false}
     >
+      <LoadingOverlay visible={loading} overlayBlur={2} />
       <Title order={2} mb={20}>
-        Config
+        {t("Config")}
       </Title>
       <form
         onSubmit={form.onSubmit((values) => {
@@ -194,9 +216,9 @@ export default function Config() {
                 <TextInput
                   styles={commonInputStyle}
                   placeholder="https://xxxx.xx"
-                  label="API Base of Devchat"
+                  label={t("API Base of Devchat")}
                   withAsterisk
-                  description="the base URL for the API"
+                  description={t("the base URL for the API")}
                   {...form.getInputProps("providers.devchat.api_base")}
                 />
                 <PasswordInput
@@ -208,9 +230,9 @@ export default function Config() {
                     },
                   }}
                   withAsterisk
-                  label="Access Key of Devchat"
-                  placeholder="Your Access Key"
-                  description="please keep this secret"
+                  label={t("Access Key of Devchat")}
+                  placeholder={t("Your Access Key")}
+                  description={t("please keep this secret")}
                   {...form.getInputProps("providers.devchat.api_key")}
                 />
               </Stack>
@@ -228,10 +250,10 @@ export default function Config() {
               <Stack>
                 <TextInput
                   styles={commonInputStyle}
-                  placeholder="Your name"
-                  label="API Base of OpenAI"
+                  placeholder={t("API Base of OpenAI")}
+                  label={t("API Base of OpenAI")}
                   withAsterisk
-                  description="the base URL for the API"
+                  description={t("the base URL for the API")}
                 />
                 <PasswordInput
                   styles={commonInputStyle}
@@ -270,23 +292,25 @@ export default function Config() {
               value={form.values?.models[current]?.max_input_tokens}
               onChange={(value) => changeModelDetail("max_input_tokens", value)}
             />
-            <Select
-              label="Provider"
-              placeholder="Pick one"
-              description="select the provider for the model"
-              styles={{
-                ...commonInputStyle,
-                ...selectStyle,
-              }}
-              data={[
-                { value: "devchat", label: "Devchat" },
-                { value: "openai", label: "OpenAI" },
-              ]}
-              value={form.values?.models[current]?.provider}
-              onChange={(value) =>
-                changeModelDetail("provider", value as string)
-              }
-            />
+            {current.toLowerCase().startsWith("gpt") && (
+              <Select
+                label="Provider"
+                placeholder="Pick one"
+                description="select the provider for the model"
+                styles={{
+                  ...commonInputStyle,
+                  ...selectStyle,
+                }}
+                data={[
+                  { value: "devchat", label: "Devchat" },
+                  { value: "openai", label: "OpenAI" },
+                ]}
+                value={form.values?.models[current]?.provider}
+                onChange={(value) =>
+                  changeModelDetail("provider", value as string)
+                }
+              />
+            )}
           </Box>
           <Radio.Group
             label="Language"
@@ -300,6 +324,7 @@ export default function Config() {
               },
             }}
             {...form.getInputProps("language")}
+            onChange={languageChange}
           >
             <Group mt="xs">
               <Radio value="en" label="EN" />
@@ -349,4 +374,6 @@ export default function Config() {
       </form>
     </Drawer>
   );
-}
+};
+
+export default observer(Config);

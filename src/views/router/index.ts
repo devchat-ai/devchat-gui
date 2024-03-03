@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 
 export type CurrentRouteType = "chat" | "config";
 export interface IRouter {
+  lastRoute: CurrentRouteType;
   currentRoute: CurrentRouteType;
   updateRoute: (route: CurrentRouteType) => void;
 }

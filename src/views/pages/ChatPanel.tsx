@@ -22,10 +22,11 @@ import {
   IconCircleArrowDownFilled,
   IconExternalLink,
 } from "@tabler/icons-react";
+import { useRouter } from "../router";
 
 const chatPanel = observer(() => {
   const { input, chat } = useMst();
-
+  const router = useRouter();
   const [chatContainerRef, chatContainerRect] = useResizeObserver();
   const scrollViewport = useRef<HTMLDivElement>(null);
   const { height } = useViewportSize();
@@ -39,17 +40,6 @@ const chatPanel = observer(() => {
       top: scrollViewport.current.scrollHeight,
       behavior: "smooth",
     });
-
-  const getSettings = () => {
-    messageUtil.sendMessage({
-      command: "getSetting",
-      key1: "devchat",
-      key2: "defaultModel",
-    });
-    messageUtil.sendMessage({
-      command: "getUserAccessKey",
-    });
-  };
 
   const getFeatureToggles = () => {
     messageUtil.sendMessage({
@@ -84,6 +74,7 @@ const chatPanel = observer(() => {
   };
 
   useEffect(() => {
+    if (!router.currentRoute || router.currentRoute !== "chat") return;
     // Fetch the command menus, before history records are obtained,
     // because the display information in the history record requires adjustment
     messageUtil.sendMessage({ command: "regCommandList" });
@@ -105,18 +96,10 @@ const chatPanel = observer(() => {
             reset: message.entries.length === 0,
           });
         });
-        // The history records need to be obtained after setting the key,
-        // as the display information in the history record requires adjustment
-        // based on whether the key is present.
-        messageUtil.registerHandler("getUserAccessKey", (message: any) => {
-          chat.setKey(message.accessKey);
-          chat.fetchHistoryMessages();
-        });
-        // The history records need to be obtained after setting the key,
+        chat.fetchHistoryMessages();
         input.fetchContextMenus().then();
-        input.fetchModelMenus().then();
+        input.fetchModelMenus();
         getFeatureToggles();
-        getSettings();
       }
     );
     messageUtil.registerHandler(
@@ -151,17 +134,8 @@ const chatPanel = observer(() => {
       }
     );
     messageUtil.registerHandler(
-      "getSetting",
-      (message: { value: string; key2: string }) => {
-        if (message.key2 === "defaultModel") {
-          chat.changeChatModel(message.value);
-        }
-      }
-    );
-    messageUtil.registerHandler(
       "featureToggles",
       (message: { features: object }) => {
-        // chat.changeChatModel(message.value);
         chat.updateFeatures(message.features);
       }
     );
@@ -171,6 +145,16 @@ const chatPanel = observer(() => {
       timer.clear();
     };
   }, []);
+
+  useEffect(() => {
+    if (router.currentRoute === "chat" && router.lastRoute !== "chat") {
+      chat.reloadMessage({
+        entries: [],
+        pageIndex: 0,
+        reset: true,
+      });
+    }
+  }, [router.currentRoute]);
 
   useEffect(() => {
     scrollToBottom();
