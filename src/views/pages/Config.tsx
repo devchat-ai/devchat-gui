@@ -254,6 +254,7 @@ const Config = function () {
                   label={t("API Base of OpenAI")}
                   withAsterisk
                   description={t("the base URL for the API")}
+                  {...form.getInputProps("providers.openai.api_base")}
                 />
                 <PasswordInput
                   styles={commonInputStyle}
@@ -261,6 +262,7 @@ const Config = function () {
                   label="Access Key of OpenAI"
                   placeholder="Your Access Key"
                   description="please keep this secret"
+                  {...form.getInputProps("providers.openai.api_key")}
                 />
               </Stack>
             </Tabs.Panel>

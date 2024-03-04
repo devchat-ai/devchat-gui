@@ -51,6 +51,12 @@ export const ConfigStore = types
           };
         }
       });
+      if (!newConfig.providers?.openai) {
+        newConfig.providers.openai = {
+          api_key: "",
+          api_base: "",
+        };
+      }
       self.config = newConfig;
       self.settle = true;
     },
