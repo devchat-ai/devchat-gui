@@ -337,6 +337,7 @@ const InputMessage = observer((props: any) => {
       },
     },
   };
+  // DC.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOjI1MTYwMzg1MzQ2LCJqdGkiOjczMjc0OTkzMjcwMzc1MjkyNjB9.e-KAl0QM0Ooe6NdLAV3vaJAiA4Zr_DAgqkE0cl7MKZw
 
   return (
     <Stack
@@ -367,7 +368,7 @@ const InputMessage = observer((props: any) => {
               leftIcon={<IconRobot size="1rem" />}
               styles={buttonStyles}
             >
-              {getModelShowName(chat.chatModel)}
+              {getModelShowName(config.defaultModel)}
             </Button>
           </Menu.Target>
           <Menu.Dropdown>

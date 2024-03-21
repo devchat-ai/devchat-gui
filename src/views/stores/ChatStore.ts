@@ -94,7 +94,6 @@ export const ChatStore = types
     isBottom: true,
     isTop: false,
     scrollBottom: 0,
-    chatModel: "GPT-3.5",
     chatPanelWidth: 300,
     disabled: false,
     rechargeSite: "https://web.devchat.ai/pricing/",

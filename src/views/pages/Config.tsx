@@ -32,7 +32,7 @@ const commonInputStyle = {
   input: {
     fontSize: "var(--vscode-editor-font-size)",
     backgroundColor: "var(--vscode-sideBar-background)",
-    borderColor: "var(--vscode-input-border)",
+    borderColor: "var(--vscode-editor-foreground)",
     color: "var(--vscode-editor-foreground)",
     "&[data-disabled]": {
       color: "var(--vscode-disabledForeground)",
@@ -90,7 +90,6 @@ const Config = function () {
   useEffect(() => {
     MessageUtil.registerHandler("updateSetting", (data) => {
       // 保存后的回调
-
       MessageUtil.sendMessage({ command: "readConfig" });
     });
     if (router.currentRoute !== "config") return;
@@ -106,6 +105,7 @@ const Config = function () {
 
   useEffect(() => {
     if (router.currentRoute !== "config") return;
+    form.setValues(config.config);
     if (config.settle && loading) {
       setTimeout(() => {
         router.updateRoute("chat");
@@ -115,11 +115,18 @@ const Config = function () {
   }, [config.settle]);
 
   const onSave = (values) => {
-    if (!isEqual(values, config.config)) {
-      config.updateSettle(false);
-      startLoading();
-      MessageUtil.sendMessage({ command: "saveConfig", data: values });
-    }
+    config.updateSettle(false);
+    startLoading();
+    MessageUtil.sendMessage({
+      command: "writeConfig",
+      value: values,
+      key: "",
+    });
+    config.setConfig(values);
+    setTimeout(() => {
+      router.updateRoute("chat");
+      closeLoading();
+    }, 1000);
   };
 
   const changeModelDetail = (key: string, value: number | string) => {
@@ -345,7 +352,7 @@ const Config = function () {
             label="Python for commands"
             placeholder="/xxx/xxx"
             description="Please enter the path of your python"
-            {...form.getInputProps("python_for_command")}
+            {...form.getInputProps("python_for_commands")}
           />
         </Stack>
         <Group

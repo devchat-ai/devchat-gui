@@ -25,11 +25,9 @@ export default function App() {
   };
 
   const getConfig = () => {
-    console.log("getConfig");
-    MessageUtil.sendMessage({ command: "readConfig" });
-    MessageUtil.registerHandler("readConfig", (data: any) => {
-      console.log("readConfig: ", data);
-      config.setConfig(data);
+    MessageUtil.sendMessage({ command: "readConfig", key: "" });
+    MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
+      config.setConfig(data.value);
       setReady(true);
     });
   };
