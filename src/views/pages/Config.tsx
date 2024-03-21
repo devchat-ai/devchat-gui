@@ -122,11 +122,7 @@ const Config = function () {
       value: values,
       key: "",
     });
-    config.setConfig(values);
-    setTimeout(() => {
-      router.updateRoute("chat");
-      closeLoading();
-    }, 1000);
+    MessageUtil.sendMessage({ command: "readConfig", key: "" });
   };
 
   const changeModelDetail = (key: string, value: number | string) => {
