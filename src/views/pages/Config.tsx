@@ -169,6 +169,7 @@ const Config = function () {
       }}
       withCloseButton={false}
       withOverlay={false}
+      zIndex={99}
     >
       <LoadingOverlay visible={loading} overlayBlur={2} />
       <Title order={2} mb={20}>

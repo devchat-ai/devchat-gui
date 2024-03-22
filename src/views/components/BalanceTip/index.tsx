@@ -114,7 +114,7 @@ export default function WechatTip() {
           borderColor: "var(--vscode-menu-border)",
         },
       }}
-      zIndex={999}
+      zIndex={99999}
     >
       <HoverCard.Target>
         <div onMouseEnter={getBalance}>
