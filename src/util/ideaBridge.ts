@@ -433,7 +433,7 @@ class IdeaBridge {
   }
 
   resviceSettings(res) {
-    // 用户设置的回调
+    // 获取用户设置的回调
     const setting = res?.payload || {};
 
     this.executeHandlers("readConfig", {
@@ -447,9 +447,6 @@ class IdeaBridge {
       pattern: item.name,
       description: item.description,
     }));
-    // this.handle.regCommandList({
-    //   result,
-    // });
     this.executeHandlers("regCommandList", {
       result,
     });
@@ -471,9 +468,6 @@ class IdeaBridge {
 
   resviceModelList(response: any) {
     // 接受到模型列表
-    // this.handle["regModelList"]({
-    //   result: response.payload.models,
-    // });
     this.executeHandlers("regModelList", {
       result: response.payload.models,
     });
@@ -483,20 +477,12 @@ class IdeaBridge {
     // 接受到消息
     if (response.metadata?.isFinalChunk) {
       // 结束对话
-      // this.handle["receiveMessage"]({
-      //   text: response.payload?.message || response.metadata?.error || "",
-      //   isError: response.metadata?.error.length > 0,
-      //   hash: response.payload?.promptHash || "",
-      // });
       this.executeHandlers("receiveMessage", {
         text: response.payload?.message || response.metadata?.error || "",
         isError: response.metadata?.error.length > 0,
         hash: response.payload?.promptHash || "",
       });
     } else {
-      // this.handle["receiveMessagePartial"]({
-      //   text: response?.payload?.message || "",
-      // });
       this.executeHandlers("receiveMessagePartial", {
         text: response?.payload?.message || "",
       });
@@ -596,9 +582,9 @@ class IdeaBridge {
       case "readConfig":
         JStoIdea.readConfig();
         break;
-      case "saveConfig":
+      case "writeConfig":
         // 保存用户设置
-        JStoIdea.saveConfig(message.data);
+        JStoIdea.saveConfig(message.value);
         break;
       default:
         break;
