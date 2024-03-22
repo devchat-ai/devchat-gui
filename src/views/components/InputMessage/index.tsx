@@ -16,18 +16,13 @@ import {
 } from "@mantine/core";
 import { useDisclosure, useResizeObserver } from "@mantine/hooks";
 import {
-  IconGitBranch,
   IconSend,
   IconPaperclip,
   IconChevronDown,
-  IconTextPlus,
   IconRobot,
 } from "@tabler/icons-react";
 import React, { useState, useEffect, useRef } from "react";
-import {
-  IconGitBranchChecked,
-  IconShellCommand,
-} from "@/views/components/ChatIcons";
+
 import messageUtil from "@/util/MessageUtil";
 import InputContexts from "./InputContexts";
 import Topic from "./Topic";
@@ -36,8 +31,9 @@ import { observer } from "mobx-react-lite";
 import { useMst } from "@/views/stores/RootStore";
 import { ChatContext } from "@/views/stores/InputStore";
 import { Trans, useTranslation } from "react-i18next";
+import getModelShowName from "@/util/getModelShowName";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(() => ({
   actionIcon: {
     color: "var(--vscode-dropdown-foreground)",
     borderColor: "var(--vscode-dropdown-border)",
@@ -60,7 +56,7 @@ const useStyles = createStyles((theme) => ({
 
 const InputMessage = observer((props: any) => {
   const { classes } = useStyles();
-  const { input, chat } = useMst();
+  const { input, chat, config } = useMst();
   const { t } = useTranslation();
   const {
     contexts,
@@ -229,31 +225,6 @@ const InputMessage = observer((props: any) => {
     inputRef.current.focus();
   }, []);
 
-  const getModelShowName = (modelName: string) => {
-    const nameMap = {
-      "gpt-3.5-turbo": "GPT-3.5",
-      "gpt-4": "GPT-4",
-      "gpt-4-turbo-preview": "GPT-4-turbo",
-      "claude-2.1": "CLAUDE-2.1",
-      "xinghuo-3.5": "xinghuo-3.5",
-      "GLM-4": "GLM-4",
-      "ERNIE-Bot-4.0": "ERNIE-Bot-4.0",
-      "togetherai/codellama/CodeLlama-70b-Instruct-hf": "CodeLlama-70b",
-      "togetherai/mistralai/Mixtral-8x7B-Instruct-v0.1": "Mixtral-8x7B",
-      "minimax/abab6-chat": "minimax-abab6",
-      "llama-2-70b-chat": "llama2-70b",
-    };
-    if (modelName in nameMap) {
-      return nameMap[modelName];
-    } else if (modelName.lastIndexOf("/") > -1) {
-      return modelName
-        .substring(modelName.lastIndexOf("/") + 1)
-        .toLocaleUpperCase();
-    } else {
-      return modelName.toUpperCase();
-    }
-  };
-
   useEffect(() => {
     let filtered;
     if (input.value) {
@@ -329,13 +300,7 @@ const InputMessage = observer((props: any) => {
   }, [contexts.length]);
 
   const changeModel = (value) => {
-    chat.changeChatModel(value);
-    messageUtil.sendMessage({
-      command: "updateSetting",
-      key1: "devchat",
-      key2: "defaultModel",
-      value: value,
-    });
+    config.setConfigValue("default_model", value);
   };
 
   const menuStyles = {
@@ -372,6 +337,7 @@ const InputMessage = observer((props: any) => {
       },
     },
   };
+  // DC.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfaWQiOjI1MTYwMzg1MzQ2LCJqdGkiOjczMjc0OTkzMjcwMzc1MjkyNjB9.e-KAl0QM0Ooe6NdLAV3vaJAiA4Zr_DAgqkE0cl7MKZw
 
   return (
     <Stack
@@ -402,7 +368,7 @@ const InputMessage = observer((props: any) => {
               leftIcon={<IconRobot size="1rem" />}
               styles={buttonStyles}
             >
-              {getModelShowName(chat.chatModel)}
+              {getModelShowName(config.defaultModel)}
             </Button>
           </Menu.Target>
           <Menu.Dropdown>

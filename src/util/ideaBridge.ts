@@ -99,17 +99,7 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
-  getUserAccessKey: () => {
-    // 这里需要发送一个请求，获取完整的用户设置
-    const params = {
-      action: "getSetting/request",
-      metadata: {
-        callback: "IdeaToJSMessage",
-      },
-      payload: {},
-    };
-    window.JSJavaBridge.callJava(JSON.stringify(params));
-  },
+
   etcCommand: (command: any) => {
     /**
      * 有四种命令
@@ -158,24 +148,6 @@ const JStoIdea = {
       payload: {},
     };
 
-    window.JSJavaBridge.callJava(JSON.stringify(params));
-  },
-  updateSetting: (message: { value: string; key2: string }) => {
-    if (message.key2 === "Language") {
-      JStoIdea.setLanguage(message.value);
-      return;
-    }
-    const params = {
-      action: "updateSetting/request",
-      metadata: {
-        callback: "IdeaToJSMessage",
-      },
-      payload: {
-        setting: {
-          currentModel: message.value,
-        },
-      },
-    };
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
   commit: (code: string) => {
@@ -270,19 +242,6 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
-  setLanguage: (language) => {
-    const params = {
-      action: "updateLanguage/request",
-      metadata: {
-        callback: "IdeaToJSMessage",
-      },
-      payload: {
-        language: language || "en",
-      },
-    };
-    console.log("setLanguage params: ", params);
-    window.JSJavaBridge.callJava(JSON.stringify(params));
-  },
   userInput: (message) => {
     const params = {
       action: "input/request",
@@ -318,6 +277,29 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
+  readConfig: () => {
+    // 获取完整的用户设置
+    const params = {
+      action: "getSetting/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {},
+    };
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
+  saveConfig: (data) => {
+    const params = {
+      action: "updateSetting/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: data,
+    };
+
+    console.log("ready to call java: ", JSON.stringify(params));
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
 };
 
 class IdeaBridge {
@@ -328,8 +310,11 @@ class IdeaBridge {
     this.handle = {};
     // 注册全局的回调函数，用于接收来自 IDEA 的消息
     window.IdeaToJSMessage = (res: any) => {
-      console.log("IdeaToJSMessage: ", res);
+      console.info("IdeaToJSMessage get res: ", res);
       switch (res.action) {
+        case "updateSetting/response":
+          this.resviceUpdateSetting(res);
+          break;
         case "sendUserMessage/response":
           this.resviceSendUserMessage(res);
           break;
@@ -371,6 +356,11 @@ class IdeaBridge {
       // 初始化完成
       JStoIdea.getCommandList();
     };
+  }
+
+  resviceUpdateSetting(res) {
+    // 更新用户设置之后的回调
+    this.executeHandlers("updateSetting", res.payload);
   }
 
   resviceSendUserMessage(res) {
@@ -443,43 +433,11 @@ class IdeaBridge {
   }
 
   resviceSettings(res) {
-    // 用户设置的回调
-    const setting = res.payload.setting;
+    // 获取用户设置的回调
+    const setting = res?.payload || {};
 
-    let key = setting?.apiKey || "";
-    // idea 默认的 key 是 change_me,所以这里要清空
-    if (setting?.apiKey.includes("change")) {
-      key = "";
-    }
-
-    // 当前的默认模型
-    // this.handle.getSetting({});
-
-    this.executeHandlers("getSetting", {
-      value: setting.currentModel,
-      key2: "defaultModel",
-    });
-
-    // this.handle.getUserAccessKey({
-    //   endPoint: setting.apiBase,
-    //   accessKey: key,
-    //   keyType: key.startsWith("DC") ? "DevChat" : "OpenAi",
-    // });
-
-    this.executeHandlers("getUserAccessKey", {
-      endPoint: setting.apiBase,
-      accessKey: key,
-      keyType: key.startsWith("DC") ? "DevChat" : "OpenAi",
-    });
-
-    // this.handle.getSetting({
-    //   value: setting.language,
-    //   key2: "Language",
-    // });
-
-    this.executeHandlers("getSetting", {
-      value: setting.language,
-      key2: "Language",
+    this.executeHandlers("readConfig", {
+      value: setting,
     });
   }
 
@@ -489,9 +447,6 @@ class IdeaBridge {
       pattern: item.name,
       description: item.description,
     }));
-    // this.handle.regCommandList({
-    //   result,
-    // });
     this.executeHandlers("regCommandList", {
       result,
     });
@@ -513,9 +468,6 @@ class IdeaBridge {
 
   resviceModelList(response: any) {
     // 接受到模型列表
-    // this.handle["regModelList"]({
-    //   result: response.payload.models,
-    // });
     this.executeHandlers("regModelList", {
       result: response.payload.models,
     });
@@ -525,20 +477,12 @@ class IdeaBridge {
     // 接受到消息
     if (response.metadata?.isFinalChunk) {
       // 结束对话
-      // this.handle["receiveMessage"]({
-      //   text: response.payload?.message || response.metadata?.error || "",
-      //   isError: response.metadata?.error.length > 0,
-      //   hash: response.payload?.promptHash || "",
-      // });
       this.executeHandlers("receiveMessage", {
         text: response.payload?.message || response.metadata?.error || "",
         isError: response.metadata?.error.length > 0,
         hash: response.payload?.promptHash || "",
       });
     } else {
-      // this.handle["receiveMessagePartial"]({
-      //   text: response?.payload?.message || "",
-      // });
       this.executeHandlers("receiveMessagePartial", {
         text: response?.payload?.message || "",
       });
@@ -568,7 +512,6 @@ class IdeaBridge {
   }
 
   sendMessage(message: any) {
-    console.log("sendMessage message: ", message);
     // 根据 command 分发到不同的方法·
     switch (message.command) {
       // 发送消息
@@ -600,17 +543,11 @@ class IdeaBridge {
       case "code_file_apply":
         JStoIdea.replaceFileContent(message.content);
         break;
-      case "getUserAccessKey":
-        JStoIdea.getUserAccessKey();
-        break;
       case "doCommand":
         JStoIdea.etcCommand(message);
         break;
       case "show_diff":
         JStoIdea.viewDiff(message.content);
-        break;
-      case "updateSetting":
-        JStoIdea.updateSetting(message);
         break;
       case "doCommit":
         JStoIdea.commit(message.content);
@@ -633,9 +570,6 @@ class IdeaBridge {
       case "userInput":
         JStoIdea.userInput(message);
         break;
-      case "setLanguage":
-        JStoIdea.setLanguage(message);
-        break;
       case "setNewTopic":
         JStoIdea.setNewTopic();
         break;
@@ -644,6 +578,13 @@ class IdeaBridge {
         break;
       case "stopDevChat":
         JStoIdea.stopDevChat();
+        break;
+      case "readConfig":
+        JStoIdea.readConfig();
+        break;
+      case "writeConfig":
+        // 保存用户设置
+        JStoIdea.saveConfig(message.value);
         break;
       default:
         break;

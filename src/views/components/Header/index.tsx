@@ -8,11 +8,13 @@ import {
   createStyles,
 } from "@mantine/core";
 import BalanceTip from "@/views/components/BalanceTip";
-import { IconSettings, IconLanguage } from "@tabler/icons-react";
+import { IconSettings, IconLanguage, IconMessages } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 // @ts-ignore
 import SvgAvatarDevChat from "../MessageAvatar/avatar_devchat.svg";
 import messageUtil from "@/util/MessageUtil";
+import { useRouter } from "@/views/router";
+import { useMst } from "@/views/stores/RootStore";
 
 const useStyles = createStyles((theme) => ({
   logoName: {
@@ -21,35 +23,28 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function Head() {
+  const router = useRouter();
   const { classes } = useStyles();
   const { i18n } = useTranslation();
+  const { config } = useMst();
 
   useEffect(() => {
-    messageUtil.sendMessage({
-      command: "getSetting",
-      key1: "DevChat",
-      key2: "Language",
-    });
-    messageUtil.registerHandler(
-      "getSetting",
-      (data: { key2: string; value: string }) => {
-        console.log("data: ", data);
-        if (data.key2 === "Language") {
-          if (data.value && data.value.toLocaleLowerCase() === "en") {
-            i18n.changeLanguage("en");
-          } else {
-            i18n.changeLanguage("zh");
-          }
-        }
-      }
-    );
+    const lang = config.getLanguage();
+    if (lang && lang.toLocaleLowerCase() === "en") {
+      i18n.changeLanguage("en");
+    } else {
+      i18n.changeLanguage("zh");
+    }
   }, []);
 
   const openSetting = () => {
-    messageUtil.sendMessage({
-      command: "doCommand",
-      content: ["workbench.action.openSettings", "@ext:merico.devchat"],
-    });
+    if (router.currentRoute === "config") return;
+    router.updateRoute("config");
+  };
+
+  const openChat = () => {
+    if (router.currentRoute === "chat") return;
+    router.updateRoute("chat");
   };
 
   const switchLang = () => {
@@ -57,12 +52,7 @@ export default function Head() {
     const newLang = currentLang === "en" ? "zh" : "en";
     i18n.changeLanguage(newLang);
 
-    messageUtil.sendMessage({
-      command: "updateSetting",
-      key1: "DevChat",
-      key2: "Language",
-      value: newLang,
-    });
+    config.setConfigValue("language", newLang);
   };
 
   return (
@@ -89,10 +79,22 @@ export default function Head() {
         </Flex>
         <Flex align="center" gap="xs" sx={{ paddingRight: 10 }}>
           <div>
-            <BalanceTip />
+            <ActionIcon
+              size="sm"
+              onClick={openChat}
+              color={router.currentRoute === "chat" ? "merico" : "gray"}
+              variant={router.currentRoute === "chat" ? "filled" : "subtle"}
+            >
+              <IconMessages size="1.125rem" />
+            </ActionIcon>
           </div>
           <div>
-            <ActionIcon size="sm" onClick={openSetting}>
+            <ActionIcon
+              size="sm"
+              onClick={openSetting}
+              color={router.currentRoute === "config" ? "merico" : "gray"}
+              variant={router.currentRoute === "config" ? "filled" : "subtle"}
+            >
               <IconSettings size="1.125rem" />
             </ActionIcon>
           </div>
@@ -100,6 +102,9 @@ export default function Head() {
             <ActionIcon size="sm" onClick={switchLang}>
               <IconLanguage size="1.125rem" />
             </ActionIcon>
+          </div>
+          <div>
+            <BalanceTip />
           </div>
         </Flex>
       </Flex>

@@ -10,6 +10,7 @@ import {
   LoadingOverlay,
 } from "@mantine/core";
 import { Trans } from "react-i18next";
+import { useMst } from "@/views/stores/RootStore";
 
 const currencyMap = {
   USD: "$",
@@ -39,7 +40,7 @@ const envMap = {
 };
 
 export default function WechatTip() {
-  const [bindWechat, setBindWechat] = useState(false);
+  const { config } = useMst();
   const [balance, setBalance] = useState<null | number>(null);
   const [currency, setCurrency] = useState("USD");
   const [accessKey, setAccessKey] = useState("");
@@ -47,12 +48,6 @@ export default function WechatTip() {
 
   const [loading, setLoading] = useState(false);
   const platform = process.env.platform;
-
-  const getSettings = () => {
-    messageUtil.sendMessage({
-      command: "getUserAccessKey",
-    });
-  };
 
   const getBalance = () => {
     if (!envMap[env].requestUrl || !accessKey) {
@@ -64,9 +59,6 @@ export default function WechatTip() {
         headers: { Authorization: `Bearer ${accessKey}` },
       })
       .then((res) => {
-        if (res?.data?.user?.wechat_nickname) {
-          setBindWechat(true);
-        }
         if (res?.data?.organization?.balance) {
           setBalance(formatBalance(res?.data?.organization?.balance));
           setCurrency(res?.data?.organization?.currency);
@@ -84,20 +76,16 @@ export default function WechatTip() {
   }, [env, accessKey]);
 
   useEffect(() => {
-    getSettings();
-    messageUtil.registerHandler(
-      "getUserAccessKey",
-      (message: { endPoint: string; accessKey: string; keyType: string }) => {
-        if (message.accessKey) {
-          if (message.endPoint.includes("api-test.devchat.ai")) {
-            setEnv("dev");
-          } else {
-            setEnv("prod");
-          }
-          setAccessKey(message.accessKey);
-        }
+    const accessKey = config.getUserKey();
+    const apibase = config.getAPIBase();
+    if (accessKey) {
+      if (apibase.includes("api-test.devchat.ai")) {
+        setEnv("dev");
+      } else {
+        setEnv("prod");
       }
-    );
+      setAccessKey(accessKey);
+    }
   }, []);
 
   const openLink = (e) => {
@@ -126,7 +114,7 @@ export default function WechatTip() {
           borderColor: "var(--vscode-menu-border)",
         },
       }}
-      zIndex={999}
+      zIndex={99999}
     >
       <HoverCard.Target>
         <div onMouseEnter={getBalance}>

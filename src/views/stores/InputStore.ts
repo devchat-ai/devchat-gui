@@ -1,6 +1,6 @@
-import { types, flow, Instance } from "mobx-state-tree";
+import { types, flow, Instance, getParent } from "mobx-state-tree";
 import messageUtil from "@/util/MessageUtil";
-import { IMessage } from "@/views/stores/ChatStore";
+import { RootInstance } from "./RootStore";
 
 export interface Item {
   name: string;
@@ -46,7 +46,6 @@ const regCommandMenus = async () => {
       messageUtil.registerHandler(
         "regCommandList",
         (message: { result: Item[] }) => {
-          console.log("regCommandList message: ", message);
           resolve(message.result);
         }
       );
@@ -115,18 +114,13 @@ export const InputStore = types
       try {
         const items = yield regContextMenus();
         self.contextMenus.push(...items);
-      } catch (error) {
-        console.error("Failed to fetch context menus", error);
-      }
+      } catch (error) {}
     }),
-    fetchModelMenus: flow(function* () {
-      try {
-        const models = yield regModelMenus();
-        self.modelMenus.push(...models);
-      } catch (error) {
-        console.error("Failed to fetch context menus", error);
-      }
-    }),
+    fetchModelMenus() {
+      const rootStore = getParent<RootInstance>(self);
+      const models = rootStore.config.getModelList();
+      self.modelMenus.push(...models);
+    },
     fetchCommandMenus: (items: Item[]) => {
       self.commandMenus.clear();
       self.commandMenus.push(...items);
