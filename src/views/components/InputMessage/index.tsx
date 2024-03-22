@@ -230,6 +230,7 @@ const InputMessage = observer((props: any) => {
   }, []);
 
   const getModelShowName = (modelName: string) => {
+    //
     const nameMap = {
       "gpt-3.5-turbo": "GPT-3.5",
       "gpt-4": "GPT-4",
@@ -240,6 +241,7 @@ const InputMessage = observer((props: any) => {
       "ERNIE-Bot-4.0": "ERNIE-Bot-4.0",
       "togetherai/codellama/CodeLlama-70b-Instruct-hf": "CodeLlama-70b",
       "togetherai/mistralai/Mixtral-8x7B-Instruct-v0.1": "Mixtral-8x7B",
+      "hzwxai/Mixtral-8x7B-Instruct-v0.1-GPTQ": "Mixtral-8x7B-GPTQ",
       "minimax/abab6-chat": "minimax-abab6",
       "llama-2-70b-chat": "llama2-70b",
     };
