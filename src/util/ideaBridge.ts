@@ -436,7 +436,9 @@ class IdeaBridge {
     // 用户设置的回调
     const setting = res?.payload || {};
 
-    this.executeHandlers("readConfig", setting);
+    this.executeHandlers("readConfig", {
+      value: setting,
+    });
   }
 
   resviceCommandList(res) {

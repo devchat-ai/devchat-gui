@@ -53,14 +53,16 @@ export const ConfigStore = types
             ...currentModel,
           };
         } else {
-          console.log(
-            "newConfig.models[item.name]: ",
-            newConfig.models[item.name]
-          );
           newConfig.models[item.name] = {
             ...currentModel,
             ...newConfig.models[item.name],
           };
+        }
+        if (
+          newConfig.models[item.name].provider !== "devchat" &&
+          newConfig.models[item.name].provider !== "openai"
+        ) {
+          newConfig.models[item.name].provider = currentModel.provider;
         }
       });
 

@@ -9,7 +9,7 @@ const modelsTemplate = [
   },
   {
     name: "gpt-4",
-    provider: "openai",
+    provider: "devchat",
     stream: true,
     max_input_tokens: 6000,
     // temperature: 0.3,
