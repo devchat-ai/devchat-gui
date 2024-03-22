@@ -20,6 +20,7 @@ import MessageUtil from "@/util/MessageUtil";
 import { useMst } from "@/views/stores/RootStore";
 import getModelShowName from "@/util/getModelShowName";
 import isEqual from "lodash.isequal";
+import cloneDeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
 import { useDisclosure } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
@@ -70,7 +71,7 @@ const Config = function () {
     initialValues: {
       providers: {},
       models: {},
-      ...config.config,
+      ...cloneDeep(config.config),
     },
     validate: {
       providers: {
@@ -105,7 +106,8 @@ const Config = function () {
 
   useEffect(() => {
     if (router.currentRoute !== "config") return;
-    form.setValues(config.config);
+    const cloneConfig = cloneDeep(config.config);
+    form.setValues(cloneConfig);
     if (config.settle && loading) {
       setTimeout(() => {
         router.updateRoute("chat");
@@ -224,6 +226,7 @@ const Config = function () {
                   description={t("the base URL for the API")}
                   {...form.getInputProps("providers.devchat.api_base")}
                 />
+
                 <PasswordInput
                   styles={commonInputStyle}
                   sx={{
