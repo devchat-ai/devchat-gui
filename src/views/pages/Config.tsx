@@ -97,9 +97,9 @@ const Config = function () {
           api_base: (value) =>
             value.length > 0 ? null : "Please enter api base",
           cumstom_api_base: (value, values) =>
-            values.providers.devchat.api_base === "custom" && value.length > 0
-              ? null
-              : "Please enter custom api base",
+            values.providers.devchat.api_base === "custom" && value.length <= 0
+              ? "Please enter custom api base"
+              : null,
         },
       },
     },
@@ -127,16 +127,6 @@ const Config = function () {
   useEffect(() => {
     if (router.currentRoute !== "config") return;
     const cloneConfig = cloneDeep(config.config);
-    if (
-      cloneConfig?.providers?.devchat?.api_base !== apiSelection[0].value ||
-      cloneConfig?.providers?.devchat?.api_base !== apiSelection[1].value
-    ) {
-      cloneConfig.providers.devchat.api_base = "custom";
-    }
-    console.log(
-      "cloneConfig.providers.devchat.api_base: ",
-      cloneConfig.providers.devchat.api_base
-    );
     form.setValues(cloneConfig);
     if (config.settle && loading) {
       setTimeout(() => {
@@ -149,12 +139,15 @@ const Config = function () {
   const onSave = (values) => {
     config.updateSettle(false);
     startLoading();
-    const writeConfig = cloneDeep(self.config);
-    if (writeConfig.providers.devchat.cumstom_api_base) {
+    const writeConfig = cloneDeep(values);
+    if (
+      writeConfig.providers.devchat.api_base === "custom" &&
+      writeConfig.providers.devchat.cumstom_api_base
+    ) {
       writeConfig.providers.devchat.api_base =
         writeConfig.providers.devchat.cumstom_api_base;
-      delete writeConfig.providers.devchat.cumstom_api_base;
     }
+    delete writeConfig.providers.devchat.cumstom_api_base;
     MessageUtil.sendMessage({
       command: "writeConfig",
       value: writeConfig,

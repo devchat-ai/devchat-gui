@@ -110,11 +110,14 @@ export const ConfigStore = types
       self.config = cloneConfig;
 
       const writeConfig = cloneDeep(self.config);
-      if (writeConfig.providers.devchat.cumstom_api_base) {
+      if (
+        writeConfig.providers.devchat.api_base === "custom" &&
+        writeConfig.providers.devchat.cumstom_api_base
+      ) {
         writeConfig.providers.devchat.api_base =
           writeConfig.providers.devchat.cumstom_api_base;
-        delete writeConfig.providers.devchat.cumstom_api_base;
       }
+      delete writeConfig.providers.devchat.cumstom_api_base;
 
       MessageUtil.sendMessage({
         command: "writeConfig",
