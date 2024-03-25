@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, forwardRef } from "react";
 import {
   Title,
   Box,
@@ -67,6 +67,22 @@ const Config = function () {
   const { config } = useMst();
   const router = useRouter();
   const { i18n, t } = useTranslation();
+
+  const apiSelection = [
+    {
+      value: "https://api.devchat.ai/v1",
+      label: t("Singapore Node"),
+    },
+    {
+      value: "https://api.devchat-ai.cn/v1",
+      label: t("China Node"),
+    },
+    {
+      value: "custom",
+      label: t("Custom"),
+    },
+  ];
+
   const form = useForm({
     initialValues: {
       providers: {},
@@ -80,6 +96,10 @@ const Config = function () {
           //   value.length > 0 ? null : "Please enter access key",
           api_base: (value) =>
             value.length > 0 ? null : "Please enter api base",
+          cumstom_api_base: (value, values) =>
+            values.providers.devchat.api_base === "custom" && value.length > 0
+              ? null
+              : "Please enter custom api base",
         },
       },
     },
@@ -107,6 +127,16 @@ const Config = function () {
   useEffect(() => {
     if (router.currentRoute !== "config") return;
     const cloneConfig = cloneDeep(config.config);
+    if (
+      cloneConfig?.providers?.devchat?.api_base !== apiSelection[0].value ||
+      cloneConfig?.providers?.devchat?.api_base !== apiSelection[1].value
+    ) {
+      cloneConfig.providers.devchat.api_base = "custom";
+    }
+    console.log(
+      "cloneConfig.providers.devchat.api_base: ",
+      cloneConfig.providers.devchat.api_base
+    );
     form.setValues(cloneConfig);
     if (config.settle && loading) {
       setTimeout(() => {
@@ -119,9 +149,15 @@ const Config = function () {
   const onSave = (values) => {
     config.updateSettle(false);
     startLoading();
+    const writeConfig = cloneDeep(self.config);
+    if (writeConfig.providers.devchat.cumstom_api_base) {
+      writeConfig.providers.devchat.api_base =
+        writeConfig.providers.devchat.cumstom_api_base;
+      delete writeConfig.providers.devchat.cumstom_api_base;
+    }
     MessageUtil.sendMessage({
       command: "writeConfig",
-      value: values,
+      value: writeConfig,
       key: "",
     });
     MessageUtil.sendMessage({ command: "readConfig", key: "" });
@@ -219,7 +255,8 @@ const Config = function () {
               }}
             >
               <Stack>
-                <TextInput
+                <Select
+                  data={apiSelection}
                   styles={commonInputStyle}
                   placeholder="https://xxxx.xx"
                   label={t("API Base of Devchat")}
@@ -227,6 +264,17 @@ const Config = function () {
                   description={t("the base URL for the API")}
                   {...form.getInputProps("providers.devchat.api_base")}
                 />
+                {form.values.providers.devchat.api_base === "custom" && (
+                  <TextInput
+                    styles={commonInputStyle}
+                    label={t("Custom API Base of Devchat")}
+                    withAsterisk
+                    description={t("the base URL for the API")}
+                    {...form.getInputProps(
+                      "providers.devchat.cumstom_api_base"
+                    )}
+                  />
+                )}
 
                 <PasswordInput
                   styles={commonInputStyle}
