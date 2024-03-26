@@ -4,17 +4,32 @@ import modelsTemplate from "@/models";
 import cloneDeep from "lodash.clonedeep";
 
 const defaultAPIBase = [
-  "https://api.devchat.ai",
+  "https://api.devchat.ai/v1",
   "https://api.devchat-ai.cn/v1",
 ];
 
 export const ConfigStore = types
   .model("Config", {
     config: types.optional(types.frozen(), {}),
+    modelsTemplate: types.optional(types.frozen(), {}),
     settle: types.optional(types.boolean, false),
     defaultModel: types.optional(types.string, ""),
   })
   .actions((self) => ({
+    setTemplate: (value: any) => {
+      const models = value
+        .filter((item) => item.category === "chat")
+        .map((item) => {
+          return {
+            name: item.model,
+            max_input_tokens: item.max_input_tokens,
+            provider: "devchat",
+            stream: true,
+          };
+        });
+      console.log("models: ", models);
+      self.modelsTemplate = models;
+    },
     updateSettle: (value: boolean) => {
       self.settle = value;
     },
@@ -36,6 +51,12 @@ export const ConfigStore = types
     },
     getAPIBase: () => {
       if (self.config?.providers?.devchat?.api_base) {
+        if (
+          self.config.providers.devchat.api_base === "custom" &&
+          self.config.providers.devchat.cumstom_api_base
+        ) {
+          return self.config.providers.devchat.cumstom_api_base;
+        }
         return self.config.providers.devchat.api_base;
       }
       if (self.config?.providers?.openai?.api_base) {
@@ -49,7 +70,7 @@ export const ConfigStore = types
       if (!data.models) {
         newConfig.models = {};
       }
-      modelsTemplate.forEach((item) => {
+      self.modelsTemplate.forEach((item) => {
         const currentModel: any = {
           ...item,
         };
@@ -96,7 +117,7 @@ export const ConfigStore = types
       self.defaultModel = newConfig.default_model;
     },
     getModelList: () => {
-      const modelsArray = modelsTemplate.map((item) => {
+      const modelsArray = self.modelsTemplate.map((item) => {
         return item.name;
       });
       return modelsArray;

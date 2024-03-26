@@ -8,6 +8,7 @@ import { useMst } from "./stores/RootStore";
 import MessageUtil from "@/util/MessageUtil";
 import "./App.css";
 import "./i18n";
+import axios from "axios";
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -25,10 +26,16 @@ export default function App() {
   };
 
   const getConfig = () => {
-    MessageUtil.sendMessage({ command: "readConfig", key: "" });
     MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
       config.setConfig(data.value);
       setReady(true);
+    });
+    // 获取 models 模版列表
+    axios.get("https://api-test.devchat.ai/v1/models").then((res) => {
+      if (res?.data?.data && Array.isArray(res?.data?.data)) {
+        config.setTemplate(res.data.data);
+        MessageUtil.sendMessage({ command: "readConfig", key: "" });
+      }
     });
   };
 
