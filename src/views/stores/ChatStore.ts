@@ -108,6 +108,21 @@ export const ChatStore = types
     const helpWorkflowCommands = () => {
       const rootStore = getParent<RootInstance>(self);
 
+      const recommendCommands = rootStore.input.commandMenus.filter(
+        (item) => item.recommend > -1
+      );
+
+      if (recommendCommands.length > 0) {
+        return recommendCommands
+          .map((item) => {
+            if (item.name === "help") {
+              return "";
+            }
+            return `<a class="workflow_command" href="${item.pattern}">/${item.name}: <span style="color:var(--vscode-editor-foreground)"> ${item.description} </span></a>`;
+          })
+          .join("\n\n");
+      }
+
       return rootStore.input.commandMenus
         .map((item) => {
           if (item.name === "help") {

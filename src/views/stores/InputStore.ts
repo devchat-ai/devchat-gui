@@ -6,6 +6,7 @@ export interface Item {
   name: string;
   pattern: string;
   description: string;
+  recommend: number;
 }
 
 const regContextMenus = async () => {
@@ -67,6 +68,14 @@ export const MenuItem = types.model({
   name: types.string,
   pattern: types.maybe(types.string),
   description: types.string,
+  recommend: types.number,
+});
+
+export const ContextMenuItem = types.model({
+  icon: types.maybe(types.string),
+  name: types.string,
+  pattern: types.maybe(types.string),
+  description: types.string,
 });
 
 export const InputStore = types
@@ -77,7 +86,7 @@ export const InputStore = types
     menuOpend: false,
     currentMenuIndex: 0,
     commandMenus: types.array(MenuItem),
-    contextMenus: types.array(MenuItem),
+    contextMenus: types.array(ContextMenuItem),
     modelMenus: types.array(types.string),
   })
   .actions((self) => ({
@@ -128,6 +137,7 @@ export const InputStore = types
         name: "help",
         description: "View the DevChat documentation.",
         pattern: "help",
+        recommend: -1,
       });
     },
   }));
