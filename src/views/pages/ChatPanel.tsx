@@ -81,7 +81,13 @@ const chatPanel = observer(() => {
     messageUtil.registerHandler(
       "regCommandList",
       (message: { result: Item[] }) => {
-        input.fetchCommandMenus(message.result);
+        console.log("regCommandList message: ", message);
+        const commandMenus = message.result?.map((item) => ({
+          ...item,
+          recommend: item.args ?? -1,
+        }));
+        console.log("regCommandList commandMenus: ", commandMenus);
+        input.fetchCommandMenus(commandMenus);
         if (!isFirstRender.current) {
           return;
         }

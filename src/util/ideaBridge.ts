@@ -446,7 +446,7 @@ class IdeaBridge {
       name: item.name,
       pattern: item.name,
       description: item.description,
-      recommend: item.recommend,
+      recommend: item.recommend ?? -1,
     }));
     this.executeHandlers("regCommandList", {
       result,

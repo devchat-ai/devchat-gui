@@ -128,7 +128,7 @@ export const ChatStore = types
           if (item.name === "help") {
             return "";
           }
-          return `<a class="workflow_command" href="${item.pattern}">/${item.name}: ${item.description}</a>`;
+          return `<a class="workflow_command" href="${item.pattern}">/${item.name}: <span style="color:var(--vscode-editor-foreground)"> ${item.description} </span></a>`;
         })
         .join("\n\n");
     };

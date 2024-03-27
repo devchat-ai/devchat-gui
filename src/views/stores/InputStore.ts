@@ -7,6 +7,7 @@ export interface Item {
   pattern: string;
   description: string;
   recommend: number;
+  args?: number;
 }
 
 const regContextMenus = async () => {
