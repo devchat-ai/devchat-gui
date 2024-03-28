@@ -170,6 +170,9 @@ const Config = function () {
   };
 
   const disabledSubmit = isEqual(form.values, config.config);
+  const showProvider =
+    current.toLowerCase().startsWith("gpt") &&
+    form.values.providers?.openai?.api_key;
 
   return (
     <Drawer
@@ -342,7 +345,7 @@ const Config = function () {
               value={form.values?.models[current]?.max_input_tokens}
               onChange={(value) => changeModelDetail("max_input_tokens", value)}
             />
-            {current.toLowerCase().startsWith("gpt") && (
+            {showProvider && (
               <Select
                 label="Provider"
                 placeholder="Pick one"

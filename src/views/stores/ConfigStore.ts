@@ -64,12 +64,25 @@ export const ConfigStore = types
       }
       return "";
     },
-    setConfig: (data) => {
+    setConfig: function (data) {
       self.settle = false;
       const newConfig = { ...data };
       if (!data.models) {
         newConfig.models = {};
       }
+      if (!newConfig.providers?.openai) {
+        newConfig.providers.openai = {
+          api_key: "",
+          api_base: "",
+        };
+      }
+      if (!newConfig.providers?.devchat) {
+        newConfig.providers.devchat = {
+          api_key: "",
+          api_base: "",
+        };
+      }
+
       self.modelsTemplate.forEach((item) => {
         const currentModel: any = {
           ...item,
@@ -91,30 +104,26 @@ export const ConfigStore = types
         ) {
           newConfig.models[item.name].provider = currentModel.provider;
         }
+        // 只有之前配置过 openai 的，provider 才可以是 openai
+        if (
+          newConfig.models[item.name].provider === "openai" &&
+          !newConfig.providers.openai.api_key
+        ) {
+          newConfig.models[item.name].provider = "devchat";
+        }
       });
 
-      if (!newConfig.providers?.openai) {
-        newConfig.providers.openai = {
-          api_key: "",
-          api_base: "",
-        };
-      }
-      if (!newConfig.providers?.devchat) {
-        newConfig.providers.devchat = {
-          api_key: "",
-          api_base: "",
-        };
-      }
       if (!defaultAPIBase.includes(newConfig.providers.devchat.api_base)) {
         newConfig.providers.devchat.cumstom_api_base =
           newConfig.providers.devchat.api_base;
         newConfig.providers.devchat.api_base = "custom";
       }
-      console.log("newConfig: ", newConfig);
 
       self.config = newConfig;
       self.settle = true;
       self.defaultModel = newConfig.default_model;
+
+      this.writeConfig();
     },
     getModelList: () => {
       const modelsArray = self.modelsTemplate.map((item) => {
@@ -122,14 +131,8 @@ export const ConfigStore = types
       });
       return modelsArray;
     },
-    setConfigValue: (key: string, value: any) => {
-      if (key === "default_model") {
-        self.defaultModel = value;
-      }
-      const cloneConfig = cloneDeep(self.config);
-      cloneConfig[key] = value;
-      self.config = cloneConfig;
-
+    writeConfig: function () {
+      console.log("writeConfig");
       const writeConfig = cloneDeep(self.config);
       if (
         writeConfig.providers.devchat.api_base === "custom" &&
@@ -145,6 +148,15 @@ export const ConfigStore = types
         value: writeConfig,
         key: "",
       });
+    },
+    setConfigValue: function (key: string, value: any) {
+      if (key === "default_model") {
+        self.defaultModel = value;
+      }
+      const cloneConfig = cloneDeep(self.config);
+      cloneConfig[key] = value;
+      self.config = cloneConfig;
+      this.writeConfig();
     },
   }));
 

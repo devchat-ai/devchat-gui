@@ -24,6 +24,7 @@ const useStyles = createStyles((theme) => ({
   link: {
     "&:hover": {
       color: theme.colors.merico[6],
+      textDecoration: "none",
     },
   },
   codeOverride: {
