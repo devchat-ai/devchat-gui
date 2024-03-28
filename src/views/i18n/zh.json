@@ -47,5 +47,6 @@
   "Python for commands": "命令用的 Python",
   "Please enter the path of your python": "请输入你的 Python 路径",
   "Cancel": "取消",
-  "Save": "保存"
+  "Save": "保存",
+  "Max input tokens": "最大输入数"
 }
