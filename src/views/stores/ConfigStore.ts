@@ -27,7 +27,6 @@ export const ConfigStore = types
             stream: true,
           };
         });
-      console.log("models: ", models);
       self.modelsTemplate = models;
     },
     updateSettle: (value: boolean) => {
@@ -122,8 +121,6 @@ export const ConfigStore = types
       self.config = newConfig;
       self.settle = true;
       self.defaultModel = newConfig.default_model;
-
-      this.writeConfig();
     },
     getModelList: () => {
       const modelsArray = self.modelsTemplate.map((item) => {

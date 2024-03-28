@@ -253,7 +253,10 @@ const Config = function () {
               <Stack>
                 <Select
                   data={apiSelection}
-                  styles={selectStyle}
+                  styles={{
+                    ...commonInputStyle,
+                    ...selectStyle,
+                  }}
                   placeholder="https://xxxx.xx"
                   label={t("API Base of Devchat")}
                   withAsterisk
