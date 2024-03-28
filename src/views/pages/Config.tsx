@@ -313,9 +313,8 @@ const Config = function () {
                 <PasswordInput
                   styles={commonInputStyle}
                   withAsterisk
-                  label="Access Key of OpenAI"
-                  placeholder="Your Access Key"
-                  description="please keep this secret"
+                  label={t("Access Key of OpenAI")}
+                  description={t("please keep this secret")}
                   {...form.getInputProps("providers.openai.api_key")}
                 />
               </Stack>
@@ -329,9 +328,8 @@ const Config = function () {
             p={10}
           >
             <Select
-              label="Current model"
-              placeholder="Pick one"
-              description="Leave it blank if you won't use this llm model"
+              label={t("Model Config")}
+              description={t("Leave it blank if you won't use this llm model")}
               withAsterisk
               styles={{
                 ...commonInputStyle,
@@ -342,17 +340,18 @@ const Config = function () {
               onChange={(value: string) => setCurrent(value)}
             />
             <NumberInput
-              label="Max input tokens"
-              description="the maximum number of tokens that can be used in the input"
+              label={t("Max input tokens")}
+              description={t(
+                "the maximum number of tokens that can be used in the input"
+              )}
               styles={commonInputStyle}
               value={form.values?.models[current]?.max_input_tokens}
               onChange={(value) => changeModelDetail("max_input_tokens", value)}
             />
             {showProvider && (
               <Select
-                label="Provider"
-                placeholder="Pick one"
-                description="select the provider for the model"
+                label={t("Provider")}
+                description={t("select the provider for the model")}
                 styles={{
                   ...commonInputStyle,
                   ...selectStyle,
@@ -369,8 +368,8 @@ const Config = function () {
             )}
           </Box>
           <Radio.Group
-            label="Language"
-            description="Select your preferred language"
+            label={t("Language")}
+            description={t("Select your preferred language")}
             withAsterisk
             styles={commonInputStyle}
             sx={{
@@ -389,16 +388,16 @@ const Config = function () {
           </Radio.Group>
           <TextInput
             styles={commonInputStyle}
-            label="Python for chat"
+            label={t("Python for chat")}
             placeholder="/xxx/xxx"
-            description="Please enter the path of your python"
+            description={t("Please enter the path of your python")}
             {...form.getInputProps("python_for_chat")}
           />
           <TextInput
             styles={commonInputStyle}
-            label="Python for commands"
+            label={t("Python for commands")}
             placeholder="/xxx/xxx"
-            description="Please enter the path of your python"
+            description={t("Please enter the path of your python")}
             {...form.getInputProps("python_for_commands")}
           />
         </Stack>
@@ -415,7 +414,7 @@ const Config = function () {
           }}
         >
           <Button type="submit" disabled={disabledSubmit}>
-            Save
+            {t("Save")}
           </Button>
           <Button
             variant="outline"
@@ -424,7 +423,7 @@ const Config = function () {
               router.updateRoute("chat");
             }}
           >
-            Cancel
+            {t("Cancel")}
           </Button>
         </Group>
       </form>
