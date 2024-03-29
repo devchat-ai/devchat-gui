@@ -153,7 +153,9 @@ const Config = function () {
       value: writeConfig,
       key: "",
     });
-    MessageUtil.sendMessage({ command: "readConfig", key: "" });
+    setTimeout(() => {
+      MessageUtil.sendMessage({ command: "readConfig", key: "" });
+    }, 1000);
   };
 
   const changeModelDetail = (key: string, value: number | string) => {

@@ -2,6 +2,7 @@ import MessageUtil from "@/util/MessageUtil";
 import { types, Instance } from "mobx-state-tree";
 import modelsTemplate from "@/models";
 import cloneDeep from "lodash.clonedeep";
+import { set } from "mobx";
 
 const defaultAPIBase = [
   "https://api.devchat.ai/v1",
@@ -65,6 +66,7 @@ export const ConfigStore = types
     },
     setConfig: function (data) {
       self.settle = false;
+      let needUpdate = false;
       const newConfig = { ...data };
       if (!data.models) {
         newConfig.models = {};
@@ -112,6 +114,12 @@ export const ConfigStore = types
         }
       });
 
+      const modelList = this.getModelList();
+      if (!modelList.includes(newConfig.default_model)) {
+        newConfig.default_model = modelList[0];
+        needUpdate = true;
+      }
+
       if (!defaultAPIBase.includes(newConfig.providers.devchat.api_base)) {
         newConfig.providers.devchat.cumstom_api_base =
           newConfig.providers.devchat.api_base;
@@ -121,6 +129,9 @@ export const ConfigStore = types
       self.config = newConfig;
       self.settle = true;
       self.defaultModel = newConfig.default_model;
+      if (needUpdate) {
+        this.writeConfig();
+      }
     },
     getModelList: () => {
       const modelsArray = self.modelsTemplate.map((item) => {
@@ -129,7 +140,6 @@ export const ConfigStore = types
       return modelsArray;
     },
     writeConfig: function () {
-      console.log("writeConfig");
       const writeConfig = cloneDeep(self.config);
       if (
         writeConfig.providers.devchat.api_base === "custom" &&
@@ -145,6 +155,10 @@ export const ConfigStore = types
         value: writeConfig,
         key: "",
       });
+
+      setTimeout(() => {
+        MessageUtil.sendMessage({ command: "readConfig", key: "" });
+      }, 1000);
     },
     setConfigValue: function (key: string, value: any) {
       if (key === "default_model") {

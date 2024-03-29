@@ -1,4 +1,3 @@
-//@ts-check
 "use strict";
 
 const path = require("path");
@@ -6,6 +5,14 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const dotenv = require("dotenv");
+
+const env = dotenv.config().parsed;
+
+const envKeys = Object.keys(env).reduce((prev, next) => {
+  prev[`process.env.${next}`] = JSON.stringify(env[next]);
+  return prev;
+}, {});
 
 const webviewConfig = {
   name: "webview",
@@ -94,6 +101,7 @@ const webviewConfig = {
     new webpack.ProgressPlugin(),
     new webpack.DefinePlugin({
       "process.env.platform": JSON.stringify("idea"),
+      ...envKeys,
     }),
   ],
 };

@@ -196,10 +196,16 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
     }
     return children;
   }, [children, i18n.language]);
+  console.log("process.env.REACT_APP_IMAGE_BASE_URL", process.env.platform);
 
   return (
     <ReactMarkdown
       {...props}
+      transformImageUri={(uri) =>
+        uri.startsWith("http")
+          ? uri
+          : `${process.env.REACT_APP_IMAGE_BASE_URL}${uri}`
+      }
       remarkPlugins={[
         () => (tree) => {
           let stepCount = 1;
