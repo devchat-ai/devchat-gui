@@ -108,9 +108,9 @@ export const ChatStore = types
     const helpWorkflowCommands = () => {
       const rootStore = getParent<RootInstance>(self);
 
-      const recommendCommands = rootStore.input.commandMenus.filter(
-        (item) => item.recommend > -1
-      );
+      const recommendCommands = rootStore.input.commandMenus
+        .filter((item) => item.recommend > -1)
+        .sort((a, b) => a.recommend - b.recommend);
 
       if (recommendCommands.length > 0) {
         return recommendCommands
