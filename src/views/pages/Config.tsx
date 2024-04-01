@@ -61,7 +61,7 @@ const selectStyle = {
   },
 };
 
-const Config = function () {
+const Config = observer(() => {
   const [loading, { open: startLoading, close: closeLoading }] =
     useDisclosure(false);
   const { config } = useMst();
@@ -123,18 +123,17 @@ const Config = function () {
     setModels(modelArray);
     setCurrent(modelArray[0].value);
   }, [router.currentRoute]);
-
   useEffect(() => {
-    if (router.currentRoute !== "config") return;
     const cloneConfig = cloneDeep(config.config);
     form.setValues(cloneConfig);
+    if (router.currentRoute !== "config") return;
     if (config.settle && loading) {
       setTimeout(() => {
         router.updateRoute("chat");
         closeLoading();
       }, 1000);
     }
-  }, [config.settle]);
+  }, [config.config]);
 
   const onSave = (values) => {
     config.updateSettle(false);
@@ -431,6 +430,6 @@ const Config = function () {
       </form>
     </Drawer>
   );
-};
+});
 
-export default observer(Config);
+export default Config;

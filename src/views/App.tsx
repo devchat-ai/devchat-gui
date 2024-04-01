@@ -27,16 +27,19 @@ export default function App() {
 
   const getConfig = () => {
     MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
-      config.setConfig(data.value);
-      setReady(true);
+      console.log("readConfig registerHandler: ", data);
+      const modelsUrl =
+        data.value?.providers?.devchat?.api_base || "https://api.devchat.ai/v1";
+      axios.get(`${modelsUrl}/models`).then((res) => {
+        // 获取 models 模版列表
+        if (res?.data?.data && Array.isArray(res?.data?.data)) {
+          config.setTemplate(res.data.data);
+          config.setConfig(data.value);
+          setReady(true);
+        }
+      });
     });
-    // 获取 models 模版列表
-    axios.get("https://api-test.devchat.ai/v1/models").then((res) => {
-      if (res?.data?.data && Array.isArray(res?.data?.data)) {
-        config.setTemplate(res.data.data);
-        MessageUtil.sendMessage({ command: "readConfig", key: "" });
-      }
-    });
+    MessageUtil.sendMessage({ command: "readConfig", key: "" });
   };
 
   useEffect(() => {

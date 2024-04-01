@@ -48,5 +48,19 @@
   "Please enter the path of your python": "请输入你的 Python 路径",
   "Cancel": "取消",
   "Save": "保存",
-  "Max input tokens": "最大输入数"
+  "Max input tokens": "最大输入数",
+  "/unit_tests": "/单元测试",
+  "Generate unit tests.": "生成单元测试",
+  "/commit": "/提交",
+  "Writes a well-formatted commit message for selected code changes and commits them via Git. Include an issue number if desired (e.g., input \"/commit to close #12\").": "为选定的代码更改编写格式良好的提交消息，并通过 Git 提交它们。如果需要，可以包含问题编号（例如，输入“/commit to close #12”）。",
+  "/docstring": "/生成函数注释",
+  "Automatically add docstrings. Select a function or method and execute this command to generate docstring.": "自动生成函数注释。选择一个函数或方法并执行此命令以生成文档字符串。",
+  "/comments": "/生成行间注释",
+  "Automatically add doc comments. Select some code and execute this command to generate comments.": "自动生成行间注释。选择一些代码并执行此命令以生成注释。",
+  "/fix": "/修复代码",
+  "Try to find out potential bugs in the selected code and try fixing these bugs automaticly.": "尝试查找所选代码中的潜在错误，并尝试自动修复这些错误。",
+  "/explain": "/解释",
+  "Explain selected code.": "解释所选代码。",
+  "/refactor": "/重构",
+  "rewrite selected code.": "重构所选代码。"
 }

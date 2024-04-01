@@ -65,7 +65,7 @@ export const ConfigStore = types
       return "";
     },
     setConfig: function (data) {
-      self.settle = false;
+      this.updateSettle(false);
       let needUpdate = false;
       const newConfig = { ...data };
       if (!data.models) {
@@ -127,11 +127,11 @@ export const ConfigStore = types
       }
 
       self.config = newConfig;
-      self.settle = true;
       self.defaultModel = newConfig.default_model;
       if (needUpdate) {
         this.writeConfig();
       }
+      this.updateSettle(true);
     },
     getModelList: () => {
       const modelsArray = self.modelsTemplate.map((item) => {

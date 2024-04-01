@@ -3,7 +3,8 @@ import messageUtil from "@/util/MessageUtil";
 import { ChatContext } from "@/views/stores/InputStore";
 import yaml from "js-yaml";
 import { RootInstance } from "./RootStore";
-import { get } from "http";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 interface Context {
   content: string;
@@ -118,7 +119,13 @@ export const ChatStore = types
             if (item.name === "help") {
               return "";
             }
-            return `<a class="workflow_command" href="${item.pattern}">/${item.name}: <span style="color:var(--vscode-editor-foreground)"> ${item.description} </span></a>`;
+            return `<a class="workflow_command" href="${
+              item.pattern
+            }">${i18next.t(
+              `/${item.name}`
+            )}:<span style="color:var(--vscode-editor-foreground)">${i18next.t(
+              `${item.description}`
+            )}</span></a>`;
           })
           .join("\n\n");
       }
