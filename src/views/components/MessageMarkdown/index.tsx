@@ -398,6 +398,9 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
             </a>
           );
         },
+        img({ node, ...props }) {
+          return <img {...props} style={{ width: "100%" }} />;
+        },
       }}
     >
       {trasnlateChildren}
