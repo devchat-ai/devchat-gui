@@ -213,9 +213,7 @@ Your DevChat Access Key is not detected in the current settings. Please set your
         self.messages.push(
           Message.create({
             type: "bot",
-            message: `# 你好
-![图片](https://deploy-script.merico.cn/devchat/workflow/readme_docstring.gif)
-            `,
+            message: helps,
           })
         );
       }
