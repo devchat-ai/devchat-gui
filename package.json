@@ -145,6 +145,7 @@
     "react-markdown": "^8.0.7",
     "react-syntax-highlighter": "^15.5.0",
     "rehype-raw": "^6.1.1",
+    "remark-gfm": "^3.0.0",
     "shell-escape": "^0.2.0",
     "string-argv": "^0.3.2",
     "tree-kill": "^1.2.2",

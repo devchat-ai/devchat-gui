@@ -10,3 +10,14 @@
   background-color: grey;
   border-radius: 6px;
 }
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  border: 1px solid #ced4da;
+  padding: 6px 13px;
+}

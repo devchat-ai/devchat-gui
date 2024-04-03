@@ -16,6 +16,7 @@ import ChatMark from "@/views/components/ChatMark";
 import { useSetState } from "@mantine/hooks";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "@/views/router";
+import remarkGfm from "remark-gfm";
 
 (typeof global !== "undefined" ? global : window).Prism = Prism;
 require("prismjs/components/prism-java");
@@ -206,6 +207,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
           : `${process.env.REACT_APP_IMAGE_BASE_URL}${uri}`
       }
       remarkPlugins={[
+        remarkGfm,
         () => (tree) => {
           let stepCount = 1;
           let chatmarkCount = 0;
