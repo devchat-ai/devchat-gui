@@ -165,6 +165,22 @@ export const ChatStore = types
         };
       });
 
+    const startGenerating = (text: string, chatContexts) => {
+      self.generating = true;
+      self.responsed = false;
+      self.hasDone = false;
+      self.errorMessage = "";
+      self.currentMessage = "";
+      const chatModel = getParent<RootInstance>(self).config.getDefaultModel();
+      messageUtil.sendMessage({
+        command: "sendMessage",
+        text: text,
+        contextInfo: contextInfo(chatContexts),
+        parent_hash: lastNonEmptyHash(),
+        model: chatModel,
+      });
+    };
+
     const helpMessage = (originalMessage = false) => {
       let helps = `
 Do you want to write some code or have a question about the project? Simply right-click on your chosen files or code snippets and add them to DevChat. Feel free to ask me anything or let me help you with coding.
@@ -218,24 +234,18 @@ Your DevChat Access Key is not detected in the current settings. Please set your
         );
       }
 
+      // const rootStore = getParent<RootInstance>(self);
+
+      // setTimeout(() => {
+      //   rootStore.chat.startResponsing("form settimeout");
+      //   setTimeout(() => {
+      //     rootStore.chat.stopGenerating(true, "123123", "form settimeout stop");
+      //     rootStore.chat.happendError("form settimeout error");
+      //   }, 1000);
+      // }, 1000);
+
       // goto bottom
       goScrollBottom();
-    };
-
-    const startGenerating = (text: string, chatContexts) => {
-      self.generating = true;
-      self.responsed = false;
-      self.hasDone = false;
-      self.errorMessage = "";
-      self.currentMessage = "";
-      const chatModel = getParent<RootInstance>(self).config.getDefaultModel();
-      messageUtil.sendMessage({
-        command: "sendMessage",
-        text: text,
-        contextInfo: contextInfo(chatContexts),
-        parent_hash: lastNonEmptyHash(),
-        model: chatModel,
-      });
     };
 
     const sendLastUserMessage = () => {
@@ -293,6 +303,11 @@ Thinking...
       goScrollBottom();
     };
 
+    const startResponsing = (message: string) => {
+      self.responsed = true;
+      self.currentMessage = message;
+    };
+
     return {
       helpMessage,
       sendLastUserMessage,
@@ -302,6 +317,7 @@ Thinking...
       commonMessage,
       userInput,
       helpWorkflowCommands,
+      startResponsing,
       devchatAsk: flow(function* (userMessage, chatContexts) {
         self.messages.push({
           type: "user",
@@ -366,10 +382,7 @@ Thinking...
           self.messages[messagesLength - 1].message = message;
         }
       },
-      startResponsing: (message: string) => {
-        self.responsed = true;
-        self.currentMessage = message;
-      },
+
       newMessage: (message: IMessage) => {
         self.messages.push(message);
       },
@@ -378,7 +391,13 @@ Thinking...
       },
       updateLastMessage: (message: string) => {
         if (self.messages.length > 0) {
-          self.messages[self.messages.length - 1].message = message;
+          if (message === "") {
+            self.messages[self.messages.length - 1].message = message;
+          } else if (
+            self.messages[self.messages.length - 1].message !== message
+          ) {
+            self.messages[self.messages.length - 1].message += message;
+          }
         }
       },
       shiftMessage: () => {
