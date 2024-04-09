@@ -185,7 +185,7 @@ export const ChatStore = types
       let helps = `
 Do you want to write some code or have a question about the project? Simply right-click on your chosen files or code snippets and add them to DevChat. Feel free to ask me anything or let me help you with coding.
     
-Don't forget to check out the "+" button on the left of the input to add more context. To see a list of workflows you can run in the context, just type "/". Happy prompting!
+To see a list of workflows you can run in the context, just type "/". Happy prompting!
 
 To get started, here are some of the things that I can do for you:
 

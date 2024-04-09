@@ -8,7 +8,7 @@
   "Ask DevChat a question or type ‘/’ for workflow": "向 DevChat 直接提问或输入 '/' 以查看可用的工作流",
   "How do I use DevChat?": "如何使用 DevChat？",
   "balance": "你的账户余额为 {{formatedCurrency}}，登录 <4>web.devchat.ai</4> 获得更多 tokens",
-  "devchat.help": "你想生成一些代码还是对这个项目有疑问？请首先右键单击相关的文件或代码片段，将它们添加到 DevChat 中作为上下文，然后在输入框中写下你的请求或问题，我将基于添加的上下文生成代码或回答你的问题。<br> <br> 你还可以点击输入框左侧的“+”按钮，查看更多添加上下文的快捷方法。此外，在输入框中键入“/”，DevChat 会列出可供使用的各类工作流，按 Tab 键或输入完整命令触发你需要的工作流。聊天愉快！ <br> <br>下面是一些工作流的示例：<br> <br> ",
+  "devchat.help": "你想生成一些代码还是对这个项目有疑问？请首先右键单击相关的文件或代码片段，将它们添加到 DevChat 中作为上下文，然后在输入框中写下你的请求或问题，我将基于添加的上下文生成代码或回答你的问题。<br> <br> 此外，在输入框中键入“/”，DevChat 会列出可供使用的各类工作流，按 Tab 键或输入完整命令触发你需要的工作流。聊天愉快！ <br> <br>下面是一些工作流的示例：<br> <br> ",
   "devchat.setkey": "你的环境或设置中缺少 DevChat 访问密钥。请输入你的 DevChat 访问密钥，这样我就可以开始正常工作了。<br> <br> <button value=\"get_devchat_key\">注册 DevChat 访问密钥</button> <button value=\"setting_devchat_key\">设置 DevChat 访问密钥</button>",
   "devchat.setkey_vscode": "你的环境或设置中缺少 DevChat 访问密钥。请输入你的 DevChat 访问密钥，这样我就可以开始正常工作了。<br> <br> <button value=\"get_devchat_key\" component=\"a\"  href=\"https://web.devchat.ai\">注册 DevChat 访问密钥</button> <button value=\"setting_devchat_key\">设置 DevChat 访问密钥</button>",
   "Is DevChat Access Key ready?": "DevChat 访问密钥是否已经设置好？",
