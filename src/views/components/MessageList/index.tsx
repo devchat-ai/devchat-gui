@@ -98,6 +98,7 @@ const MessageList = observer((props: any) => {
                 messageDone={
                   !(index === chat.messages.length - 1 && chat.generating)
                 }
+                messageIndex={index}
               >
                 {messageText}
               </MessageBody>

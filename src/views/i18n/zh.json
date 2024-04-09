@@ -62,5 +62,6 @@
   "/explain": "/代码解释",
   "Explain selected code.": "对所选代码生成解释。",
   "/refactor": "/代码重构",
-  "rewrite selected code.": "对所选代码进行重构。"
+  "rewrite selected code.": "对所选代码进行重构。",
+  "workflowTip": "为了确保高准确度，我们的 {{name}} 采纳了包括规划、工具使用、反思在内的LLM设计模式。这些模式能显著提高回应的精确性，但请注意，由于深度处理的需要，回应时间可能超过<3>1分钟</3>。"
 }

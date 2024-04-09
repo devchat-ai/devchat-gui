@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import MessageMarkdown from "@/views/components/MessageMarkdown";
 import { useMst } from "@/views/stores/RootStore";
 import { useTranslation } from "react-i18next";
+import WorkflowTip from "./workflowTip";
 
 interface IProps {
   messageType: string;
@@ -11,6 +12,7 @@ interface IProps {
   messageDone?: boolean;
   activeStep?: boolean;
   temp?: boolean;
+  messageIndex?: number;
 }
 
 const useStyles = createStyles((theme, options: any) => ({
@@ -38,23 +40,26 @@ const MessageBody = observer((props: IProps) => {
     activeStep = false,
     temp = false,
     messageDone,
+    messageIndex,
   } = props;
   const { chat } = useMst();
   const { classes } = useStyles({
     chatPanelWidth: chat.chatPanelWidth,
   });
   const { t } = useTranslation();
-  const transkey = trasnlateKey(children);
 
   return messageType === "bot" ? (
-    <MessageMarkdown
-      className={classes.bodyWidth}
-      activeStep={activeStep}
-      temp={temp}
-      messageDone={messageDone}
-    >
-      {children}
-    </MessageMarkdown>
+    <>
+      <WorkflowTip messageIndex={messageIndex} />
+      <MessageMarkdown
+        className={classes.bodyWidth}
+        activeStep={activeStep}
+        temp={temp}
+        messageDone={messageDone}
+      >
+        {children}
+      </MessageMarkdown>
+    </>
   ) : (
     <Container
       sx={{
