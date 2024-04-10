@@ -22,7 +22,15 @@ const WorkflowTip = ({ messageIndex }: IProps) => {
   ) {
     const name = t(chat.messages[messageIndex - 1]?.message);
     return (
-      <Alert color="orange" title="tip">
+      <Alert
+        color="orange"
+        title="tip"
+        sx={{
+          "& .mantine-Alert-message": {
+            color: "var(--vscode-editor-foreground)",
+          },
+        }}
+      >
         <Trans i18nKey="workflowTip" name={name}>
           In essence, the text suggests that the {{ name }} adopts LLM design
           patterns that include Planning, Tool use, and Reflection to ensure
