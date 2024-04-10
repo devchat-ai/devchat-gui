@@ -35,7 +35,7 @@ const useStyles = createStyles((theme) => ({
   label: {
     color: "var(--vscode-editor-foreground)",
     fontFamily: "var(--vscode-editor-font-family)",
-    fontSize: 'var(--vscode-editor-font-size)',
+    fontSize: "var(--vscode-editor-font-size)",
   },
   radio: {
     marginTop: theme.spacing.xs,
@@ -52,7 +52,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface Wdiget {
+interface IWdiget {
   id: string;
   value: string;
   title?: string;
@@ -61,13 +61,21 @@ interface Wdiget {
   cancel?: string;
 }
 
-const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'Cancel' }) => {
+const ChatMark = ({
+  children,
+  value,
+  messageDone,
+  submit = "Submit",
+  cancel = "Cancel",
+}) => {
   const { classes } = useStyles();
-  const [widgets, widgetsHandlers] = useListState<Wdiget>();
+  const [widgets, widgetsHandlers] = useListState<IWdiget>();
   const { chat } = useMst();
   const [autoForm, setAutoForm] = useState(false); // if any widget is checkbox,radio or editor wdiget, the form is auto around them
   const values = value ? yaml.load(value) : {};
   const [disabled, setDisabled] = useState(messageDone || !!value);
+  const [checkboxArray, setcheckboxArray] = useState<any>([]);
+  console.log("checkboxArray: ", checkboxArray);
 
   const handleSubmit = () => {
     let formData = {};
@@ -105,6 +113,28 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
     const widget = widgets[index];
     widget["value"] = event.currentTarget.checked ? "checked" : "unchecked";
     widgetsHandlers.setItem(index, widget);
+
+    const checkboxIndex = checkboxArray.findIndex((detail) => {
+      return detail.group.find((item) => item.id === widget.id);
+    });
+    const allChecked = checkboxArray[checkboxIndex].group.every(
+      (checkBoxItem) => {
+        const widgetIndex = widgets.findIndex(
+          (widget) => widget.id === checkBoxItem.id
+        );
+        return widgets[widgetIndex].value === "checked";
+      }
+    );
+    const indeterminate =
+      !allChecked &&
+      checkboxArray[checkboxIndex].group.some((checkBoxItem) => {
+        const widgetIndex = widgets.findIndex(
+          (widget) => widget.id === checkBoxItem.id
+        );
+        return widgets[widgetIndex].value === "checked";
+      });
+    checkboxArray[checkboxIndex].check = allChecked;
+    checkboxArray[checkboxIndex].indeterminate = indeterminate;
   };
   const handleRadioChange = ({ event, allValues }) => {
     widgetsHandlers.apply((item, index) => {
@@ -123,8 +153,6 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
     widget["value"] = event.currentTarget.value;
     widgetsHandlers.setItem(index, widget);
   };
-  const allChecked = widgets.every((w) => w.type === "checkbox" ? w.value === "checked" : true);
-  const indeterminate = widgets.some((w) => w.type === "checkbox" ? w.value === "checked" : false) && !allChecked;
 
   useEffect(() => {
     const lines = children.split("\n");
@@ -138,6 +166,8 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
     const editorRegex = /^>\s*\|\s*\((.*?)\)/; // Editor widget
     const editorContentRegex = /^>\s*(.*)/; // Editor widget
 
+    const checkArrayTemp: any = [];
+    let prevIsCheckbox = false;
     lines.forEach((line, index) => {
       let match;
 
@@ -157,13 +187,38 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
         });
       } else if ((match = line.match(checkboxRegex))) {
         const [status, id, title] = match.slice(1);
+        const check = value
+          ? "unchecked"
+          : status === "x"
+          ? "checked"
+          : "unchecked";
         widgetsHandlers.append({
           id,
           title,
           type: "checkbox",
-          value: value ? "unchecked" : status === "x" ? "checked" : "unchecked",
+          value: check,
         });
         setAutoForm(true);
+        let currentCheckboxData: any = prevIsCheckbox
+          ? checkArrayTemp[checkArrayTemp.length - 1]
+          : {};
+
+        if (prevIsCheckbox) {
+          currentCheckboxData.group.push({
+            id: id,
+            // 只记录初始化时的状态，后续状态变化不会更新
+            check: check,
+          });
+        } else {
+          currentCheckboxData = {
+            id: `select-all-${id}`,
+            allChecked: false,
+            indeterminate: false,
+            check: false,
+            group: [{ id: id, check: check }],
+          };
+          checkArrayTemp.push(currentCheckboxData);
+        }
       } else if ((match = line.match(radioRegex))) {
         const [id, title] = match.slice(1);
         widgetsHandlers.append({
@@ -206,6 +261,7 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
         detectEditorId = "";
         editorContentRecorder = "";
       }
+      prevIsCheckbox = line.match(checkboxRegex);
     });
     for (const key in values) {
       widgetsHandlers.apply((item) => {
@@ -215,13 +271,25 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
         return item;
       });
     }
+
+    const checkRes = checkArrayTemp.map((item) => {
+      const allChecked = item.group.every((item) => item.check === "checked");
+      const indeterminate =
+        !allChecked && item.group.some((item) => item.check === "checked");
+      return {
+        ...item,
+        check: allChecked,
+        indeterminate: indeterminate,
+      };
+    });
+    setcheckboxArray(checkRes);
   }, []);
   // Render markdown widgets
-  const renderWidgets = (widgets) => {
+  const renderWidgets = (widgets: IWdiget[]) => {
     let radioGroupTemp: any = [];
     let radioValuesTemp: any = [];
     let wdigetsTemp: any = [];
-    let isFirstCheckbox = true; 
+    let prevIsCheckbox = false;
     widgets.map((widget, index) => {
       if (widget.type === "text") {
         wdigetsTemp.push(<Text key={index}>{widget.value}</Text>);
@@ -241,22 +309,36 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
           </Button>
         );
       } else if (widget.type === "checkbox") {
-        if(isFirstCheckbox) {
-          wdigetsTemp.push(<Checkbox
-            classNames={{ root: classes.checkbox, label: classes.label }}
-            disabled={disabled}
-            key={"widget-all-" + index}
-            label={"Select all"}
-            size="xs"
-            checked={allChecked}
-            indeterminate={indeterminate}
-            onChange={() =>
-              widgetsHandlers.setState((current) =>
-                current.map((w) => ( w.type==="checkbox" ? { ...w, value: allChecked ? "unchecked" : "checked" } : w ))
-              )
-            }
-          />);
-          isFirstCheckbox = false;
+        if (!prevIsCheckbox) {
+          const index = checkboxArray.findIndex((detail) => {
+            return detail.group.find((item) => item.id === widget.id);
+          });
+          wdigetsTemp.push(
+            <Checkbox
+              classNames={{ root: classes.checkbox, label: classes.label }}
+              disabled={disabled}
+              key={"widget-all-" + index}
+              label={"Select all"}
+              size="xs"
+              checked={checkboxArray[index].check}
+              indeterminate={checkboxArray[index].indeterminate}
+              onChange={(e) => {
+                const currentCheck = checkboxArray[index].check;
+
+                checkboxArray[index].group.map((item) => {
+                  const widgetIndex = widgets.findIndex(
+                    (widget) => widget.id === item.id
+                  );
+                  widgetsHandlers.setItem(widgetIndex, {
+                    ...widgets[widgetIndex],
+                    value: currentCheck ? "unchecked" : "checked",
+                  });
+                });
+                checkboxArray[index].check = !checkboxArray[index].check;
+                checkboxArray[index].indeterminate = false;
+              }}
+            />
+          );
         }
         wdigetsTemp.push(
           <Checkbox
@@ -326,6 +408,8 @@ const ChatMark = ({ children, value, messageDone, submit = 'Submit', cancel = 'C
           />
         );
       }
+
+      prevIsCheckbox = widget.type === "checkbox";
     });
     return wdigetsTemp;
   };
