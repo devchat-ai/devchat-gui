@@ -83,6 +83,21 @@ const FileApplyButton = ({ code }) => {
     );
 };
 
+// Add a new button to create new file
+const NewFileButton = ({ code }) => {
+    const handleClick = () => {
+        messageUtil.sendMessage({
+            command: 'code_new_file',
+            content: code
+        });
+    };
+    return (
+        <IconButton label='Create New File' onClick={handleClick}>
+            <IconFileDiff size="1.125rem" />
+        </IconButton>
+    );
+};
+
 // Similar changes can be made to DiffButton, CodeApplyButton, FileApplyButton, and CodeCopyButton
 const CodeButtons = ({ language, code }) => (
     <Flex
@@ -101,6 +116,7 @@ const CodeButtons = ({ language, code }) => (
                     <DiffButton code={code} />
                     <CodeApplyButton code={code} />
                     <FileApplyButton code={code} />
+                    <NewFileButton code={code} />
                 </>
             )}
     </Flex>
