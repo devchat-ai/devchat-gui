@@ -75,7 +75,6 @@ const ChatMark = ({
   const values = value ? yaml.load(value) : {};
   const [disabled, setDisabled] = useState(messageDone || !!value);
   const [checkboxArray, setcheckboxArray] = useState<any>([]);
-  console.log("checkboxArray: ", checkboxArray);
 
   const handleSubmit = () => {
     let formData = {};

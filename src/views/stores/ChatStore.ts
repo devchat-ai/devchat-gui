@@ -391,13 +391,14 @@ Thinking...
       },
       updateLastMessage: (message: string) => {
         if (self.messages.length > 0) {
-          if (message === "") {
-            self.messages[self.messages.length - 1].message = message;
-          } else if (
-            self.messages[self.messages.length - 1].message !== message
-          ) {
-            self.messages[self.messages.length - 1].message += message;
-          }
+          self.messages[self.messages.length - 1].message = message;
+          // if (message === "") {
+          //   self.messages[self.messages.length - 1].message = message;
+          // } else if (
+          //   self.messages[self.messages.length - 1].message !== message
+          // ) {
+          //   self.messages[self.messages.length - 1].message += message;
+          // }
         }
       },
       shiftMessage: () => {
