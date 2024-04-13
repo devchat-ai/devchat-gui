@@ -1,8 +1,9 @@
 import { Tooltip, ActionIcon, CopyButton, Flex } from "@mantine/core";
-import { IconCheck, IconGitCommit, IconFileDiff, IconColumnInsertRight, IconReplace, IconCopy } from "@tabler/icons-react";
+import { IconCheck, IconGitCommit, IconFileDiff, IconColumnInsertRight, IconReplace, IconCopy,IconFile } from "@tabler/icons-react";
 import React, { useState } from "react";
 
 import messageUtil from '@/util/MessageUtil';
+import language from "react-syntax-highlighter/dist/esm/languages/hljs/1c";
 
 const IconButton = ({ label, color = 'gray', onClick, children }) => (
     <Tooltip sx={{ padding: '3px', fontSize: 'var(--vscode-editor-font-size)' }} label={label} withArrow position="left" color="gray">
@@ -83,6 +84,22 @@ const FileApplyButton = ({ code }) => {
     );
 };
 
+// Add a new button to create new file
+const NewFileButton = ({ language,code }) => {
+    const handleClick = () => {
+        messageUtil.sendMessage({
+            command: 'code_new_file',
+            language: language,
+            content: code
+        });
+    };
+    return (
+        <IconButton label='Create New File' onClick={handleClick}>
+            <IconFile size="1.125rem" />
+        </IconButton>
+    );
+};
+
 // Similar changes can be made to DiffButton, CodeApplyButton, FileApplyButton, and CodeCopyButton
 const CodeButtons = ({ language, code }) => (
     <Flex
@@ -101,6 +118,7 @@ const CodeButtons = ({ language, code }) => (
                     <DiffButton code={code} />
                     <CodeApplyButton code={code} />
                     <FileApplyButton code={code} />
+                    <NewFileButton code={code} language={language} />
                 </>
             )}
     </Flex>
