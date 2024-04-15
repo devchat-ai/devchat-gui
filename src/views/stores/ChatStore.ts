@@ -390,6 +390,7 @@ Thinking...
         self.messages.push(...messages);
       },
       updateLastMessage: (message: string) => {
+        console.log("message: ", message);
         if (self.messages.length > 0) {
           self.messages[self.messages.length - 1].message = message;
           // if (message === "") {
