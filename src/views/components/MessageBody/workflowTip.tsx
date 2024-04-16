@@ -11,14 +11,14 @@ interface IProps {
 const showTipArray = ["/unit_tests", "/pr", "/ask-code"];
 
 const WorkflowTip = ({ messageIndex }: IProps) => {
-  // 单元测试、PR和Ask-code
   const { chat } = useMst();
   const { t } = useTranslation();
   if (
     messageIndex &&
     chat.messages[messageIndex - 1] &&
     chat.messages[messageIndex - 1]?.message?.startsWith("/") &&
-    showTipArray.includes(chat.messages[messageIndex - 1]?.message)
+    showTipArray.includes(chat.messages[messageIndex - 1]?.message) &&
+    !chat.messages[messageIndex]?.message?.includes("操作指南")
   ) {
     const name = t(chat.messages[messageIndex - 1]?.message);
     return (
