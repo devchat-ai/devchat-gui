@@ -17,14 +17,14 @@ export const ConfigStore = types
     defaultModel: types.optional(types.string, ""),
   })
   .actions((self) => ({
-    setTemplate: (value: any) => {
+    setTemplate: (value: any, provider: string) => {
       const models = value
-        .filter((item) => item.category === "chat")
+        .filter((item) => !item.category || item.category === "chat")
         .map((item) => {
           return {
-            name: item.model,
-            max_input_tokens: item.max_input_tokens,
-            provider: "devchat",
+            name: item.model ?? item.id,
+            max_input_tokens: item.max_input_tokens ?? 6000,
+            provider: provider,
             stream: true,
           };
         });
@@ -89,6 +89,7 @@ export const ConfigStore = types
           ...item,
         };
         delete currentModel.name;
+
         if (!newConfig.models[item.name]) {
           newConfig.models[item.name] = {
             ...currentModel,
@@ -99,10 +100,9 @@ export const ConfigStore = types
             ...newConfig.models[item.name],
           };
         }
-        if (
-          newConfig.models[item.name].provider !== "devchat" &&
-          newConfig.models[item.name].provider !== "openai"
-        ) {
+
+        if (newConfig.models[item.name].provider !== currentModel.provider) {
+          needUpdate = true;
           newConfig.models[item.name].provider = currentModel.provider;
         }
         // 只有之前配置过 openai 的，provider 才可以是 openai
