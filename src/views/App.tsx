@@ -28,12 +28,31 @@ export default function App() {
   const getConfig = () => {
     MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
       console.log("readConfig registerHandler: ", data);
-      const modelsUrl =
-        data.value?.providers?.devchat?.api_base || "https://api.devchat.ai/v1";
-      axios.get(`${modelsUrl}/models`).then((res) => {
+
+      // 尝试获取 devchat 的 api_base
+      let provider: string = "devchat";
+      let modelsUrl = data.value?.providers?.devchat?.api_base;
+      let devchatApiKey = data.value?.providers?.devchat?.api_key;
+
+      // 如果 devchat 的 api_base 没有设置，尝试获取 openai 的 api_base
+      if (!modelsUrl || !devchatApiKey) {
+        modelsUrl = data.value?.providers?.openai?.api_base;
+        devchatApiKey = data.value?.providers?.openai?.api_key;
+        provider = "openai";
+      }
+
+      // 如果以上两者都没有设置，使用默认链接
+      if (!modelsUrl) {
+        modelsUrl = "https://api.devchat.ai/v1";
+        devchatApiKey = "1234";
+        provider = "devchat";
+      }
+
+      // 添加 header: "Authorization: Bearer ${devchatApiKey}"
+      axios.get(`${modelsUrl}/models`, { headers: { 'Authorization': `Bearer ${devchatApiKey}` }}).then((res) => {
         // 获取 models 模版列表
         if (res?.data?.data && Array.isArray(res?.data?.data)) {
-          config.setTemplate(res.data.data);
+          config.setTemplate(res.data.data, provider);
           config.setConfig(data.value);
           setReady(true);
         }
