@@ -68,21 +68,16 @@ export const ConfigStore = types
       this.updateSettle(false);
       let needUpdate = false;
       const newConfig = { ...data };
-      if (!data.models) {
-        newConfig.models = {};
-      }
-      if (!newConfig.providers?.openai) {
-        newConfig.providers.openai = {
-          api_key: "",
-          api_base: "",
-        };
-      }
-      if (!newConfig.providers?.devchat) {
-        newConfig.providers.devchat = {
-          api_key: "",
-          api_base: "",
-        };
-      }
+      newConfig.models = newConfig.models || {};
+      newConfig.providers = newConfig.providers || {};
+      newConfig.providers.openai = newConfig.providers.openai || {
+        api_key: "",
+        api_base: "",
+      };
+      newConfig.providers.devchat = newConfig.providers.devchat || {
+        api_key: "",
+        api_base: "",
+      };
 
       self.modelsTemplate.forEach((item) => {
         const currentModel: any = {
