@@ -86,6 +86,20 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
+  newSrcFile: (language, content) => {
+    const params = {
+      action: "newSrcFile/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {
+        language: language,
+        content: content,
+      },
+    };
+
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
   viewDiff: (code) => {
     const params = {
       action: "viewDiff/request",
@@ -543,6 +557,9 @@ class IdeaBridge {
         break;
       case "code_file_apply":
         JStoIdea.replaceFileContent(message.content);
+        break;
+      case "code_new_file":
+        JStoIdea.newSrcFile(message.language, message.content);
         break;
       case "doCommand":
         JStoIdea.etcCommand(message);
