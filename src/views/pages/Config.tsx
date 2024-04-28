@@ -97,7 +97,7 @@ const Config = observer(() => {
           api_base: (value) =>
             value.length > 0 ? null : "Please enter api base",
           cumstom_api_base: (value, values) =>
-            values.providers.devchat.api_base === "custom" && value.length <= 0
+            values.providers?.devchat?.api_base === "custom" && value.length <= 0
               ? "Please enter custom api base"
               : null,
         },
@@ -113,7 +113,7 @@ const Config = observer(() => {
       // 保存后的回调
       MessageUtil.sendMessage({ command: "readConfig" });
     });
-    if (router.currentRoute !== "config") return;
+    if (router.currentRoute !== "config") {return;}
     const modelName = config.getModelList();
 
     const modelArray = modelName.map((item) => ({
@@ -126,7 +126,7 @@ const Config = observer(() => {
   useEffect(() => {
     const cloneConfig = cloneDeep(config.config);
     form.setValues(cloneConfig);
-    if (router.currentRoute !== "config") return;
+    if (router.currentRoute !== "config") {return;}
     if (config.settle && loading) {
       setTimeout(() => {
         router.updateRoute("chat");
@@ -264,7 +264,7 @@ const Config = observer(() => {
                   description={t("the base URL for the API")}
                   {...form.getInputProps("providers.devchat.api_base")}
                 />
-                {form.values.providers.devchat.api_base === "custom" && (
+                {form.values.providers?.devchat?.api_base === "custom" && (
                   <TextInput
                     styles={commonInputStyle}
                     label={t("Custom API Base of Devchat")}
