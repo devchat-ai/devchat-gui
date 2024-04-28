@@ -28,6 +28,7 @@ export default function App() {
     MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
       console.log("readConfig registerHandler: ", data);
       config.setConfig(data.value);
+      config.refreshModelList();
     });
     MessageUtil.sendMessage({ command: "readConfig", key: "" });
   };

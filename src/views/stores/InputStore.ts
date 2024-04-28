@@ -24,37 +24,6 @@ const regContextMenus = async () => {
     }
   });
 };
-const regModelMenus = async () => {
-  return new Promise<String[]>((resolve, reject) => {
-    try {
-      messageUtil.sendMessage({ command: "regModelList" });
-      messageUtil.registerHandler(
-        "regModelList",
-        (message: { result: String[] }) => {
-          resolve(message.result);
-        }
-      );
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
-
-const regCommandMenus = async () => {
-  return new Promise<Item[]>((resolve, reject) => {
-    try {
-      messageUtil.sendMessage({ command: "regCommandList" });
-      messageUtil.registerHandler(
-        "regCommandList",
-        (message: { result: Item[] }) => {
-          resolve(message.result);
-        }
-      );
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
 
 export const ChatContext = types.model({
   file: types.maybe(types.string),
@@ -86,8 +55,7 @@ export const InputStore = types
     menuOpend: false,
     currentMenuIndex: 0,
     commandMenus: types.array(MenuItem),
-    contextMenus: types.array(ContextMenuItem),
-    modelMenus: types.array(types.string),
+    contextMenus: types.array(ContextMenuItem)
   })
   .actions((self) => ({
     setValue(value: string) {
@@ -125,11 +93,6 @@ export const InputStore = types
         self.contextMenus.push(...items);
       } catch (error) {}
     }),
-    fetchModelMenus() {
-      const rootStore = getParent<RootInstance>(self);
-      const models = rootStore.config.getModelList();
-      self.modelMenus.push(...models);
-    },
     fetchCommandMenus: (items: Item[]) => {
       self.commandMenus.clear();
       self.commandMenus.push(...items);

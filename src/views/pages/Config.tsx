@@ -97,7 +97,7 @@ const Config = observer(() => {
           api_base: (value) =>
             value.length > 0 ? null : "Please enter api base",
           cumstom_api_base: (value, values) =>
-            values.providers?.devchat?.api_base === "custom" && value.length <= 0
+            values.providers?.devchat?.api_base === "custom" && value?.length <= 0
               ? "Please enter custom api base"
               : null,
         },
@@ -114,11 +114,9 @@ const Config = observer(() => {
       MessageUtil.sendMessage({ command: "readConfig" });
     });
     if (router.currentRoute !== "config") {return;}
-    const modelName = config.getModelList();
-
-    const modelArray = modelName.map((item) => ({
-      value: item,
-      label: getModelShowName(item),
+    const modelArray = config.modelsTemplate.map((item) => ({
+      value: item.name,
+      label: getModelShowName(item.name),
     }));
     setModels(modelArray);
     setCurrent(modelArray[0].value);

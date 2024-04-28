@@ -38,6 +38,7 @@ export const ConfigStore = types
   .model("Config", {
     config: types.optional(types.frozen(), {}),
     modelsTemplate: types.optional(types.array(Model), modelsTemplate),
+    modelNames: types.optional(types.array(types.string),modelsTemplate.map((item)=>item.name)),
     settle: types.optional(types.boolean, false),
     defaultModel: types.optional(types.string, ""),
     devchatApiKey: "DC.xxxxxxx",
@@ -57,7 +58,9 @@ export const ConfigStore = types
           };
         });
       self.modelsTemplate = models;
-    }
+      self.modelNames = models.map((item)=>item.name);
+    };
+
     return {
       setTemplate,
       updateSettle: (value: boolean) => {
@@ -158,7 +161,7 @@ export const ConfigStore = types
           }
         });
 
-        const modelList = this.getModelList();
+        const modelList = self.modelNames;
         if (!modelList.includes(newConfig.default_model)) {
           newConfig.default_model = modelList[0];
           needUpdate = true;
@@ -181,12 +184,6 @@ export const ConfigStore = types
         const { data } = yield fetchLLMs({modelsUrl:self.modelsUrl,devchatApiKey:self.devchatApiKey});
         setTemplate(data,self.provider);
       }),
-      getModelList: function () {
-        const modelsArray = self.modelsTemplate.map((item) => {
-          return item.name;
-        });
-        return modelsArray;
-      },
       writeConfig: function () {
         const writeConfig = cloneDeep(self.config);
         if (
