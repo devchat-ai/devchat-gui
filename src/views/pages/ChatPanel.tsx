@@ -74,7 +74,7 @@ const chatPanel = observer(() => {
   };
 
   useEffect(() => {
-    if (!router.currentRoute || router.currentRoute !== "chat") return;
+    if (!router.currentRoute || router.currentRoute !== "chat") {return;}
     // Fetch the command menus, before history records are obtained,
     // because the display information in the history record requires adjustment
     messageUtil.sendMessage({ command: "regCommandList" });
@@ -102,7 +102,6 @@ const chatPanel = observer(() => {
         });
         chat.fetchHistoryMessages();
         input.fetchContextMenus().then();
-        input.fetchModelMenus();
         getFeatureToggles();
       }
     );

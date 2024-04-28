@@ -64,8 +64,7 @@ const InputMessage = observer((props: any) => {
     menuType,
     currentMenuIndex,
     contextMenus,
-    commandMenus,
-    modelMenus,
+    commandMenus
   } = input;
   const { generating } = chat;
   const viewport = useRef<HTMLDivElement>(null);
@@ -357,7 +356,7 @@ const InputMessage = observer((props: any) => {
           withArrow
           shadow="md"
           styles={menuStyles}
-          disabled={modelMenus.length === 0}
+          disabled={config.modelNames.length === 0}
         >
           <Menu.Target>
             <Button
@@ -373,7 +372,7 @@ const InputMessage = observer((props: any) => {
           </Menu.Target>
           <Menu.Dropdown>
             <ScrollArea.Autosize placeholder="" type="always" mah={240}>
-              {modelMenus.map((modelName) => {
+              {config.modelNames.map((modelName) => {
                 return (
                   <Menu.Item
                     key={modelName}
