@@ -46,7 +46,6 @@ export const ConfigStore = types
   })
   .actions((self) => {
     const setTemplate = (value: any, provider: string) => {
-      debugger
       const models = value
         .filter((item) => !item.category || item.category === "chat")
         .map((item) => {
@@ -179,7 +178,6 @@ export const ConfigStore = types
         this.updateSettle(true);
       },
       refreshModelList: flow(function* (){
-        debugger
         const { data } = yield fetchLLMs({modelsUrl:self.modelsUrl,devchatApiKey:self.devchatApiKey});
         setTemplate(data,self.provider);
       }),
