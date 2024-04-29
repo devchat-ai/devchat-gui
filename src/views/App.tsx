@@ -24,24 +24,15 @@ export default function App() {
     },
   };
 
-  const getConfig = () => {
-    MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
-      console.log("readConfig registerHandler: ", data);
-      config.setConfig(data.value);
-      config.refreshModelList();
-    });
-    MessageUtil.sendMessage({ command: "readConfig", key: "" });
-  };
-
   useEffect(() => {
     if (process.env.platform === "vscode") {
-      getConfig();
+      config.readConfig();
       return;
     }
 
     const checkReady = () => {
       if (window.JSJavaBridge) {
-        getConfig();
+        config.readConfig();
       } else {
         setTimeout(checkReady, 200);
       }
