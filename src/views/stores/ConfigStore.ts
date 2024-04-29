@@ -1,7 +1,7 @@
 import MessageUtil from "@/util/MessageUtil";
 import { types, Instance, flow } from "mobx-state-tree";
 import modelsTemplate from "@/models";
-import cloneDeep from "lodash.clonedeep";
+import _ from "lodash";
 import { set } from "mobx";
 import axios from "axios";
 
@@ -10,11 +10,36 @@ const defaultAPIBase = [
   "https://api.devchat-ai.cn/v1",
 ];
 
-export const fetchLLMs = async ({modelsUrl,devchatApiKey}) => {
+export const Model = types.model({
+  name: types.string,
+  provider: types.string,
+  stream: types.boolean,
+  maxInputTokens: types.number
+});
+
+export const Provider = types.model({
+  name: types.string,
+  apiKey: types.string,
+  apiBase: types.string,
+});
+
+export const ConfigFile = types.model({
+  language: types.string,
+  defaultModel: types.string,
+  providers: types.array(Provider),
+  models: types.array(Model),
+  enableFunctionCalling: types.boolean,
+  betaInvitationCode: types.string,
+  maxLogCount: types.number,
+  pythonForChat:types.string,
+  pythonForCommands:types.string,
+});
+
+export const fetchLLMs = async (provider) => {
   return new Promise<{data:any}>((resolve, reject) => {
       try {
         // 添加 header: "Authorization: Bearer ${devchatApiKey}"
-        axios.get(`${modelsUrl}/models`, { headers: { 'Authorization': `Bearer ${devchatApiKey}` }}).then((res) => {
+        axios.get(`${provider.api_base}/models`, { headers: { 'Authorization': `Bearer ${provider.api_key}` }}).then((res) => {
           // 获取 models 模版列表
           if (res?.data?.data && Array.isArray(res?.data?.data)) {
             resolve(res.data);
@@ -27,23 +52,48 @@ export const fetchLLMs = async ({modelsUrl,devchatApiKey}) => {
   );
 };
 
-export const Model = types.model({
-  name: types.string,
-  provider: types.string,
-  stream: types.boolean,
-  max_input_tokens: types.number
-});
+export const readConfigFile = async () => {
+  return new Promise((resolve, reject) => {
+      try {
+        const handler =  (data: { value: any }) => {
+          console.log("readConfig registerHandler: ", data);
+          resolve(data.value);
+          MessageUtil.unregisterHandler("readConfig",handler);
+        };
+        MessageUtil.registerHandler("readConfig",handler);
+        MessageUtil.sendMessage({ command: "readConfig", key: "" });
+      } catch (e) {
+        reject(e);
+      }
+    }
+  );
+};
 
 export const ConfigStore = types
   .model("Config", {
-    config: types.optional(types.frozen(), {}),
-    modelsTemplate: types.optional(types.array(Model), modelsTemplate),
-    modelNames: types.optional(types.array(types.string),modelsTemplate.map((item)=>item.name)),
+    file: types.optional(ConfigFile,{
+      language: "zh",
+      defaultModel: "",
+      providers: [],
+      models: [],
+      enableFunctionCalling: false,
+      betaInvitationCode: "",
+      maxLogCount: 20,
+      pythonForChat:"",
+      pythonForCommands:"",
+    }),
+    modelNames: types.optional(types.array(types.string),[]),
     settle: types.optional(types.boolean, false),
-    defaultModel: types.optional(types.string, ""),
-    devchatApiKey: "DC.xxxxxxx",
-    modelsUrl: "https://api.devchat.ai/v1",
-    provider: "devchat",
+    devchat: types.optional(Provider,{
+      name: "devchat",
+      apiKey: "DC.xxxxxxx",
+      apiBase: "https://api.devchat.ai/v1",
+    }),
+    openai: types.optional(Provider,{
+      name: "openai",
+      apiKey: "xxxxx",
+      apiBase: "https://api.openai.com/v1",
+    })
   })
   .actions((self) => {
     const setTemplate = (value: any, provider: string) => {
@@ -57,163 +107,147 @@ export const ConfigStore = types
             stream: true,
           };
         });
-      self.modelsTemplate = models;
+      self.file.models = models;
       self.modelNames = models.map((item)=>item.name);
+    };
+
+    const getProvider = () =>{
+      const devchatIndex = self.file.providers.findIndex((p)=>p.name==="devchat");
+      const openaiIndex = self.file.providers.findIndex((p)=>p.name==="openai");
+
+      // key 可能有两个，一个是 devchat key,一个是 openai key
+      if (devchatIndex>0) {
+        return self.file.providers[devchatIndex];
+      } else if (openaiIndex>0) {
+        return self.file.providers[openaiIndex];
+      } else{
+        return Provider.create({
+          name: "devchat",
+          apiKey: "DC.xxxxxxx",
+          apiBase: "https://api.devchat.ai/v1",
+        });
+      }
+    };
+
+    const readConfig = flow(function*(){
+      const fileConfig = yield readConfigFile();
+      // load config file data
+      self.file.models = _.map(fileConfig.models,(value,key) => Model.create({
+        name:key,
+        provider: value.provider,
+        stream: value.stream,
+        maxInputTokens: value.max_input_tokens || -1
+      }));
+      self.file.providers = _.map(fileConfig.providers,(value,key) => Provider.create({
+          name: key,
+          apiKey: value.api_key,
+          apiBase: value.api_base,
+      }));
+      self.file.language = fileConfig.language;
+      self.file.defaultModel = fileConfig.default_model;
+      self.file.enableFunctionCalling = fileConfig.enable_function_calling;
+      self.file.betaInvitationCode = fileConfig.beta_invitation_code;
+      self.file.maxLogCount = fileConfig.max_log_count;
+      self.file.pythonForChat = fileConfig.python_for_chat;
+      self.file.pythonForCommands = fileConfig.python_for_commands;
+      // for view layer data
+      self.modelNames = _.map(fileConfig.models,(value, key) => key);
+      self.devchat = _.findLast(self.file.providers,(p)=>p.name==="devchat");
+      self.openai = _.findLast(self.file.providers,(p)=>p.name==="openai");
+    });
+
+    const writeConfig = () => {
+      const writeConfig = self.file;
+      MessageUtil.sendMessage({
+        command: "writeConfig",
+        value: writeConfig,
+        key: "",
+      });
+    };
+
+    const updateSettle = (value: boolean):void => {
+      self.settle = value;
+    };
+
+    const initConfig = (data:any) => {
+      updateSettle(false);
+      let needUpdate = false;
+      const newConfig = { ...data };
+      newConfig.models = newConfig.models || {};
+      newConfig.providers = newConfig.providers || {};
+      newConfig.providers.openai = newConfig.providers.openai || {
+        api_key: "",
+        api_base: "",
+      };
+      newConfig.providers.devchat = newConfig.providers.devchat || {
+        api_key: "",
+        api_base: "",
+      };
+
+      self.file.models.forEach((item) => {
+        const currentModel: any = {
+          ...item,
+        };
+        delete currentModel.name;
+
+        if (!newConfig.models[item.name]) {
+          newConfig.models[item.name] = {
+            ...currentModel,
+          };
+        } else {
+          newConfig.models[item.name] = {
+            ...currentModel,
+            ...newConfig.models[item.name],
+          };
+        }
+
+        if (newConfig.models[item.name].provider !== currentModel.provider) {
+          needUpdate = true;
+          newConfig.models[item.name].provider = currentModel.provider;
+        }
+        // 只有之前配置过 openai 的，provider 才可以是 openai
+        if (
+          newConfig.models[item.name].provider === "openai" &&
+          !newConfig.providers.openai.api_key
+        ) {
+          newConfig.models[item.name].provider = "devchat";
+        }
+      });
+
+      const modelList = self.modelNames;
+      if (!modelList.includes(newConfig.default_model)) {
+        newConfig.default_model = modelList[0];
+        needUpdate = true;
+      }
+
+      self = newConfig;
+      self.file.defaultModel = newConfig.default_model;
+      if (needUpdate) {
+        writeConfig();
+      }
+      updateSettle(true);
+    };
+    
+    const refreshModelList = flow(function* (){
+      const provider = getProvider();
+      const { data } = yield fetchLLMs(provider);
+      setTemplate(data, provider.name);
+    });
+
+    const setConfigValue = (key: string, value: any) => {
+      self[key]=value;
+      writeConfig();
     };
 
     return {
       setTemplate,
-      updateSettle: (value: boolean) => {
-        self.settle = value;
-      },
-      getDefaultModel: () => {
-        return self.defaultModel;
-      },
-      getLanguage: () => {
-        return self.config?.language;
-      },
-      getUserKey: () => {
-        // key 可能有两个，一个是 devchat key,一个是 openai key
-        if (self.config?.providers?.devchat?.api_key) {
-          return self.config.providers.devchat.api_key;
-        }
-        if (self.config?.providers?.openai?.api_key) {
-          return self.config.providers.openai.api_key;
-        }
-        return "";
-      },
-      getAPIBase: () => {
-        if (self.config?.providers?.devchat?.api_base) {
-          if (
-            self.config.providers.devchat.api_base === "custom" &&
-            self.config.providers.devchat.cumstom_api_base
-          ) {
-            return self.config.providers.devchat.cumstom_api_base;
-          }
-          return self.config.providers.devchat.api_base;
-        }
-        if (self.config?.providers?.openai?.api_base) {
-          return self.config.providers.openai.api_base;
-        }
-        return "";
-      },
-      setConfig: function (data) {
-        this.updateSettle(false);
-        let needUpdate = false;
-        const newConfig = { ...data };
-        newConfig.models = newConfig.models || {};
-        newConfig.providers = newConfig.providers || {};
-        newConfig.providers.openai = newConfig.providers.openai || {
-          api_key: "",
-          api_base: "",
-        };
-        newConfig.providers.devchat = newConfig.providers.devchat || {
-          api_key: "",
-          api_base: "",
-        };
-
-        self.modelsTemplate.forEach((item) => {
-          const currentModel: any = {
-            ...item,
-          };
-          delete currentModel.name;
-
-          if (!newConfig.models[item.name]) {
-            newConfig.models[item.name] = {
-              ...currentModel,
-            };
-          } else {
-            newConfig.models[item.name] = {
-              ...currentModel,
-              ...newConfig.models[item.name],
-            };
-          }
-
-          if (newConfig.models[item.name].provider !== currentModel.provider) {
-            needUpdate = true;
-            newConfig.models[item.name].provider = currentModel.provider;
-          }
-          // 只有之前配置过 openai 的，provider 才可以是 openai
-          if (
-            newConfig.models[item.name].provider === "openai" &&
-            !newConfig.providers.openai.api_key
-          ) {
-            newConfig.models[item.name].provider = "devchat";
-          }
-
-          // 尝试获取 devchat 的 api_base
-          self.provider = "devchat";
-          self.modelsUrl = data?.providers?.devchat?.cumstom_api_base || data?.providers?.devchat?.api_base;
-          self.devchatApiKey = data?.providers?.devchat?.api_key;
-
-          // 如果 devchat 的 api_base 没有设置，尝试获取 openai 的 api_base
-          if (!self.modelsUrl || !self.devchatApiKey) {
-            self.modelsUrl = data?.providers?.openai?.api_base;
-            self.devchatApiKey = data?.providers?.openai?.api_key;
-            self.provider = "openai";
-          }
-
-          // 如果以上两者都没有设置，使用默认链接
-          if (!self.modelsUrl) {
-            self.modelsUrl = "https://api.devchat.ai/v1";
-            self.devchatApiKey = "1234";
-            self.provider = "devchat";
-          }
-        });
-
-        const modelList = self.modelNames;
-        if (!modelList.includes(newConfig.default_model)) {
-          newConfig.default_model = modelList[0];
-          needUpdate = true;
-        }
-
-        if (!defaultAPIBase.includes(newConfig.providers.devchat.api_base)) {
-          newConfig.providers.devchat.cumstom_api_base =
-            newConfig.providers.devchat.api_base;
-          newConfig.providers.devchat.api_base = "custom";
-        }
-
-        self.config = newConfig;
-        self.defaultModel = newConfig.default_model;
-        if (needUpdate) {
-          this.writeConfig();
-        }
-        this.updateSettle(true);
-      },
-      refreshModelList: flow(function* (){
-        const { data } = yield fetchLLMs({modelsUrl:self.modelsUrl,devchatApiKey:self.devchatApiKey});
-        setTemplate(data,self.provider);
-      }),
-      writeConfig: function () {
-        const writeConfig = cloneDeep(self.config);
-        if (
-          writeConfig.providers.devchat.api_base === "custom" &&
-          writeConfig.providers.devchat.cumstom_api_base
-        ) {
-          writeConfig.providers.devchat.api_base =
-            writeConfig.providers.devchat.cumstom_api_base;
-        }
-        delete writeConfig.providers.devchat.cumstom_api_base;
-
-        MessageUtil.sendMessage({
-          command: "writeConfig",
-          value: writeConfig,
-          key: "",
-        });
-
-        setTimeout(() => {
-          MessageUtil.sendMessage({ command: "readConfig", key: "" });
-        }, 1000);
-      },
-      setConfigValue: function (key: string, value: any) {
-        if (key === "default_model") {
-          self.defaultModel = value;
-        }
-        const cloneConfig = cloneDeep(self.config);
-        cloneConfig[key] = value;
-        self.config = cloneConfig;
-        this.writeConfig();
-      },
+      getProvider,
+      readConfig,
+      writeConfig,
+      updateSettle,
+      initConfig,
+      refreshModelList,
+      setConfigValue
     };
   });
 
