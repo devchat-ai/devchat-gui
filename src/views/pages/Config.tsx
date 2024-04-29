@@ -85,26 +85,24 @@ const Config = observer(() => {
 
   const form = useForm({
     initialValues: {
-      providers: {},
-      models: {},
-      ...cloneDeep(config.config),
+      ...config.file,
+      providers:{
+        devchat: config.devchat,
+        openai: config.openai,
+      }
     },
     validate: {
       providers: {
         devchat: {
-          // api_key: (value) =>
+          // apiKey: (value) =>
           //   value.length > 0 ? null : "Please enter access key",
-          api_base: (value) =>
-            value.length > 0 ? null : "Please enter api base",
-          cumstom_api_base: (value, values) =>
-            values.providers?.devchat?.api_base === "custom" && value?.length <= 0
-              ? "Please enter custom api base"
-              : null,
+          apiBase: (value) =>
+            value.length > 0 ? null : "Please enter api base"
         },
       },
     },
   });
-
+  
   const [models, setModels] = useState<any[]>([]);
   const [current, setCurrent] = useState("");
 
@@ -114,16 +112,22 @@ const Config = observer(() => {
       MessageUtil.sendMessage({ command: "readConfig" });
     });
     if (router.currentRoute !== "config") {return;}
-    const modelArray = config.modelsTemplate.map((item) => ({
+    const modelArray = config.file.models.map((item) => ({
       value: item.name,
       label: getModelShowName(item.name),
     }));
     setModels(modelArray);
     setCurrent(modelArray[0].value);
   }, [router.currentRoute]);
+
   useEffect(() => {
-    const cloneConfig = cloneDeep(config.config);
-    form.setValues(cloneConfig);
+    form.setValues({
+      ...config.file,
+      providers:{
+        devchat: config.devchat,
+        openai: config.openai,
+      }
+    });
     if (router.currentRoute !== "config") {return;}
     if (config.settle && loading) {
       setTimeout(() => {
@@ -131,20 +135,12 @@ const Config = observer(() => {
         closeLoading();
       }, 1000);
     }
-  }, [config.config]);
+  }, [config]);
 
   const onSave = (values) => {
     config.updateSettle(false);
     startLoading();
     const writeConfig = cloneDeep(values);
-    if (
-      writeConfig.providers.devchat.api_base === "custom" &&
-      writeConfig.providers.devchat.cumstom_api_base
-    ) {
-      writeConfig.providers.devchat.api_base =
-        writeConfig.providers.devchat.cumstom_api_base;
-    }
-    delete writeConfig.providers.devchat.cumstom_api_base;
     MessageUtil.sendMessage({
       command: "writeConfig",
       value: writeConfig,
@@ -168,10 +164,10 @@ const Config = observer(() => {
     form.setFieldValue("language", value);
   };
 
-  const disabledSubmit = isEqual(form.values, config.config);
+  const disabledSubmit = isEqual(form.values, config);
   const showProvider =
     current.toLowerCase().startsWith("gpt") &&
-    form.values.providers?.openai?.api_key;
+    form.values.providers?.openai?.apiKey;
 
   return (
     <Drawer
@@ -260,16 +256,16 @@ const Config = observer(() => {
                   label={t("API Base of Devchat")}
                   withAsterisk
                   description={t("the base URL for the API")}
-                  {...form.getInputProps("providers.devchat.api_base")}
+                  {...form.getInputProps("providers.devchat.apiBase")}
                 />
-                {form.values.providers?.devchat?.api_base === "custom" && (
+                {form.values.providers?.devchat.apiBase === "custom" && (
                   <TextInput
                     styles={commonInputStyle}
                     label={t("Custom API Base of Devchat")}
                     withAsterisk
                     description={t("the base URL for the API")}
                     {...form.getInputProps(
-                      "providers.devchat.cumstom_api_base"
+                      "providers.custom.apiBase"
                     )}
                   />
                 )}
@@ -286,7 +282,7 @@ const Config = observer(() => {
                   label={t("Access Key of Devchat")}
                   placeholder={t("Your Access Key")}
                   description={t("please keep this secret")}
-                  {...form.getInputProps("providers.devchat.api_key")}
+                  {...form.getInputProps("providers.devchat.apiKey")}
                 />
               </Stack>
             </Tabs.Panel>
@@ -307,14 +303,14 @@ const Config = observer(() => {
                   label={t("API Base of OpenAI")}
                   withAsterisk
                   description={t("the base URL for the API")}
-                  {...form.getInputProps("providers.openai.api_base")}
+                  {...form.getInputProps("providers.openai.apiBase")}
                 />
                 <PasswordInput
                   styles={commonInputStyle}
                   withAsterisk
                   label={t("Access Key of OpenAI")}
                   description={t("please keep this secret")}
-                  {...form.getInputProps("providers.openai.api_key")}
+                  {...form.getInputProps("providers.openai.apiKey")}
                 />
               </Stack>
             </Tabs.Panel>
@@ -344,8 +340,8 @@ const Config = observer(() => {
                 "the maximum number of tokens that can be used in the input"
               )}
               styles={commonInputStyle}
-              value={form.values?.models[current]?.max_input_tokens}
-              onChange={(value) => changeModelDetail("max_input_tokens", value)}
+              value={form.values?.models[current]?.maxInputTokens}
+              onChange={(value) => changeModelDetail("maxInputTokens", value)}
             />
             {showProvider && (
               <Select
@@ -390,14 +386,14 @@ const Config = observer(() => {
             label={t("Python for chat")}
             placeholder="/xxx/xxx"
             description={t("Please enter the path of your python")}
-            {...form.getInputProps("python_for_chat")}
+            {...form.getInputProps("pythonForChat")}
           />
           <TextInput
             styles={commonInputStyle}
             label={t("Python for commands")}
             placeholder="/xxx/xxx"
             description={t("Please enter the path of your python")}
-            {...form.getInputProps("python_for_commands")}
+            {...form.getInputProps("pythonForCommands")}
           />
         </Stack>
         <Group
