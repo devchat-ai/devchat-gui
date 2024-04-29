@@ -2,7 +2,7 @@ import { Instance, types } from "mobx-state-tree";
 import { createContext, useContext } from "react";
 import { InputStore } from "@/views/stores/InputStore";
 import { ChatStore } from "@/views/stores/ChatStore";
-import { ConfigStore } from "./ConfigStore";
+import { ConfigStore,ConfigFile } from "./ConfigStore";
 
 const RootStore = types.model("Root", {
   input: InputStore,

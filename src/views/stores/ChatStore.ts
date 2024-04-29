@@ -119,13 +119,12 @@ export const ChatStore = types
             if (item.name === "help") {
               return "";
             }
-            return `<a class="workflow_command" href="${
-              item.pattern
-            }">${i18next.t(
-              `/${item.name}`
-            )}:<span style="color:var(--vscode-editor-foreground)">${i18next.t(
-              `${item.description}`
-            )}</span></a>`;
+            return `<a class="workflow_command" href="${item.pattern
+              }">${i18next.t(
+                `/${item.name}`
+              )}:<span style="color:var(--vscode-editor-foreground)">${i18next.t(
+                `${item.description}`
+              )}</span></a>`;
           })
           .join("\n\n");
       }
@@ -171,7 +170,7 @@ export const ChatStore = types
       self.hasDone = false;
       self.errorMessage = "";
       self.currentMessage = "";
-      const chatModel = getParent<RootInstance>(self).config.getDefaultModel();
+      const chatModel = getParent<RootInstance>(self).config.file.defaultModel;
       messageUtil.sendMessage({
         command: "sendMessage",
         text: text,
@@ -194,17 +193,16 @@ ${helpWorkflowCommands()}`;
       const setKeyMessage = `
 Your DevChat Access Key is not detected in the current settings. Please set your Access Key below, and we'll have everything set up for you in no time.
 
-<button value="get_devchat_key" ${
-        process.env.platform === "vscode"
+<button value="get_devchat_key" ${process.env.platform === "vscode"
           ? 'href="https://web.devchat.ai" component="a"'
           : ""
-      }>Get DevChat key</button>
+        }>Get DevChat key</button>
 <button value="setting_devchat_key">Set DevChat key</button>
 `;
 
       const setKeyUser = `Is DevChat Access Key ready?`;
 
-      const accessKey = getParent<RootInstance>(self).config.getUserKey();
+      const accessKey = getParent<RootInstance>(self).config.getProvider().apiKey;
 
       if (accessKey === "") {
         self.messages.push(
