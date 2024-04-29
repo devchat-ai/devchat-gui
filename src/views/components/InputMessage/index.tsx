@@ -367,7 +367,7 @@ const InputMessage = observer((props: any) => {
               leftIcon={<IconRobot size="1rem" />}
               styles={buttonStyles}
             >
-              {getModelShowName(config.defaultModel)}
+              {getModelShowName(config.file.defaultModel)}
             </Button>
           </Menu.Target>
           <Menu.Dropdown>

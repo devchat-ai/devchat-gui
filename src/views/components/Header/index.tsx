@@ -29,8 +29,7 @@ export default function Head() {
   const { config } = useMst();
 
   useEffect(() => {
-    const lang = config.getLanguage();
-    if (lang && lang.toLocaleLowerCase() === "en") {
+    if (config.file.language && config.file.language.toLocaleLowerCase() === "en") {
       i18n.changeLanguage("en");
     } else {
       i18n.changeLanguage("zh");
@@ -38,12 +37,12 @@ export default function Head() {
   }, []);
 
   const openSetting = () => {
-    if (router.currentRoute === "config") return;
+    if (router.currentRoute === "config") {return;}
     router.updateRoute("config");
   };
 
   const openChat = () => {
-    if (router.currentRoute === "chat") return;
+    if (router.currentRoute === "chat") {return;}
     router.updateRoute("chat");
   };
 

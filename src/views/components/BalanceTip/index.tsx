@@ -76,15 +76,14 @@ export default function WechatTip() {
   }, [env, accessKey]);
 
   useEffect(() => {
-    const accessKey = config.getUserKey();
-    const apibase = config.getAPIBase();
-    if (accessKey) {
-      if (apibase.includes("api-test.devchat.ai")) {
+    const provider = config.getProvider();
+    if (provider.apiKey) {
+      if (provider.apiBase.includes("api-test.devchat.ai")) {
         setEnv("dev");
       } else {
         setEnv("prod");
       }
-      setAccessKey(accessKey);
+      setAccessKey(provider.apiKey);
     }
   }, []);
 
