@@ -143,13 +143,13 @@ export const ConfigStore = types
 
           // 尝试获取 devchat 的 api_base
           self.provider = "devchat";
-          self.modelsUrl = data.value?.providers?.devchat?.api_base;
-          self.devchatApiKey = data.value?.providers?.devchat?.api_key;
+          self.modelsUrl = data?.providers?.devchat?.cumstom_api_base || data?.providers?.devchat?.api_base;
+          self.devchatApiKey = data?.providers?.devchat?.api_key;
 
           // 如果 devchat 的 api_base 没有设置，尝试获取 openai 的 api_base
           if (!self.modelsUrl || !self.devchatApiKey) {
-            self.modelsUrl = data.value?.providers?.openai?.api_base;
-            self.devchatApiKey = data.value?.providers?.openai?.api_key;
+            self.modelsUrl = data?.providers?.openai?.api_base;
+            self.devchatApiKey = data?.providers?.openai?.api_key;
             self.provider = "openai";
           }
 
