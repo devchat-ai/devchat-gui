@@ -140,30 +140,29 @@ export const ConfigStore = types
           ) {
             newConfig.models[item.name].provider = "devchat";
           }
-
-          // 尝试获取 devchat 的 api_base
-          self.provider = "devchat";
-          self.modelsUrl = data?.providers?.devchat?.cumstom_api_base || data?.providers?.devchat?.api_base;
-          self.devchatApiKey = data?.providers?.devchat?.api_key;
-
-          // 如果 devchat 的 api_base 没有设置，尝试获取 openai 的 api_base
-          if (!self.modelsUrl || !self.devchatApiKey) {
-            self.modelsUrl = data?.providers?.openai?.api_base;
-            self.devchatApiKey = data?.providers?.openai?.api_key;
-            self.provider = "openai";
-          }
-
-          // 如果以上两者都没有设置，使用默认链接
-          if (!self.modelsUrl) {
-            self.modelsUrl = "https://api.devchat.ai/v1";
-            self.devchatApiKey = "1234";
-            self.provider = "devchat";
-          }
         });
 
-        const modelList = self.modelNames;
-        if (!modelList.includes(newConfig.default_model)) {
-          newConfig.default_model = modelList[0];
+        // 尝试获取 devchat 的 api_base
+        self.provider = "devchat";
+        self.modelsUrl = data?.providers?.devchat?.cumstom_api_base || data?.providers?.devchat?.api_base;
+        self.devchatApiKey = data?.providers?.devchat?.api_key;
+
+        // 如果 devchat 的 api_base 没有设置，尝试获取 openai 的 api_base
+        if (!self.modelsUrl || !self.devchatApiKey) {
+          self.modelsUrl = data?.providers?.openai?.api_base;
+          self.devchatApiKey = data?.providers?.openai?.api_key;
+          self.provider = "openai";
+        }
+
+        // 如果以上两者都没有设置，使用默认链接
+        if (!self.modelsUrl) {
+          self.modelsUrl = "https://api.devchat.ai/v1";
+          self.devchatApiKey = "1234";
+          self.provider = "devchat";
+        }
+
+        if (self.modelsTemplate.length > 0 && self.modelsTemplate.find((item) => item.name === newConfig.default_model) === undefined) {
+          newConfig.default_model = self.modelsTemplate[0].name;
           needUpdate = true;
         }
 
