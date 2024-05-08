@@ -12,17 +12,16 @@ const defaultAPIBase = [
 
 export const fetchLLMs = async ({modelsUrl,devchatApiKey}) => {
   return new Promise<{data:any}>((resolve, reject) => {
-      try {
         // 添加 header: "Authorization: Bearer ${devchatApiKey}"
         axios.get(`${modelsUrl}/models`, { headers: { 'Authorization': `Bearer ${devchatApiKey}` }}).then((res) => {
           // 获取 models 模版列表
           if (res?.data?.data && Array.isArray(res?.data?.data)) {
             resolve(res.data);
           }
+        }).catch((e) => {
+          console.error("fetchLLMs error:", e);
+          reject(e);
         });
-      } catch (e) {
-        reject(e);
-      }
     }
   );
 };
@@ -180,8 +179,12 @@ export const ConfigStore = types
         this.updateSettle(true);
       },
       refreshModelList: flow(function* (){
-        const { data } = yield fetchLLMs({modelsUrl:self.modelsUrl,devchatApiKey:self.devchatApiKey});
-        setTemplate(data,self.provider);
+        try {
+          const { data } = yield fetchLLMs({modelsUrl:self.modelsUrl,devchatApiKey:self.devchatApiKey});
+          setTemplate(data,self.provider);
+        } catch (e) {
+          console.log("fetchLLMs error:", e);
+        }
       }),
       writeConfig: function () {
         const writeConfig = cloneDeep(self.config);

@@ -119,7 +119,9 @@ const Config = observer(() => {
       label: getModelShowName(item.name),
     }));
     setModels(modelArray);
-    setCurrent(modelArray[0].value);
+    if (modelArray.length > 0) {
+      setCurrent(modelArray[0].value);
+    }
   }, [router.currentRoute]);
   useEffect(() => {
     const cloneConfig = cloneDeep(config.config);
