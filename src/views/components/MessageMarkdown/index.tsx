@@ -214,33 +214,41 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
           let previousNode: any = null;
           visit(tree, function (node) {
             if (node.type === "code") {
-              // set meta data as props
-              let props = {};
-              if (node.lang === "step" || node.lang === "Step") {
-                props["index"] = stepCount;
-              } else if (node.lang === "chatmark" || node.lang === "ChatMark") {
-                props["id"] = `chatmark-${chatmarkCount}`;
-                props["index"] = chatmarkCount;
-              } else if (
-                (node.lang === "yaml" || node.lang === "YAML") &&
-                previousNode &&
-                previousNode.type === "code" &&
-                previousNode.lang === "chatmark"
-              ) {
-                props["hidden"] = true;
-              }
-              node.data = {
-                hProperties: {
-                  ...props,
-                },
-              };
-              // record node and count data for next loop
-              previousNode = node;
-              if (node.lang === "chatmark" || node.lang === "ChatMark") {
-                chatmarkCount++;
-              }
-              if (node.lang === "step" || node.lang === "Step") {
-                stepCount++;
+              const startOffset = node.position.start.offset;
+              const endOffset = node.position.end.offset;
+              const nodeText = children.substring(startOffset, endOffset);
+              if (!nodeText.startsWith("```")) {
+                node.type = 'paragraph';
+                node.children = [{ type: 'text', value: node.value }];
+              } else {
+                // set meta data as props
+                let props = {};
+                if (node.lang === "step" || node.lang === "Step") {
+                  props["index"] = stepCount;
+                } else if (node.lang === "chatmark" || node.lang === "ChatMark") {
+                  props["id"] = `chatmark-${chatmarkCount}`;
+                  props["index"] = chatmarkCount;
+                } else if (
+                  (node.lang === "yaml" || node.lang === "YAML") &&
+                  previousNode &&
+                  previousNode.type === "code" &&
+                  previousNode.lang === "chatmark"
+                ) {
+                  props["hidden"] = true;
+                }
+                node.data = {
+                  hProperties: {
+                    ...props,
+                  },
+                };
+                // record node and count data for next loop
+                previousNode = node;
+                if (node.lang === "chatmark" || node.lang === "ChatMark") {
+                  chatmarkCount++;
+                }
+                if (node.lang === "step" || node.lang === "Step") {
+                  stepCount++;
+                }
               }
             }
           });
