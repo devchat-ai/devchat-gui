@@ -24,6 +24,18 @@ import {
 } from "@tabler/icons-react";
 import { useRouter } from "../router";
 
+interface WorkflowConf {
+  description: string;
+}
+
+interface WorkflowItem {
+  name: string;
+  namespace: string;
+  active: boolean;
+  command_conf: WorkflowConf;
+  recommend: number;
+}
+
 const chatPanel = observer(() => {
   const { input, chat } = useMst();
   const router = useRouter();
@@ -80,9 +92,11 @@ const chatPanel = observer(() => {
     messageUtil.sendMessage({ command: "regCommandList" });
     messageUtil.registerHandler(
       "regCommandList",
-      (message: { result: Item[] }) => {
-        const commandMenus = message.result?.map((item) => ({
-          ...item,
+      (message: { result: WorkflowItem[] }) => {
+        const commandMenus = message.result?.filter(item => item.active).map(item => ({
+          name: item.name,
+          pattern: item.name,
+          description: item.command_conf.description,
           recommend: item.recommend ?? -1,
         }));
         input.fetchCommandMenus(commandMenus);
