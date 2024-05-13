@@ -456,14 +456,8 @@ class IdeaBridge {
   }
 
   resviceCommandList(res) {
-    const result = res.payload.commands.map((item) => ({
-      name: item.name,
-      pattern: item.name,
-      description: item.description,
-      recommend: item.recommend ?? -1,
-    }));
     this.executeHandlers("regCommandList", {
-      result,
+      result: res.payload.commands,
     });
   }
 
