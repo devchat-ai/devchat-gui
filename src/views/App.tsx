@@ -10,7 +10,7 @@ import "./App.css";
 import "./i18n";
 
 export default function App() {
-  const [ready, setReady] = useState(true);
+  const [ready, setReady] = useState(false);
   const { config } = useMst();
   const [currentRoute, setCurrentRoute] = useState<CurrentRouteType>("chat");
   const [lastRoute, setLastRoute] = useState<CurrentRouteType>("chat");
@@ -29,6 +29,7 @@ export default function App() {
       console.log("readConfig registerHandler: ", data);
       config.setConfig(data.value);
       config.refreshModelList();
+      setReady(true);
     });
     MessageUtil.sendMessage({ command: "readConfig", key: "" });
   };
