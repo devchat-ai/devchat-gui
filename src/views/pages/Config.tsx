@@ -13,6 +13,7 @@ import {
   Drawer,
   NumberInput,
   LoadingOverlay,
+  Switch,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "@/views/router";
@@ -106,6 +107,7 @@ const Config = observer(() => {
   });
 
   const [models, setModels] = useState<any[]>([]);
+  const [codeModels, setCodeModels] = useState<any[]>([]);
   const [current, setCurrent] = useState("");
 
   useEffect(() => {
@@ -119,6 +121,11 @@ const Config = observer(() => {
       label: getModelShowName(item.name),
     }));
     setModels(modelArray);
+    const codeModelArray = config.modelsTemplate.filter(model => model.category === "code").map((item) => ({
+      value: item.name,
+      label: getModelShowName(item.name),
+    }));
+    setCodeModels(codeModelArray);
     if (modelArray.length > 0) {
       setCurrent(modelArray[0].value);
     }
@@ -396,11 +403,36 @@ const Config = observer(() => {
           />
           <TextInput
             styles={commonInputStyle}
-            label={t("Python for commands")}
+            label={t("Python for commands1")}
             placeholder="/xxx/xxx"
             description={t("Please enter the path of your python")}
             {...form.getInputProps("python_for_commands")}
           />
+          {codeModels.length > 0 && (
+          <>
+            <Switch
+              styles={commonInputStyle}
+              label={t("Code Completion Enable")}
+              {...form.getInputProps('complete_enable', { type: 'checkbox' })}
+            />
+            <Switch
+              styles={commonInputStyle}
+              label={t("Codebase Index Enable")}
+              {...form.getInputProps('complete_index_enable', { type: 'checkbox' })}
+            />
+            <Select
+              styles={{
+                ...commonInputStyle,
+                ...selectStyle,
+              }}
+              label={t("Code Completion Model")}
+              placeholder={t("Select a model")}
+              data={codeModels}
+              {...form.getInputProps('complete_model')}
+              disabled={!form.values.complete_enable}
+            />
+          </>
+          )}
         </Stack>
         <Group
           grow
