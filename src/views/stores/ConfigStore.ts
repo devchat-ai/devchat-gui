@@ -30,7 +30,8 @@ export const Model = types.model({
   name: types.string,
   provider: types.string,
   stream: types.boolean,
-  max_input_tokens: types.number
+  max_input_tokens: types.number,
+  category: types.string,
 });
 
 export const ConfigStore = types
@@ -47,17 +48,19 @@ export const ConfigStore = types
   .actions((self) => {
     const setTemplate = (value: any, provider: string) => {
       const models = value
-        .filter((item) => !item.category || item.category === "chat")
         .map((item) => {
           return {
             name: item.model ?? item.id,
             max_input_tokens: item.max_input_tokens ?? 6000,
             provider: provider,
             stream: true,
+            category: item.category ?? "chat",
           };
         });
+      self.modelNames  = value
+        .filter((item) => item.category === "chat")
+        .map((item) => item.model ?? item.id);
       self.modelsTemplate = models;
-      self.modelNames = models.map((item)=>item.name);
     };
 
     return {
