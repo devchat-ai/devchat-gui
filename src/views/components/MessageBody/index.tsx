@@ -68,7 +68,7 @@ const MessageBody = observer((props: IProps) => {
         width: chat.chatPanelWidth - 20,
       }}
     >
-      <pre className={classes.userContent}>{t(children)}</pre>
+      <pre className={classes.userContent}>{t(children, children)}</pre>
     </Container>
   );
 });
