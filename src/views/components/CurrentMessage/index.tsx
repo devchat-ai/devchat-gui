@@ -95,7 +95,7 @@ const CurrentMessage = observer((props: any) => {
       }}
     >
       <MessageBody messageType="bot" activeStep={true}>
-        {renderBlocks.length > 0 ? toMarkdown(renderBlocks[0]) : ""}
+        {receivedCount > fixedCount && renderBlocks.length > 0 ? toMarkdown(renderBlocks[0]) : ""}
       </MessageBody>
       <MessageBlink />
     </Box>
