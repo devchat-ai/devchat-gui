@@ -163,8 +163,10 @@ export const ConfigStore = types
           self.provider = "devchat";
         }
 
-        if (self.modelsTemplate.length > 0 && self.modelsTemplate.find((item) => item.name === newConfig.default_model) === undefined) {
-          newConfig.default_model = self.modelsTemplate[0].name;
+        const modelsChat = self.modelsTemplate.filter(model => model.category === "chat");
+        
+        if (modelsChat.length > 0 && modelsChat.find((item) => item.name === newConfig.default_model) === undefined) {
+          newConfig.default_model = modelsChat[0].name;
           needUpdate = true;
         }
 
