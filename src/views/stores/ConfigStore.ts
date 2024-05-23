@@ -124,11 +124,15 @@ export const ConfigStore = types
             newConfig.models[item.name] = {
               ...currentModel,
             };
+            needUpdate = true;
           } else {
-            newConfig.models[item.name] = {
-              ...currentModel,
-              ...newConfig.models[item.name],
-            };
+            if (Object.keys(currentModel).length !== Object.keys(newConfig.models[item.name]).length) {
+              newConfig.models[item.name] = {
+                ...currentModel,
+                ...newConfig.models[item.name],
+              };
+              needUpdate = true;
+            }
           }
 
           if (newConfig.models[item.name].provider !== currentModel.provider) {
@@ -140,6 +144,7 @@ export const ConfigStore = types
             newConfig.models[item.name].provider === "openai" &&
             !newConfig.providers.openai.api_key
           ) {
+            needUpdate = true;
             newConfig.models[item.name].provider = "devchat";
           }
         });
@@ -169,7 +174,7 @@ export const ConfigStore = types
           newConfig.default_model = modelsChat[0].name;
           needUpdate = true;
         }
-
+        
         if (!defaultAPIBase.includes(newConfig.providers.devchat.api_base)) {
           newConfig.providers.devchat.cumstom_api_base =
             newConfig.providers.devchat.api_base;
@@ -185,8 +190,11 @@ export const ConfigStore = types
       },
       refreshModelList: flow(function* (){
         try {
-          const { data } = yield fetchLLMs({modelsUrl:self.modelsUrl,devchatApiKey:self.devchatApiKey});
-          setTemplate(data,self.provider);
+          if (self.modelsTemplate.length === 0) {
+            const { data } = yield fetchLLMs({modelsUrl:self.modelsUrl,devchatApiKey:self.devchatApiKey});
+            setTemplate(data,self.provider);
+            MessageUtil.sendMessage({ command: "readConfig", key: "" });
+          }
         } catch (e) {
           console.log("fetchLLMs error:", e);
         }
