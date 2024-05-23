@@ -89,7 +89,6 @@ const chatPanel = observer(() => {
     if (!router.currentRoute || router.currentRoute !== "chat") {return;}
     // Fetch the command menus, before history records are obtained,
     // because the display information in the history record requires adjustment
-    messageUtil.sendMessage({ command: "regCommandList" });
     messageUtil.registerHandler(
       "regCommandList",
       (message: { result: WorkflowItem[] }) => {
@@ -156,6 +155,8 @@ const chatPanel = observer(() => {
         chat.updateFeatures(message.features);
       }
     );
+
+    messageUtil.sendMessage({ command: "regCommandList" });
 
     timer.start();
     return () => {
