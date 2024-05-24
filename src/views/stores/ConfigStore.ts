@@ -133,14 +133,6 @@ export const ConfigStore = types
               ...currentModel,
             };
             needUpdate = true;
-          } else {
-            if (Object.keys(currentModel).length !== Object.keys(newConfig.models[item.name]).length) {
-              newConfig.models[item.name] = {
-                ...currentModel,
-                ...newConfig.models[item.name],
-              };
-              needUpdate = true;
-            }
           }
 
           if (newConfig.models[item.name].provider !== currentModel.provider) {
