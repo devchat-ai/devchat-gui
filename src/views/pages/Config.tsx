@@ -356,6 +356,15 @@ const Config = observer(() => {
               value={form.values?.models[current]?.max_input_tokens}
               onChange={(value) => changeModelDetail("max_input_tokens", value)}
             />
+            <NumberInput
+              label={t("Max output tokens")}
+              description={t(
+                "the maximum number of tokens output"
+              )}
+              styles={commonInputStyle}
+              value={form.values?.models[current]?.max_tokens}
+              onChange={(value) => changeModelDetail("max_tokens", value)}
+            />
             {showProvider && (
               <Select
                 label={t("Provider")}

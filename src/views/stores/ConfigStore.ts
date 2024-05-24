@@ -32,6 +32,10 @@ export const Model = types.model({
   stream: types.boolean,
   max_input_tokens: types.number,
   category: types.string,
+  context_size: types.number,
+  temperature: types.number,
+  max_tokens: types.number,
+  json_mode: types.boolean,
 });
 
 export const ConfigStore = types
@@ -55,6 +59,10 @@ export const ConfigStore = types
             provider: provider,
             stream: true,
             category: item.category ?? "chat",
+            context_size: item.context_size ?? 8000,
+            temperature: item.temperature ?? 0.3,
+            max_tokens: item.max_tokens ?? 2000,
+            json_mode: item.json_mode ?? false,
           };
         });
       self.modelNames  = value
@@ -125,14 +133,6 @@ export const ConfigStore = types
               ...currentModel,
             };
             needUpdate = true;
-          } else {
-            if (Object.keys(currentModel).length !== Object.keys(newConfig.models[item.name]).length) {
-              newConfig.models[item.name] = {
-                ...currentModel,
-                ...newConfig.models[item.name],
-              };
-              needUpdate = true;
-            }
           }
 
           if (newConfig.models[item.name].provider !== currentModel.provider) {
