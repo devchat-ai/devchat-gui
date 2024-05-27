@@ -324,6 +324,8 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
                       ...style,
                       padding: "35px 10px 10px 10px",
                       borderRadius: "5px",
+                      overflowX: "auto",
+                      whiteSpace: "pre",
                       ...props.style,
                     }}
                     {...props}
