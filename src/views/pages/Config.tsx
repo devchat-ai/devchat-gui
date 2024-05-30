@@ -160,6 +160,7 @@ const Config = observer(() => {
       key: "",
     });
     setTimeout(() => {
+      config.setTemplate([], "");
       MessageUtil.sendMessage({ command: "readConfig", key: "" });
     }, 1000);
   };
@@ -312,7 +313,7 @@ const Config = observer(() => {
               <Stack>
                 <TextInput
                   styles={commonInputStyle}
-                  placeholder={t("API Base of OpenAI")}
+                  placeholder={t("https://api.openai.com/v1")}
                   label={t("API Base of OpenAI")}
                   withAsterisk
                   description={t("the base URL for the API")}
@@ -320,6 +321,12 @@ const Config = observer(() => {
                 />
                 <PasswordInput
                   styles={commonInputStyle}
+                  sx={{
+                    "& .mantine-PasswordInput-innerInput": {
+                      fontSize: "var(--vscode-editor-font-size)",
+                      color: "var(--vscode-editor-foreground)",
+                    },
+                  }}
                   withAsterisk
                   label={t("Access Key of OpenAI")}
                   description={t("please keep this secret")}
