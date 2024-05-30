@@ -412,10 +412,17 @@ const Config = observer(() => {
           />
           <TextInput
             styles={commonInputStyle}
-            label={t("Python for commands1")}
+            label={t("Python for commands")}
             placeholder="/xxx/xxx"
             description={t("Please enter the path of your python")}
             {...form.getInputProps("python_for_commands")}
+          />
+          <TextInput
+            styles={commonInputStyle}
+            label={t("Proxy setting")}
+            placeholder="http://127.0.0.1:7890"
+            description={t("Please enter the proxy url and port")}
+            {...form.getInputProps("DEVCHAT_PROXY")}
           />
           {codeModels.length > 0 && (
           <>
