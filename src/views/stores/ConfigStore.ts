@@ -36,13 +36,17 @@ export const Model = types.model({
   temperature: types.number,
   max_tokens: types.number,
   json_mode: types.boolean,
+  input_price: types.number,
+  output_price: types.number,
+  currency: types.string
 });
+
 
 export const ConfigStore = types
   .model("Config", {
     config: types.optional(types.frozen(), {}),
     modelsTemplate: types.optional(types.array(Model), modelsTemplate),
-    modelNames: types.optional(types.array(types.string),modelsTemplate.map((item)=>item.name)),
+    chatModels: types.optional(types.array(Model), []),
     settle: types.optional(types.boolean, false),
     defaultModel: types.optional(types.string, ""),
     devchatApiKey: "DC.xxxxxxx",
@@ -63,11 +67,13 @@ export const ConfigStore = types
             temperature: item.temperature ?? 0.3,
             max_tokens: item.max_tokens ?? 2000,
             json_mode: item.json_mode ?? false,
+            input_price: item.input_price ?? -1,
+            output_price: item.output_price ?? -1,
+            currency: item.currency ?? "CNY",
           };
         });
-      self.modelNames  = value
-        .filter((item) => item.category === "chat")
-        .map((item) => item.model ?? item.id);
+      self.chatModels  = models
+        .filter((item) => item.category === "chat");
       self.modelsTemplate = models;
     };
 
