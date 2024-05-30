@@ -356,7 +356,7 @@ const InputMessage = observer((props: any) => {
           withArrow
           shadow="md"
           styles={menuStyles}
-          disabled={config.modelNames.length === 0}
+          disabled={config.chatModels.length === 0}
         >
           <Menu.Target>
             <Button
@@ -372,13 +372,14 @@ const InputMessage = observer((props: any) => {
           </Menu.Target>
           <Menu.Dropdown>
             <ScrollArea.Autosize placeholder="" type="always" mah={240}>
-              {config.modelNames.map((modelName) => {
+              {config.chatModels.map((model) => {
                 return (
                   <Menu.Item
-                    key={modelName}
-                    onClick={() => changeModel(modelName)}
+                    key={model.name}
+                    title={model.input_price!== -1? (t("input price:") + `${model.currency !== 'CNY' ? '$' : ''}${model.input_price}`+t("/1M tokens") + "\n" + t("output price:") + `${model.currency !== 'CNY' ? '$' : ''}${model.output_price}`+ t("/1M tokens")) : ""}
+                    onClick={() => changeModel(model.name)}
                   >
-                    {getModelShowName(modelName)}
+                    {getModelShowName(model.name)}
                   </Menu.Item>
                 );
               })}
