@@ -160,6 +160,7 @@ const Config = observer(() => {
       key: "",
     });
     setTimeout(() => {
+      config.setTemplate([], "");
       MessageUtil.sendMessage({ command: "readConfig", key: "" });
     }, 1000);
   };
