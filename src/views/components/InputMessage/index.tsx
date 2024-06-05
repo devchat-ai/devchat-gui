@@ -376,7 +376,7 @@ const InputMessage = observer((props: any) => {
                 return (
                   <Menu.Item
                     key={model.name}
-                    title={model.input_price!== -1? (t("input price:") + `${model.currency !== 'CNY' ? '$' : ''}${model.input_price}`+t("/1M tokens") + "\n" + t("output price:") + `${model.currency !== 'CNY' ? '$' : ''}${model.output_price}`+ t("/1M tokens")) : ""}
+                    title={model.input_price!== -1? (t("input price:") + `${model.currency !== 'CNY' ? '$' : ''}${model.input_price.toFixed(3)}`+t("/1M tokens") + "\n" + t("output price:") + `${model.currency !== 'CNY' ? '$' : ''}${model.output_price.toFixed(3)}`+ t("/1M tokens")) : ""}
                     onClick={() => changeModel(model.name)}
                   >
                     {getModelShowName(model.name)}
