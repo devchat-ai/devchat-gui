@@ -5,6 +5,7 @@ import yaml from "js-yaml";
 import { RootInstance } from "./RootStore";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
+import APIUtil from "@/util/APIUtil";
 
 interface Context {
   content: string;
@@ -171,7 +172,8 @@ export const ChatStore = types
       self.hasDone = false;
       self.errorMessage = "";
       self.currentMessage = "";
-      const chatModel = getParent<RootInstance>(self).config.getDefaultModel();
+      const config = getParent<RootInstance>(self).config
+      const chatModel = config.getDefaultModel();
       messageUtil.sendMessage({
         command: "sendMessage",
         text: text,
@@ -179,6 +181,7 @@ export const ChatStore = types
         parent_hash: lastNonEmptyHash(),
         model: chatModel,
       });
+      APIUtil.createMessage(config.getAppURL(), config.getUserKey(), {content: text});
     };
 
     const helpMessage = (originalMessage = false) => {
@@ -390,7 +393,7 @@ Thinking...
         self.messages.push(...messages);
       },
       updateLastMessage: (message: string) => {
-        console.log("message: ", message);
+        // console.log("message: ", message);
         if (self.messages.length > 0) {
           self.messages[self.messages.length - 1].message = message;
           // if (message === "") {
