@@ -113,6 +113,23 @@ export const ConfigStore = types
         }
         return "";
       },
+      getAppURL: function() {
+        return "http://localhost:8001"
+        const apiBase = this.getAPIBase();
+        if (apiBase.includes("api-test.devchat.ai")) {
+          return "https://apptest.devchat.ai";
+        } else {
+          return "https://app.devchat.ai";
+        }
+      },
+      getWebURL: function() {
+        const apiBase = this.getAPIBase();
+        if (apiBase.includes("api-test.devchat.ai")) {
+          return "https://webtest.devchat.ai";
+        } else {
+          return "https://web.devchat.ai";
+        }
+      },
       setConfig: function (data) {
         this.updateSettle(false);
         let needUpdate = false;
