@@ -1,9 +1,12 @@
 import { Tooltip, ActionIcon, CopyButton, Flex } from "@mantine/core";
 import { IconCheck, IconGitCommit, IconFileDiff, IconColumnInsertRight, IconReplace, IconCopy,IconFile } from "@tabler/icons-react";
 import React, { useState } from "react";
+import { useMst } from "@/views/stores/RootStore";
 
 import messageUtil from '@/util/MessageUtil';
 import language from "react-syntax-highlighter/dist/esm/languages/hljs/1c";
+import { use } from "chai";
+import APIUtil from "@/util/APIUtil";
 
 const IconButton = ({ label, color = 'gray', onClick, children }) => (
     <Tooltip sx={{ padding: '3px', fontSize: 'var(--vscode-editor-font-size)' }} label={label} withArrow position="left" color="gray">
@@ -31,10 +34,14 @@ const CommitButton = ({ code }) => {
 };
 
 const CodeCopyButton = ({ code }) => {
+    const {config} = useMst();
     return (
         <CopyButton value={code} timeout={2000}>
             {({ copied, copy }) => (
-                <IconButton label={copied ? 'Copied' : 'Copy'} color={copied ? 'teal' : 'gray'} onClick={copy}>
+                <IconButton label={copied ? 'Copied' : 'Copy'} color={copied ? 'teal' : 'gray'} onClick={() => {
+                    copy();
+                    APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: 'copy', value: 'copy'})
+                }}>
                     {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
                 </IconButton>
             )}
@@ -43,11 +50,14 @@ const CodeCopyButton = ({ code }) => {
 };
 
 const DiffButton = ({ code }) => {
+    const {config} = useMst();
     const handleClick = () => {
+        const e = 'show_diff';
         messageUtil.sendMessage({
-            command: 'show_diff',
+            command: e,
             content: code
         });
+        APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: e, value: e})
     };
     return (
         <IconButton label='View Diff' onClick={handleClick}>
@@ -57,11 +67,14 @@ const DiffButton = ({ code }) => {
 };
 
 const CodeApplyButton = ({ code }) => {
+    const {config} = useMst();
     const handleClick = () => {
+        const e = 'code_apply';
         messageUtil.sendMessage({
-            command: 'code_apply',
+            command: e,
             content: code
         });
+        APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: e, value: e})
     };
     return (
         <IconButton label='Insert Code' onClick={handleClick}>
@@ -71,11 +84,14 @@ const CodeApplyButton = ({ code }) => {
 };
 
 const FileApplyButton = ({ code }) => {
+    const {config} = useMst();
     const handleClick = () => {
+        const e = 'code_file_apply';
         messageUtil.sendMessage({
-            command: 'code_file_apply',
+            command: e,
             content: code
         });
+        APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: e, value: e})
     };
     return (
         <IconButton label='Replace File' onClick={handleClick}>
@@ -86,12 +102,15 @@ const FileApplyButton = ({ code }) => {
 
 // Add a new button to create new file
 const NewFileButton = ({ language,code }) => {
+    const {config} = useMst();
     const handleClick = () => {
+        const e = 'code_new_file';
         messageUtil.sendMessage({
-            command: 'code_new_file',
+            command: e,
             language: language,
             content: code
         });
+        APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: e, value: e})
     };
     return (
         <IconButton label='Create New File' onClick={handleClick}>
