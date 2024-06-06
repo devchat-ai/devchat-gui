@@ -443,6 +443,13 @@ const Config = observer(() => {
               label={t("Codebase Index Enable")}
               {...form.getInputProps('complete_index_enable', { type: 'checkbox' })}
             />
+            <TextInput
+              styles={commonInputStyle}
+              label={t("Completion Context Length")}
+              placeholder="5000"
+              description={t("The maximum number of tokens to use as context for the model")}
+              {...form.getInputProps("complete_context_limit")}
+            />
             <Select
               styles={{
                 ...commonInputStyle,
