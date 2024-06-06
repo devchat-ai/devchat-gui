@@ -51,6 +51,8 @@
   "Proxy setting": "代理设置",
   "Code Completion Enable": "代码补全启用",
   "Codebase Index Enable": "代码库索引启用",
+  "The maximum number of tokens to use as context for the model": "模型上下文的最大令牌数",
+  "Completion Context Length": "补全上下文长度",
   "Code Completion Model": "代码补全模型",
   "Select a model": "选择补全模型",
   "Please enter the path of your python": "请输入你的 Python 路径",
