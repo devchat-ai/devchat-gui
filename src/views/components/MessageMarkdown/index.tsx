@@ -112,7 +112,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
     const selection = window.getSelection()?.toString();
     console.log("Copied: ", selection);
     const e = 'manual_copy';
-    APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: e, value: selection})
+    APIUtil.createEvent({name: e, value: selection})
   }
 
   useEffect(() => {

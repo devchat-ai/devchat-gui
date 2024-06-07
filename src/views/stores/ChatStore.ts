@@ -181,7 +181,7 @@ export const ChatStore = types
         parent_hash: lastNonEmptyHash(),
         model: chatModel,
       });
-      APIUtil.createMessage(config.getAppURL(), config.getUserKey(), {content: text});
+      APIUtil.createMessage({content: text});
     };
 
     const helpMessage = (originalMessage = false) => {

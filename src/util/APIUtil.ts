@@ -3,11 +3,17 @@ import { v4 as uuidv4 } from 'uuid';
 
 class APIUtil {
   private static instance: APIUtil;
+  private baseUrl: string | undefined;
+  private accessKey: string | undefined;
   private currentMessageId: string | undefined;
 
 
   constructor() {
-    console.log("APIUtil");
+    window.onCodeDiffApply = () => {
+      const e = 'code_diff_apply'
+      this.createEvent({name: e, value: e})
+    };
+    console.log("Registered onCodeDiffApply");
   }
 
   public static getInstance(): APIUtil {
@@ -17,14 +23,19 @@ class APIUtil {
     return APIUtil.instance;
   }
 
-  async createMessage(baseUrl: string, accessKey: string, message: object) {
+  config(baseUrl: string, accessKey: string) {
+    this.baseUrl = baseUrl;
+    this.accessKey = accessKey;
+  }
+
+  async createMessage(message: object) {
     this.currentMessageId = `msg-${uuidv4()}`;
     try {
       const res = await axios.post(
-        `${baseUrl}/api/v1/messages`,
+        `${this.baseUrl}/api/v1/messages`,
         {...message, message_id: this.currentMessageId},
         { headers: { 
-          Authorization: `Bearer ${accessKey}`,
+          Authorization: `Bearer ${this.accessKey}`,
           'Content-Type': 'application/json',
         }}
       )
@@ -34,13 +45,13 @@ class APIUtil {
     }
   }
 
-  async createEvent(baseUrl: string, accessKey: string, event: object) {
+  async createEvent(event: object) {
     try {
       const res = await axios.post(
-        `${baseUrl}/api/v1/messages/${this.currentMessageId}/events`,
+        `${this.baseUrl}/api/v1/messages/${this.currentMessageId}/events`,
         event,
         {headers: {
-          Authorization: `Bearer ${accessKey}`,
+          Authorization: `Bearer ${this.accessKey}`,
           'Content-Type': 'application/json',
         }}
       )

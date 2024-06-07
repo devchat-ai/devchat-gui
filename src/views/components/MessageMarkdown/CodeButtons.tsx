@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import { useMst } from "@/views/stores/RootStore";
 
 import messageUtil from '@/util/MessageUtil';
-import language from "react-syntax-highlighter/dist/esm/languages/hljs/1c";
-import { use } from "chai";
 import APIUtil from "@/util/APIUtil";
 
 const IconButton = ({ label, color = 'gray', onClick, children }) => (
@@ -40,7 +38,7 @@ const CodeCopyButton = ({ code }) => {
             {({ copied, copy }) => (
                 <IconButton label={copied ? 'Copied' : 'Copy'} color={copied ? 'teal' : 'gray'} onClick={() => {
                     copy();
-                    APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: 'copy', value: 'copy'})
+                    APIUtil.createEvent({name: 'copy', value: 'copy'})
                 }}>
                     {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
                 </IconButton>
@@ -57,7 +55,7 @@ const DiffButton = ({ code }) => {
             command: e,
             content: code
         });
-        APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: e, value: e})
+        APIUtil.createEvent({name: e, value: e})
     };
     return (
         <IconButton label='View Diff' onClick={handleClick}>
@@ -74,7 +72,7 @@ const CodeApplyButton = ({ code }) => {
             command: e,
             content: code
         });
-        APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: e, value: e})
+        APIUtil.createEvent({name: e, value: e})
     };
     return (
         <IconButton label='Insert Code' onClick={handleClick}>
@@ -91,7 +89,7 @@ const FileApplyButton = ({ code }) => {
             command: e,
             content: code
         });
-        APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: e, value: e})
+        APIUtil.createEvent({name: e, value: e})
     };
     return (
         <IconButton label='Replace File' onClick={handleClick}>
@@ -110,7 +108,7 @@ const NewFileButton = ({ language,code }) => {
             language: language,
             content: code
         });
-        APIUtil.createEvent(config.getAppURL(), config.getUserKey(), {name: e, value: e})
+        APIUtil.createEvent({name: e, value: e})
     };
     return (
         <IconButton label='Create New File' onClick={handleClick}>
