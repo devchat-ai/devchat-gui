@@ -2,7 +2,6 @@ import MessageUtil from "@/util/MessageUtil";
 import { types, Instance, flow } from "mobx-state-tree";
 import modelsTemplate from "@/models";
 import cloneDeep from "lodash.clonedeep";
-import { set } from "mobx";
 import axios from "axios";
 
 const defaultAPIBase = [
@@ -112,23 +111,6 @@ export const ConfigStore = types
           return self.config.providers.openai.api_base;
         }
         return "";
-      },
-      getAppURL: function() {
-        return "http://localhost:8001"
-        const apiBase = this.getAPIBase();
-        if (apiBase.includes("api-test.devchat.ai")) {
-          return "https://apptest.devchat.ai";
-        } else {
-          return "https://app.devchat.ai";
-        }
-      },
-      getWebURL: function() {
-        const apiBase = this.getAPIBase();
-        if (apiBase.includes("api-test.devchat.ai")) {
-          return "https://webtest.devchat.ai";
-        } else {
-          return "https://web.devchat.ai";
-        }
       },
       setConfig: function (data) {
         this.updateSettle(false);

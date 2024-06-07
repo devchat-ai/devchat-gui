@@ -29,7 +29,7 @@ export default function App() {
     MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
       console.log("readConfig registerHandler: ", data);
       config.setConfig(data.value);
-      APIUtil.config(config.getAppURL(), config.getUserKey())
+      APIUtil.config(config.getAPIBase(), config.getUserKey())
       config.refreshModelList();
       setReady(true);
     });

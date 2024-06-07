@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import messageUtil from "@/util/MessageUtil";
 import { IconWallet } from "@tabler/icons-react";
 import {
@@ -11,6 +10,7 @@ import {
 } from "@mantine/core";
 import { Trans } from "react-i18next";
 import { useMst } from "@/views/stores/RootStore";
+import APIUtil from "@/util/APIUtil";
 
 const currencyMap = {
   USD: "$",
@@ -28,15 +28,9 @@ function formatCurrency(balance: number | null, currency: string) {
   return `${currencyMap[currency] || currency}${balance}`;
 }
 
-const envMap = {
-  dev: {
-    requestUrl: "https://apptest.devchat.ai",
-    link: "https://webtest.devchat.ai",
-  },
-  prod: {
-    requestUrl: "https://app.devchat.ai",
-    link: "https://web.devchat.ai",
-  },
+const links = {
+  dev: "https://webtest.devchat.ai",
+  prod: "https://web.devchat.ai",
 };
 
 export default function WechatTip() {
@@ -50,23 +44,13 @@ export default function WechatTip() {
   const platform = process.env.platform;
 
   const getBalance = () => {
-    if (!envMap[env].requestUrl || !accessKey) {
-      return;
-    }
-    setLoading(true);
-    axios
-      .get(`${envMap[env].requestUrl}/api/v1/users/profile`, {
-        headers: { Authorization: `Bearer ${accessKey}` },
-      })
-      .then((res) => {
-        if (res?.data?.organization?.balance) {
-          setBalance(formatBalance(res?.data?.organization?.balance));
-          setCurrency(res?.data?.organization?.currency);
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    APIUtil.getBalance().then(org => {
+      setLoading(true);
+      setBalance(formatBalance(org?.balance));
+      setCurrency(org?.currency);
+    }).finally(() => {
+      setLoading(false);
+    })
   };
 
   useEffect(() => {
@@ -93,7 +77,7 @@ export default function WechatTip() {
     e.stopPropagation();
     messageUtil.sendMessage({
       command: "openLink",
-      url: envMap[env].link,
+      url: links[env],
     });
   };
 
@@ -139,7 +123,7 @@ export default function WechatTip() {
                   web.devchat.ai{" "}
                 </Text>
               ) : (
-                <a href={envMap[env].link} target="_blank">
+                <a href={links[env]} target="_blank">
                   web.devchat.ai{" "}
                 </a>
               )}
