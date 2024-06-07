@@ -9,11 +9,7 @@ class APIUtil {
 
 
   constructor() {
-    window.onCodeDiffApply = () => {
-      const e = 'code_diff_apply'
-      this.createEvent({name: e, value: e})
-    };
-    console.log("Registered onCodeDiffApply");
+    console.log("APIUtil ready");
   }
 
   public static getInstance(): APIUtil {

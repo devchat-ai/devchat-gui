@@ -174,6 +174,10 @@ export const ChatStore = types
       self.currentMessage = "";
       const config = getParent<RootInstance>(self).config
       const chatModel = config.getDefaultModel();
+      messageUtil.registerHandler("codeDiffApply", (_: any) => {
+        const e = 'code_diff_apply'
+        APIUtil.createEvent({name: e, value: e})
+      })
       messageUtil.sendMessage({
         command: "sendMessage",
         text: text,
