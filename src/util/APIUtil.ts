@@ -44,8 +44,7 @@ class APIUtil {
       console.log('Webapp url: ', href)
       return href;
     } catch (err) {
-      console.error("Error fetch webapp url:", err);
-      return "https://app.devchat.ai";
+      throw(`Error fetch webapp url: ${err}`)
     }
   }
 
@@ -55,6 +54,8 @@ class APIUtil {
     if (!this.webappUrl) {
       this.fetchWebappUrl().then(url => {
         this.webappUrl = url;
+      }).catch(err => {
+        console.error(err);
       })
     }
   }
@@ -62,6 +63,7 @@ class APIUtil {
   async createMessage(message: object) {
     this.currentMessageId = `msg-${uuidv4()}`;
     try {
+      if (!this.webappUrl) this.webappUrl = await this.fetchWebappUrl();
       const res = await axios.post(
         `${this.webappUrl}/api/v1/messages`,
         {...message, message_id: this.currentMessageId},
@@ -78,6 +80,7 @@ class APIUtil {
 
   async createEvent(event: object) {
     try {
+      if (!this.webappUrl) this.webappUrl = await this.fetchWebappUrl();
       const res = await axios.post(
         `${this.webappUrl}/api/v1/messages/${this.currentMessageId}/events`,
         event,
