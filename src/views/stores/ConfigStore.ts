@@ -176,7 +176,8 @@ export const ConfigStore = types
         const modelsChat = self.modelsTemplate.filter(model => model.category === "chat");
         
         if (modelsChat.length > 0 && modelsChat.find((item) => item.name === newConfig.default_model) === undefined) {
-          newConfig.default_model = modelsChat[0].name;
+          const defaultModelName = 'qwen-72b-chat'
+          newConfig.default_model = modelsChat.some(x => x.name === defaultModelName) ? defaultModelName : modelsChat[0].name;
           needUpdate = true;
         }
         
