@@ -186,6 +186,9 @@ export const ConfigStore = types
             newConfig.providers.devchat.api_base;
           newConfig.providers.devchat.api_base = "custom";
         }
+        if (this.checkAndSetCompletionDefaults(newConfig)) {
+          needUpdate = true;
+        }
 
         self.config = newConfig;
         self.defaultModel = newConfig.default_model;
@@ -205,6 +208,20 @@ export const ConfigStore = types
           console.log("fetchLLMs error:", e);
         }
       }),
+      checkAndSetCompletionDefaults: (newConfig) => {
+        const codeModels = self.modelsTemplate.filter(model => model.category === "code");
+        const isCustomAPIBase = self.modelsUrl.indexOf("api.devchat.ai") === -1 && self.modelsUrl.indexOf("api.devchat-ai.cn") === -1;
+        const isCompleteModelUnset = !self.config.complete_model;
+
+        if (codeModels.length > 0 && isCustomAPIBase && isCompleteModelUnset) {
+          newConfig.complete_enable = true;
+          newConfig.complete_index_enable = true;
+          newConfig.complete_context_limit = 5000;
+          newConfig.complete_model = codeModels[0].name;
+          return true;
+        }
+        return false;
+      },
       writeConfig: function () {
         const writeConfig = cloneDeep(self.config);
         if (
