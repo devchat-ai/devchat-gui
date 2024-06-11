@@ -219,6 +219,12 @@ export const ConfigStore = types
           newConfig.complete_context_limit = 5000;
           newConfig.complete_model = codeModels[0].name;
           return true;
+        } else {
+          // 如果代码补全模型可用，但complete_model设置模型不在codeModels中，则重新更新
+          if (codeModels.length > 0 && newConfig.complete_model && codeModels.find((item) => item.name === newConfig.complete_model) === undefined) {
+            newConfig.complete_model = codeModels[0].name;
+            return true;
+          }
         }
         return false;
       },
