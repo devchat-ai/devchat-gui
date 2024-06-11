@@ -17,6 +17,7 @@ import { useSetState } from "@mantine/hooks";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "@/views/router";
 import remarkGfm from "remark-gfm";
+import APIUtil from "@/util/APIUtil";
 
 (typeof global !== "undefined" ? global : window).Prism = Prism;
 require("prismjs/components/prism-java");
@@ -70,7 +71,7 @@ function parseMetaData(string) {
 
 const MessageMarkdown = observer((props: MessageMarkdownProps) => {
   const { children, activeStep = false, messageDone } = props;
-  const { chat } = useMst();
+  const { config, chat } = useMst();
   const router = useRouter();
   const [steps, setSteps] = useState<Step[]>([]);
   const tree = fromMarkdown(children);
@@ -106,6 +107,13 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
       url: link,
     });
   };
+
+  const handleCodeCopy = (event) => {
+    const selection = window.getSelection()?.toString();
+    console.log("Copied: ", selection);
+    const e = 'manual_copy';
+    APIUtil.createEvent({name: e, value: selection})
+  }
 
   useEffect(() => {
     let previousNode: any = null;
@@ -328,6 +336,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
                       whiteSpace: "pre",
                       ...props.style,
                     }}
+                    onCopy={handleCodeCopy}
                     {...props}
                   >
                     {tokens.map((line, i) => (

@@ -329,6 +329,9 @@ class IdeaBridge {
         case "updateSetting/response":
           this.resviceUpdateSetting(res);
           break;
+        case "codeDiffApply/response":
+          this.resviceCodeDiffApply(res);
+          break;
         case "sendUserMessage/response":
           this.resviceSendUserMessage(res);
           break;
@@ -375,6 +378,10 @@ class IdeaBridge {
   resviceUpdateSetting(res) {
     // 更新用户设置之后的回调
     this.executeHandlers("updateSetting", res.payload);
+  }
+
+  resviceCodeDiffApply(res) {
+    this.executeHandlers("codeDiffApply", res.payload);
   }
 
   resviceSendUserMessage(res) {

@@ -8,6 +8,7 @@ import { useMst } from "./stores/RootStore";
 import MessageUtil from "@/util/MessageUtil";
 import "./App.css";
 import "./i18n";
+import APIUtil from "@/util/APIUtil";
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -28,6 +29,7 @@ export default function App() {
     MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
       console.log("readConfig registerHandler: ", data);
       config.setConfig(data.value);
+      APIUtil.config(config.getAPIBase(), config.getUserKey())
       config.refreshModelList();
       setReady(true);
     });
