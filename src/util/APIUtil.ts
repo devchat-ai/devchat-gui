@@ -51,13 +51,11 @@ class APIUtil {
   config(baseUrl: string, accessKey: string) {
     this.baseUrl = baseUrl;
     this.accessKey = accessKey;
-    if (!this.webappUrl) {
-      this.fetchWebappUrl().then(url => {
-        this.webappUrl = url;
-      }).catch(err => {
-        console.error(err);
-      })
-    }
+    this.fetchWebappUrl().then(url => {
+      this.webappUrl = url;
+    }).catch(err => {
+      console.error(err);
+    })
   }
 
   async createMessage(message: object) {
