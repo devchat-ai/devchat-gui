@@ -9,12 +9,12 @@ import {
   useViewportSize,
 } from "@mantine/hooks";
 import messageUtil from "@/util/MessageUtil";
+import APIUtil from "@/util/APIUtil";
 import StopButton from "@/views/components/StopButton";
 import RegenerationButton from "@/views/components/RegenerationButton";
 import { observer } from "mobx-react-lite";
 import { useMst } from "@/views/stores/RootStore";
 import { Message } from "@/views/stores/ChatStore";
-import type { Item } from "@/views/stores/InputStore";
 
 import InputMessage from "@/views/components/InputMessage";
 import MessageList from "@/views/components/MessageList";
@@ -155,6 +155,10 @@ const chatPanel = observer(() => {
         chat.updateFeatures(message.features);
       }
     );
+    messageUtil.registerHandler("codeDiffApply", (_: any) => {
+      const e = 'code_diff_apply'
+      APIUtil.createEvent({name: e, value: e})
+    })
 
     messageUtil.sendMessage({ command: "regCommandList" });
 

@@ -3,7 +3,6 @@ import messageUtil from "@/util/MessageUtil";
 import { ChatContext } from "@/views/stores/InputStore";
 import yaml from "js-yaml";
 import { RootInstance } from "./RootStore";
-import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import APIUtil from "@/util/APIUtil";
 
@@ -174,10 +173,6 @@ export const ChatStore = types
       self.currentMessage = "";
       const config = getParent<RootInstance>(self).config
       const chatModel = config.getDefaultModel();
-      messageUtil.registerHandler("codeDiffApply", (_: any) => {
-        const e = 'code_diff_apply'
-        APIUtil.createEvent({name: e, value: e})
-      })
       messageUtil.sendMessage({
         command: "sendMessage",
         text: text,
