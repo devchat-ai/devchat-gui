@@ -305,7 +305,7 @@ const JStoIdea = {
   readServerConfigBase: () => {
     // 获取完整的用户设置
     const params = {
-      action: "getServerSetting/request",
+      action: "getServerSettings/request",
       metadata: {
         callback: "IdeaToJSMessage",
       },
@@ -329,7 +329,7 @@ const JStoIdea = {
 
   writeServerConfigBase: (data) => {
     const params = {
-      action: "updateServerSetting/request",
+      action: "updateServerSettings/request",
       metadata: {
         callback: "IdeaToJSMessage",
       },
@@ -383,6 +383,9 @@ class IdeaBridge {
           break;
         case "getSetting/response":
           this.resviceSettings(res);
+          break;
+        case "getServerSettings/response":
+          this.resviceServerSettings(res);
           break;
         case "listTopics/response":
           this.resviceTopicList(res);
