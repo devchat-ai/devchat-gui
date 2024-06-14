@@ -302,9 +302,34 @@ const JStoIdea = {
     };
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
+  readServerConfigBase: () => {
+    // 获取完整的用户设置
+    const params = {
+      action: "getServerSetting/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {},
+    };
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
+  
   saveConfig: (data) => {
     const params = {
       action: "updateSetting/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: data,
+    };
+
+    console.log("ready to call java: ", JSON.stringify(params));
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
+
+  writeServerConfigBase: (data) => {
+    const params = {
+      action: "updateServerSetting/request",
       metadata: {
         callback: "IdeaToJSMessage",
       },
@@ -462,6 +487,15 @@ class IdeaBridge {
     });
   }
 
+  resviceServerSettings(res) {
+    // 获取用户设置的回调
+    const setting = res?.payload || {};
+
+    this.executeHandlers("readServerConfigBase", {
+      value: setting,
+    });
+  }  
+
   resviceCommandList(res) {
     this.executeHandlers("regCommandList", {
       result: res.payload.commands,
@@ -601,9 +635,16 @@ class IdeaBridge {
       case "readConfig":
         JStoIdea.readConfig();
         break;
+      case "readServerConfigBase":
+        JStoIdea.readServerConfigBase();
+        break;
       case "writeConfig":
         // 保存用户设置
         JStoIdea.saveConfig(message.value);
+        break;
+      case "writeServerConfigBase":
+        // 保存用户设置
+        JStoIdea.writeServerConfigBase(message.value);
         break;
       default:
         break;

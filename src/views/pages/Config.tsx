@@ -113,7 +113,7 @@ const Config = observer(() => {
   useEffect(() => {
     MessageUtil.registerHandler("updateSetting", (data) => {
       // 保存后的回调
-      MessageUtil.sendMessage({ command: "readConfig" });
+      MessageUtil.handleMessage({ command: "reloadConfig" });
     });
     if (router.currentRoute !== "config") {return;}
     const modelArray = config.modelsTemplate.map((item) => ({
@@ -160,8 +160,7 @@ const Config = observer(() => {
       key: "",
     });
     setTimeout(() => {
-      config.setTemplate([], "");
-      MessageUtil.sendMessage({ command: "readConfig", key: "" });
+      MessageUtil.handleMessage({ command: "reloadConfig" });
     }, 1000);
   };
 
