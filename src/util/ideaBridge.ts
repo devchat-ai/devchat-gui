@@ -564,6 +564,19 @@ class IdeaBridge {
     }
   }
 
+  handleMessage(message: { command: string | number } & Record<string, any>) {
+    if (!('command' in message)) {
+      throw new Error('Missing required field: command');
+    }
+  
+    const messageType = message.command
+    if (this.handle[messageType]) {
+      this.handle[messageType].forEach((handler) => {
+        handler(message);
+      });
+    }
+  }
+
   sendMessage(message: any) {
     // 根据 command 分发到不同的方法·
     switch (message.command) {

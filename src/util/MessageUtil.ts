@@ -59,11 +59,15 @@ class MessageUtil {
       throw new Error('Missing required field: command');
     }
   
-    const handlers = this.handlers[message.command];
-    if (handlers) {
-      handlers.forEach((handler: (arg0: { command: string | number } & Record<string, any>) => any) =>
-        handler(message)
-      );
+    if (process.env.platform === "idea") {
+      IdeaBridge.handleMessage(message)
+    } else {
+      const handlers = this.handlers[message.command];
+      if (handlers) {
+        handlers.forEach((handler: (arg0: { command: string | number } & Record<string, any>) => any) =>
+          handler(message)
+        );
+      }
     }
   }
 
