@@ -61,6 +61,7 @@ export default function App() {
     // 注册处理函数
     MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
       config.setConfig(data.value);
+      APIUtil.config(config.getAPIBase(), config.getUserKey())
       setReady(true);
       config.fetchServerConfig();
       handleConfig("user_config", data);
