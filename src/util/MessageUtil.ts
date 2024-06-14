@@ -54,10 +54,14 @@ class MessageUtil {
   }
 
   // Handle a received message
-  handleMessage(message: { command: string | number }) {
+  handleMessage(message: { command: string | number } & Record<string, any>) {
+    if (!('command' in message)) {
+      throw new Error('Missing required field: command');
+    }
+  
     const handlers = this.handlers[message.command];
     if (handlers) {
-      handlers.forEach((handler: (arg0: { command: string | number }) => any) =>
+      handlers.forEach((handler: (arg0: { command: string | number } & Record<string, any>) => any) =>
         handler(message)
       );
     }

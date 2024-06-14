@@ -26,14 +26,59 @@ export default function App() {
   };
 
   const getConfig = () => {
+    // 比较函数
+    const compare_func = (configs: any) => {
+        const [serverConfig, userConfig] = config.updateConfig(configs.server_config, configs.server_config_base, configs.user_config);
+        if (serverConfig) {
+          // save server config as base
+          MessageUtil.sendMessage({ command: "writeServerConfigBase", value: serverConfig });
+        }
+
+        // set user config
+        config.setConfig(userConfig);
+    };
+
+    // 结果记录
+    let configs = {};
+    let configCount = 0;
+
+    // 处理函数
+    const handleConfig = (key: string, data: { value: any }) => {
+        console.log("-----> receive:", key);
+        configs[key] = {...data.value};
+        configCount++;
+        checkConfigs();
+    };
+
+    // 检查是否所有配置都已准备好
+    const checkConfigs = () => {
+        if (configCount === 3) {
+            compare_func(configs);
+            setReady(true); // 假设setReady是一个函数，用于设置应用状态为准备就绪
+        }
+    };
+
+    // 注册处理函数
     MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
-      console.log("readConfig registerHandler: ", data);
       config.setConfig(data.value);
-      APIUtil.config(config.getAPIBase(), config.getUserKey())
-      config.refreshModelList();
       setReady(true);
+      config.fetchServerConfig();
+      handleConfig("user_config", data);
     });
-    MessageUtil.sendMessage({ command: "readConfig", key: "" });
+    MessageUtil.registerHandler("readServerConfigBase", (data: { value: any }) => handleConfig("server_config_base", data));
+    MessageUtil.registerHandler("readServerConfig", (data: { value: any }) => handleConfig("server_config", data));
+    
+    MessageUtil.registerHandler(
+      "reloadConfig", 
+      (data: { value: any }) => {
+        configs = {};
+        configCount = 0;
+
+        // 发送消息
+        MessageUtil.sendMessage({ command: "readConfig", key: "" });
+        MessageUtil.sendMessage({ command: "readServerConfigBase", key: "" });
+      });
+    MessageUtil.handleMessage({ command: "reloadConfig" });  
   };
 
   useEffect(() => {
