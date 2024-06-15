@@ -171,7 +171,8 @@ export const ChatStore = types
       self.hasDone = false;
       self.errorMessage = "";
       self.currentMessage = "";
-      const config = getParent<RootInstance>(self).config
+      const rootStore = getParent<RootInstance>(self);
+      const config = rootStore.config;
       const chatModel = config.getDefaultModel();
       const platform = process.env.platform;
       messageUtil.sendMessage({
@@ -181,7 +182,10 @@ export const ChatStore = types
         parent_hash: lastNonEmptyHash(),
         model: chatModel,
       });
-      APIUtil.createMessage({content: text, model: chatModel, ide: platform === "idea" ? "intellij" : platform});
+      const supportedCommands = new Set(rootStore.input.commandMenus.map(x => x.name));
+      let command = text.startsWith("/") ? text.split(" ", 1)[0] : null;
+      command = command && supportedCommands.has(command.slice(1)) ? command : null;
+      APIUtil.createMessage({content: text, command: command, model: chatModel, ide: platform === "idea" ? "intellij" : platform});
     };
 
     const helpMessage = (originalMessage = false) => {
