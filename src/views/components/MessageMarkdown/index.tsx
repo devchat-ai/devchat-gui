@@ -108,11 +108,11 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
     });
   };
 
-  const handleCodeCopy = (event) => {
+  const handleCodeCopy = (platform, language) => {
     const selection = window.getSelection()?.toString();
     console.log("Copied: ", selection);
     const e = 'manual_copy';
-    APIUtil.createEvent({name: e, value: selection})
+    APIUtil.createEvent({name: e, value: selection, language: language, ide: platform})
   }
 
   useEffect(() => {
@@ -259,18 +259,18 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
         code({ node, inline, className, children, index, ...props }) {
           const match = /language-(\w+)/.exec(className || "");
           const value = String(children).replace(/\n$/, "");
-          let lanugage = match && match[1];
+          let language = match && match[1];
 
-          if (!lanugage) {
-            lanugage = "plaintext";
+          if (!language) {
+            language = "plaintext";
           }
 
           let wrapLongLines = false;
-          if (lanugage === "markdown" || lanugage === "text") {
+          if (language === "markdown" || language === "text") {
             wrapLongLines = true;
           }
 
-          if (lanugage === "step" || lanugage === "Step") {
+          if (language === "step" || language === "Step") {
             const status =
               activeStep &&
               Number(index) === codes.length &&
@@ -278,13 +278,13 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
                 ? "running"
                 : "done";
             return (
-              <Step language={lanugage} status={status} index={index}>
+              <Step language={language} status={status} index={index}>
                 {value}
               </Step>
             );
           }
 
-          if (lanugage === "chatmark" || lanugage === "ChatMark") {
+          if (language === "chatmark" || language === "ChatMark") {
             const chatmarkValue = chatmarkProps[`chatmark-${index}`];
             return (
               <ChatMark messageDone={messageDone} {...chatmarkValue}>
@@ -293,17 +293,19 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
             );
           }
 
-          if ((lanugage === "yaml" || lanugage === "YAML") && props.hidden) {
+          if ((language === "yaml" || language === "YAML") && props.hidden) {
             return <></>;
           }
 
-          return !inline && lanugage ? (
+          const platform = process.env.platform
+
+          return !inline && language ? (
             <div
               style={{ position: "relative" }}
               className={classes.codeOverride}
             >
-              <LanguageCorner language={lanugage} />
-              <CodeButtons language={lanugage} code={value} />
+              <LanguageCorner language={language} />
+              <CodeButtons platform={platform} language={language} code={value} />
               {/* <SyntaxHighlighter
                 {...props}
                 language={lanugage}
@@ -317,7 +319,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
               <Highlight
                 code={value}
                 theme={themes.okaidia}
-                language={lanugage}
+                language={language}
               >
                 {({
                   className,
@@ -336,7 +338,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
                       whiteSpace: "pre",
                       ...props.style,
                     }}
-                    onCopy={handleCodeCopy}
+                    onCopy={() => handleCodeCopy(platform, language)}
                     {...props}
                   >
                     {tokens.map((line, i) => (

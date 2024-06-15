@@ -180,7 +180,7 @@ export const ChatStore = types
         parent_hash: lastNonEmptyHash(),
         model: chatModel,
       });
-      APIUtil.createMessage({content: text, model: chatModel});
+      APIUtil.createMessage({content: text, model: chatModel, ide: process.env.platform});
     };
 
     const helpMessage = (originalMessage = false) => {
