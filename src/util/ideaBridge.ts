@@ -305,7 +305,7 @@ const JStoIdea = {
   readServerConfigBase: () => {
     // 获取完整的用户设置
     const params = {
-      action: "getServerSetting/request",
+      action: "getServerSettings/request",
       metadata: {
         callback: "IdeaToJSMessage",
       },
@@ -323,20 +323,18 @@ const JStoIdea = {
       payload: data,
     };
 
-    console.log("ready to call java: ", JSON.stringify(params));
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
 
   writeServerConfigBase: (data) => {
     const params = {
-      action: "updateServerSetting/request",
+      action: "updateServerSettings/request",
       metadata: {
         callback: "IdeaToJSMessage",
       },
       payload: data,
     };
 
-    console.log("ready to call java: ", JSON.stringify(params));
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
 };
@@ -349,7 +347,6 @@ class IdeaBridge {
     this.handle = {};
     // 注册全局的回调函数，用于接收来自 IDEA 的消息
     window.IdeaToJSMessage = (res: any) => {
-      console.info("IdeaToJSMessage get res: ", res);
       switch (res.action) {
         case "updateSetting/response":
           this.resviceUpdateSetting(res);
@@ -383,6 +380,9 @@ class IdeaBridge {
           break;
         case "getSetting/response":
           this.resviceSettings(res);
+          break;
+        case "getServerSettings/response":
+          this.resviceServerSettings(res);
           break;
         case "listTopics/response":
           this.resviceTopicList(res);
@@ -557,6 +557,19 @@ class IdeaBridge {
     if (this.handle[messageType]) {
       this.handle[messageType].forEach((handler) => {
         handler(data);
+      });
+    }
+  }
+
+  handleMessage(message: { command: string | number } & Record<string, any>) {
+    if (!('command' in message)) {
+      throw new Error('Missing required field: command');
+    }
+  
+    const messageType = message.command
+    if (this.handle[messageType]) {
+      this.handle[messageType].forEach((handler) => {
+        handler(message);
       });
     }
   }
