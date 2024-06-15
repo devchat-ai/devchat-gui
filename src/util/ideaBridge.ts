@@ -323,7 +323,6 @@ const JStoIdea = {
       payload: data,
     };
 
-    console.log("ready to call java: ", JSON.stringify(params));
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
 
@@ -336,7 +335,6 @@ const JStoIdea = {
       payload: data,
     };
 
-    console.log("ready to call java: ", JSON.stringify(params));
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
 };
@@ -349,7 +347,6 @@ class IdeaBridge {
     this.handle = {};
     // 注册全局的回调函数，用于接收来自 IDEA 的消息
     window.IdeaToJSMessage = (res: any) => {
-      console.info("IdeaToJSMessage get res: ", res);
       switch (res.action) {
         case "updateSetting/response":
           this.resviceUpdateSetting(res);

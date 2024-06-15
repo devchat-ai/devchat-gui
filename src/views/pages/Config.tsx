@@ -111,10 +111,6 @@ const Config = observer(() => {
   const [current, setCurrent] = useState("");
 
   useEffect(() => {
-    MessageUtil.registerHandler("updateSetting", (data) => {
-      // 保存后的回调
-      MessageUtil.handleMessage({ command: "reloadConfig" });
-    });
     if (router.currentRoute !== "config") {return;}
     const modelArray = config.modelsTemplate.map((item) => ({
       value: item.name,
