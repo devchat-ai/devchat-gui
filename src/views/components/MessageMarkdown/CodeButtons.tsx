@@ -32,7 +32,6 @@ const CommitButton = ({ code }) => {
 };
 
 const CodeCopyButton = ({ code }) => {
-    const {config} = useMst();
     return (
         <CopyButton value={code} timeout={2000}>
             {({ copied, copy }) => (
@@ -47,15 +46,14 @@ const CodeCopyButton = ({ code }) => {
     );
 };
 
-const DiffButton = ({ code }) => {
-    const {config} = useMst();
+const DiffButton = ({ code, language, platform }) => {
     const handleClick = () => {
         const e = 'show_diff';
         messageUtil.sendMessage({
             command: e,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e})
+        APIUtil.createEvent({name: e, value: e, language: language, ide: platform})
     };
     return (
         <IconButton label='View Diff' onClick={handleClick}>
@@ -64,15 +62,14 @@ const DiffButton = ({ code }) => {
     );
 };
 
-const CodeApplyButton = ({ code }) => {
-    const {config} = useMst();
+const CodeApplyButton = ({ code, language, platform }) => {
     const handleClick = () => {
         const e = 'code_apply';
         messageUtil.sendMessage({
             command: e,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e})
+        APIUtil.createEvent({name: e, value: e, language: language, ide: platform})
     };
     return (
         <IconButton label='Insert Code' onClick={handleClick}>
@@ -81,15 +78,14 @@ const CodeApplyButton = ({ code }) => {
     );
 };
 
-const FileApplyButton = ({ code }) => {
-    const {config} = useMst();
+const FileApplyButton = ({ code, language, platform }) => {
     const handleClick = () => {
         const e = 'code_file_apply';
         messageUtil.sendMessage({
             command: e,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e})
+        APIUtil.createEvent({name: e, value: e, language: language, ide: platform})
     };
     return (
         <IconButton label='Replace File' onClick={handleClick}>
@@ -99,8 +95,7 @@ const FileApplyButton = ({ code }) => {
 };
 
 // Add a new button to create new file
-const NewFileButton = ({ language,code }) => {
-    const {config} = useMst();
+const NewFileButton = ({ code, language, platform }) => {
     const handleClick = () => {
         const e = 'code_new_file';
         messageUtil.sendMessage({
@@ -108,7 +103,7 @@ const NewFileButton = ({ language,code }) => {
             language: language,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e})
+        APIUtil.createEvent({name: e, value: e, language: language, ide: platform})
     };
     return (
         <IconButton label='Create New File' onClick={handleClick}>
@@ -118,7 +113,7 @@ const NewFileButton = ({ language,code }) => {
 };
 
 // Similar changes can be made to DiffButton, CodeApplyButton, FileApplyButton, and CodeCopyButton
-const CodeButtons = ({ language, code }) => (
+const CodeButtons = ({ platform, language, code }) => (
     <Flex
         gap="5px"
         justify="flex-start"
@@ -132,10 +127,10 @@ const CodeButtons = ({ language, code }) => (
             ? <CommitButton code={code} />
             : (
                 <>
-                    <DiffButton code={code} />
-                    <CodeApplyButton code={code} />
-                    <FileApplyButton code={code} />
-                    <NewFileButton code={code} language={language} />
+                    <DiffButton code={code} language={language} platform={platform} />
+                    <CodeApplyButton code={code} language={language} platform={platform} />
+                    <FileApplyButton code={code} language={language} platform={platform} />
+                    <NewFileButton code={code} language={language} platform={platform} />
                 </>
             )}
     </Flex>
