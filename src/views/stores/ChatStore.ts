@@ -173,6 +173,7 @@ export const ChatStore = types
       self.currentMessage = "";
       const config = getParent<RootInstance>(self).config
       const chatModel = config.getDefaultModel();
+      const platform = process.env.platform;
       messageUtil.sendMessage({
         command: "sendMessage",
         text: text,
@@ -180,7 +181,7 @@ export const ChatStore = types
         parent_hash: lastNonEmptyHash(),
         model: chatModel,
       });
-      APIUtil.createMessage({content: text, model: chatModel, ide: process.env.platform});
+      APIUtil.createMessage({content: text, model: chatModel, ide: platform === "idea" ? "intellij" : platform});
     };
 
     const helpMessage = (originalMessage = false) => {

@@ -297,15 +297,13 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
             return <></>;
           }
 
-          const platform = process.env.platform
-
           return !inline && language ? (
             <div
               style={{ position: "relative" }}
               className={classes.codeOverride}
             >
               <LanguageCorner language={language} />
-              <CodeButtons platform={platform} language={language} code={value} />
+              <CodeButtons platform={platform === "idea" ? "intellij" : platform} language={language} code={value} />
               {/* <SyntaxHighlighter
                 {...props}
                 language={lanugage}
