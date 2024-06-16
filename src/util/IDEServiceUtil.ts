@@ -25,8 +25,10 @@ class IDEServiceUtil {
   async getCurrentFileInfo() {
     try {
       if (!this.port) return undefined;
-      const res = await axios.post(`${this.host}:${this.port}/getCurrentFileInfo`)
-      console.log("currentFileInfo: ", res?.data);
+      const res = await axios.post(`${this.host}:${this.port}/current_file_info`)
+      const info = res?.data?.result;
+      console.log("currentFileInfo: ", info);
+      return info;
     } catch(err) {
       console.error(err);
     }

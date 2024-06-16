@@ -5,6 +5,7 @@ import yaml from "js-yaml";
 import { RootInstance } from "./RootStore";
 import i18next from "i18next";
 import APIUtil from "@/util/APIUtil";
+import IDEServiceUtil from "@/util/IDEServiceUtil";
 
 interface Context {
   content: string;
@@ -185,7 +186,13 @@ export const ChatStore = types
       const supportedCommands = new Set(rootStore.input.commandMenus.map(x => x.name));
       let command = text.startsWith("/") ? text.split(" ", 1)[0] : null;
       command = command && supportedCommands.has(command.slice(1)) ? command : null;
-      APIUtil.createMessage({content: text, command: command, model: chatModel, ide: platform === "idea" ? "intellij" : platform});
+      IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createMessage({
+        content: text,
+        command: command,
+        model: chatModel,
+        language: info?.extension,
+        ide: platform === "idea" ? "intellij" : platform
+      }));
     };
 
     const helpMessage = (originalMessage = false) => {
