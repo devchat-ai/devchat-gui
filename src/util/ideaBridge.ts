@@ -291,6 +291,17 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
+  getIDEServicePort: () => {
+    // 获取完整的用户设置
+    const params = {
+      action: "getIDEServicePort/request",
+      metadata: {
+        callback: "IdeaToJSMessage",
+      },
+      payload: {},
+    };
+    window.JSJavaBridge.callJava(JSON.stringify(params));
+  },
   readConfig: () => {
     // 获取完整的用户设置
     const params = {
@@ -390,6 +401,9 @@ class IdeaBridge {
         case "loadConversations/response":
           this.resviceTopicDetail(res);
           break;
+        case "getIDEServicePort/response":
+          this.resviceIDEServicePort(res);
+          break;
         default:
           break;
       }
@@ -407,6 +421,10 @@ class IdeaBridge {
 
   resviceCodeDiffApply(res) {
     this.executeHandlers("codeDiffApply", res.payload);
+  }
+
+  resviceIDEServicePort(res) {
+    this.executeHandlers("getIDEServicePort", res.payload?.port);
   }
 
   resviceSendUserMessage(res) {
@@ -658,6 +676,10 @@ class IdeaBridge {
       case "writeServerConfigBase":
         // 保存用户设置
         JStoIdea.writeServerConfigBase(message.value);
+        break;
+      case "getIDEServicePort":
+        // 保存用户设置
+        JStoIdea.getIDEServicePort();
         break;
       default:
         break;
