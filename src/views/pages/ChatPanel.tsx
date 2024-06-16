@@ -23,6 +23,7 @@ import {
   IconExternalLink,
 } from "@tabler/icons-react";
 import { useRouter } from "../router";
+import IDEServiceUtil from "@/util/IDEServiceUtil";
 
 interface WorkflowConf {
   description: string;
@@ -160,6 +161,11 @@ const chatPanel = observer(() => {
       APIUtil.createEvent({name: e, value: e})
     })
 
+    messageUtil.registerHandler("getIDEServicePort", (port: number) => {
+      IDEServiceUtil.config(port)
+    })
+
+    messageUtil.sendMessage({ command: "getIDEServicePort" });
     messageUtil.sendMessage({ command: "regCommandList" });
 
     timer.start();
