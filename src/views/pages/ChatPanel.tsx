@@ -161,8 +161,8 @@ const chatPanel = observer(() => {
       APIUtil.createEvent({name: e, value: e})
     })
 
-    messageUtil.registerHandler("getIDEServicePort", (port: number) => {
-      IDEServiceUtil.config(port)
+    messageUtil.registerHandler("getIDEServicePort", (data: any) => {
+      IDEServiceUtil.config(data.result)
     })
 
     messageUtil.sendMessage({ command: "getIDEServicePort" });

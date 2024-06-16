@@ -424,7 +424,7 @@ class IdeaBridge {
   }
 
   resviceIDEServicePort(res) {
-    this.executeHandlers("getIDEServicePort", res.payload?.port);
+    this.executeHandlers("getIDEServicePort", res.payload);
   }
 
   resviceSendUserMessage(res) {
