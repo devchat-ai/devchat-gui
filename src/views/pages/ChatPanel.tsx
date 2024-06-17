@@ -158,7 +158,13 @@ const chatPanel = observer(() => {
     );
     messageUtil.registerHandler("codeDiffApply", (_: any) => {
       const e = 'code_diff_apply'
-      APIUtil.createEvent({name: e, value: e})
+      const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
+      IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createEvent({
+        name: e,
+        value: e,
+        ide: platform,
+        language: info?.extension || info?.path?.split('.').pop()
+      }))
     })
 
     messageUtil.registerHandler("getIDEServicePort", (data: any) => {
