@@ -12,7 +12,6 @@
   // 1. 打开设置
   // 2. 启动 ask code 安装
   // 3. 设置 access key
-- featureToggles // 判断有没有 ask code
 - isDevChatInstalled // 判断 ask code 是否安装
 
 - historyMessages // 页面的历史消息
@@ -22,7 +21,6 @@
 - code_apply // 代码应用到 editor 光标位置
 - sendMessage // 发送消息
 - regeneration // 错误时重新生成
-- regContextList // git diff 之类的列表
 - regCommandList // 输入 / 之后出现的列表
 
 ## registerHandler
@@ -33,7 +31,6 @@
 - loadHistoryMessages // 与 historyMessages 对应
 - isDevChatInstalled // 与 isDevChatInstalled 对应
 - deletedChatMessage // 与 deleteChatMessage 对应
-- regContextList // 与 regContextList 对应
 - receiveMessagePartial // 部分对话
 - receiveMessage // 对话
 - systemMessage // 没用了

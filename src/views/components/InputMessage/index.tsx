@@ -63,7 +63,6 @@ const InputMessage = observer((props: any) => {
     menuOpend,
     menuType,
     currentMenuIndex,
-    contextMenus,
     commandMenus
   } = input;
   const { generating } = chat;

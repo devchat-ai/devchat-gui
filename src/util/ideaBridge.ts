@@ -28,17 +28,6 @@ const JStoIdea = {
     };
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
-  getContextList: () => {
-    const params = {
-      action: "listContexts/request",
-      metadata: {
-        callback: "IdeaToJSMessage",
-      },
-      payload: {},
-    };
-
-    window.JSJavaBridge.callJava(JSON.stringify(params));
-  },
   getCommandList: () => {
     const params = {
       action: "listCommands/request",
@@ -328,9 +317,6 @@ class IdeaBridge {
         case "sendMessage/response":
           this.resviceMessage(res);
           break;
-        case "listContexts/response":
-          this.resviceContextList(res);
-          break;
         case "listCommands/response":
           this.resviceCommandList(res);
           break;
@@ -468,21 +454,6 @@ class IdeaBridge {
     });
   }
 
-  resviceContextList(res) {
-    // 接受到的上下文列表
-    const result = res.payload.contexts.map((item) => ({
-      name: item.command,
-      pattern: item.command,
-      description: item.description,
-    }));
-
-    // this.handle.regContextList({ result });
-    this.executeHandlers("regContextList", {
-      result,
-    });
-  }
-
-
   resviceMessage(response: any) {
     // 接受到消息
     if (response.metadata?.isFinalChunk) {
@@ -549,9 +520,6 @@ class IdeaBridge {
       // 重新生成消息，用于发送失败时再次发送
       case "regeneration":
         JStoIdea.regeneration();
-        break;
-      case "regContextList":
-        JStoIdea.getContextList();
         break;
       case "regCommandList":
         JStoIdea.getCommandList();
