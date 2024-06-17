@@ -1,6 +1,5 @@
 ## sendMessage
 
-- getUserAccessKey // 获取 access key
 - doCommit // 提交代码
 - updateSetting // 更新设置（目前只有更换模型）
 - getSetting // 获取默认模型
@@ -24,12 +23,10 @@
 - sendMessage // 发送消息
 - regeneration // 错误时重新生成
 - regContextList // git diff 之类的列表
-- regModelList // model 列表
 - regCommandList // 输入 / 之后出现的列表
 
 ## registerHandler
 
-- getUserAccessKey // 获取 access key
 - regCommandList // 获取 / 之后出现的列表
 - appendContext // 右键添加到 context 或者 context 菜单点击的响应
 - contextDetailResponse // 获取到的文件内容
@@ -37,7 +34,6 @@
 - isDevChatInstalled // 与 isDevChatInstalled 对应
 - deletedChatMessage // 与 deleteChatMessage 对应
 - regContextList // 与 regContextList 对应
-- regModelList // 与 regModelList
 - receiveMessagePartial // 部分对话
 - receiveMessage // 对话
 - systemMessage // 没用了
