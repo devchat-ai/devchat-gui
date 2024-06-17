@@ -190,7 +190,7 @@ export const ChatStore = types
         content: text,
         command: command,
         model: chatModel,
-        language: info?.extension,
+        language: info?.extension || info?.path?.split(".").pop(),
         ide: platform === "idea" ? "intellij" : platform
       }));
     };
