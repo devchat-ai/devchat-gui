@@ -31,13 +31,13 @@ const CommitButton = ({ code }) => {
     );
 };
 
-const CodeCopyButton = ({ code }) => {
+const CodeCopyButton = ({ code, language, platform }) => {
     return (
         <CopyButton value={code} timeout={2000}>
             {({ copied, copy }) => (
                 <IconButton label={copied ? 'Copied' : 'Copy'} color={copied ? 'teal' : 'gray'} onClick={() => {
                     copy();
-                    APIUtil.createEvent({name: 'copy', value: 'copy'})
+                    APIUtil.createEvent({name: 'copy', value: 'copy', language: language, ide: platform})
                 }}>
                     {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
                 </IconButton>
@@ -122,7 +122,7 @@ const CodeButtons = ({ platform, language, code }) => (
         wrap="wrap"
         style={{ position: 'absolute', top: 8, right: 10 }}
     >
-        <CodeCopyButton code={code} />
+        <CodeCopyButton code={code} language={language} platform={platform} />
         {language && language === 'commitmsg'
             ? <CommitButton code={code} />
             : (
