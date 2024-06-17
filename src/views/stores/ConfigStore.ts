@@ -164,6 +164,8 @@ export const ConfigStore = types
           if (server_config_base.models === undefined) {
               server_config_base.models = {};
           }
+          const provider = self.provider;
+
           // 将 server_config 转换为本地配置存储的格式
           const localConfig: any = {"models": {}};
           server_config.models.forEach((model: any) => {
@@ -173,6 +175,7 @@ export const ConfigStore = types
                       modelConfig[key] = model[key];
                   }
               }
+              modelConfig["provider"] = provider;
               localConfig["models"][model.model || model.id] = modelConfig;
           });
       
