@@ -110,14 +110,6 @@ const InputMessage = observer((props: any) => {
     }
   };
 
-  const handleContextClick = (contextName: string) => {
-    // Process and send the message to the extension
-    messageUtil.sendMessage({
-      command: "addContext",
-      selected: contextName,
-    });
-  };
-
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (menuOpend) {
       if (event.key === "Escape") {

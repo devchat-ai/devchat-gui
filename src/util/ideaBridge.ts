@@ -320,9 +320,6 @@ class IdeaBridge {
         case "listCommands/response":
           this.resviceCommandList(res);
           break;
-        case "addContext/notify":
-          this.resviesContext(res);
-          break;
         case "getSetting/response":
           this.resviceSettings(res);
           break;

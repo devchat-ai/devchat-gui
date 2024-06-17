@@ -16,7 +16,6 @@
 
 - historyMessages // 页面的历史消息
 - contextDetail // 获取 appendContext 响应之后，发送次请求获取文件的内容
-- addContext // 点击 context 菜单（比如 git diff）之后发送到消息
 - code_file_apply // 代码应用到 editor，替换 current file
 - code_apply // 代码应用到 editor 光标位置
 - sendMessage // 发送消息
