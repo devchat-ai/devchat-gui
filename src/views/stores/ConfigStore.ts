@@ -176,6 +176,7 @@ export const ConfigStore = types
                   }
               }
               modelConfig["provider"] = provider;
+              modelConfig["stream"] = true;
               localConfig["models"][model.model || model.id] = modelConfig;
           });
       
