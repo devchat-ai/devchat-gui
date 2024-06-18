@@ -63,7 +63,6 @@ const InputMessage = observer((props: any) => {
     menuOpend,
     menuType,
     currentMenuIndex,
-    contextMenus,
     commandMenus
   } = input;
   const { generating } = chat;
@@ -109,14 +108,6 @@ const InputMessage = observer((props: any) => {
       input.clearContexts();
       // event.preventDefault();
     }
-  };
-
-  const handleContextClick = (contextName: string) => {
-    // Process and send the message to the extension
-    messageUtil.sendMessage({
-      command: "addContext",
-      selected: contextName,
-    });
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {

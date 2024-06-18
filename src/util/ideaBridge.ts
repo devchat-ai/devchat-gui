@@ -28,27 +28,6 @@ const JStoIdea = {
     };
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
-  getModel: () => {
-    const params = {
-      action: "listModels/request",
-      metadata: {
-        callback: "IdeaToJSMessage",
-      },
-      payload: {},
-    };
-    window.JSJavaBridge.callJava(JSON.stringify(params));
-  },
-  getContextList: () => {
-    const params = {
-      action: "listContexts/request",
-      metadata: {
-        callback: "IdeaToJSMessage",
-      },
-      payload: {},
-    };
-
-    window.JSJavaBridge.callJava(JSON.stringify(params));
-  },
   getCommandList: () => {
     const params = {
       action: "listCommands/request",
@@ -112,45 +91,6 @@ const JStoIdea = {
     };
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
-  },
-
-  etcCommand: (command: any) => {
-    /**
-     * 有四种命令
-     * 1. workbench.action.openSettings
-     * 2. AskCodeIndexStart
-     * 3. AccessKey.OpenAI
-     * 4. DevChat.AccessKey.DevChat
-     */
-    const content = Array.isArray(command.content) ? command.content[0] : "";
-    switch (content) {
-      case "workbench.action.openSettings":
-        // 打开设置
-        const params = {
-          action: "showSettingDialog/request",
-          metadata: {
-            callback: "IdeaToJSMessage",
-          },
-          payload: {},
-        };
-
-        window.JSJavaBridge.callJava(JSON.stringify(params));
-        break;
-      case "DevChat.AccessKey.DevChat":
-        // 设置key
-        const setkeyparams = {
-          action: "showSettingDialog/request",
-          metadata: {
-            callback: "IdeaToJSMessage",
-          },
-          payload: {},
-        };
-
-        window.JSJavaBridge.callJava(JSON.stringify(setkeyparams));
-        break;
-      default:
-        break;
-    }
   },
   getTopicList: () => {
     // 获取 topic 列表
@@ -377,17 +317,8 @@ class IdeaBridge {
         case "sendMessage/response":
           this.resviceMessage(res);
           break;
-        case "listModels/response":
-          this.resviceModelList(res);
-          break;
-        case "listContexts/response":
-          this.resviceContextList(res);
-          break;
         case "listCommands/response":
           this.resviceCommandList(res);
-          break;
-        case "addContext/notify":
-          this.resviesContext(res);
           break;
         case "getSetting/response":
           this.resviceSettings(res);
@@ -520,27 +451,6 @@ class IdeaBridge {
     });
   }
 
-  resviceContextList(res) {
-    // 接受到的上下文列表
-    const result = res.payload.contexts.map((item) => ({
-      name: item.command,
-      pattern: item.command,
-      description: item.description,
-    }));
-
-    // this.handle.regContextList({ result });
-    this.executeHandlers("regContextList", {
-      result,
-    });
-  }
-
-  resviceModelList(response: any) {
-    // 接受到模型列表
-    this.executeHandlers("regModelList", {
-      result: response.payload.models,
-    });
-  }
-
   resviceMessage(response: any) {
     // 接受到消息
     if (response.metadata?.isFinalChunk) {
@@ -608,13 +518,6 @@ class IdeaBridge {
       case "regeneration":
         JStoIdea.regeneration();
         break;
-      // 请求 model 列表
-      case "regModelList":
-        JStoIdea.getModel();
-        break;
-      case "regContextList":
-        JStoIdea.getContextList();
-        break;
       case "regCommandList":
         JStoIdea.getCommandList();
         break;
@@ -626,9 +529,6 @@ class IdeaBridge {
         break;
       case "code_new_file":
         JStoIdea.newSrcFile(message.language, message.content);
-        break;
-      case "doCommand":
-        JStoIdea.etcCommand(message);
         break;
       case "show_diff":
         JStoIdea.viewDiff(message.content);

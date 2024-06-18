@@ -9,22 +9,6 @@ export interface Item {
   recommend: number;
 }
 
-const regContextMenus = async () => {
-  return new Promise<Item[]>((resolve, reject) => {
-    try {
-      messageUtil.sendMessage({ command: "regContextList" });
-      messageUtil.registerHandler(
-        "regContextList",
-        (message: { result: Item[] }) => {
-          resolve(message.result);
-        }
-      );
-    } catch (e) {
-      reject(e);
-    }
-  });
-};
-
 export const ChatContext = types.model({
   file: types.maybe(types.string),
   path: types.maybe(types.string),
@@ -40,13 +24,6 @@ export const MenuItem = types.model({
   recommend: types.number,
 });
 
-export const ContextMenuItem = types.model({
-  icon: types.maybe(types.string),
-  name: types.string,
-  pattern: types.maybe(types.string),
-  description: types.string,
-});
-
 export const InputStore = types
   .model("Input", {
     value: "",
@@ -54,8 +31,7 @@ export const InputStore = types
     menuType: "contexts",
     menuOpend: false,
     currentMenuIndex: 0,
-    commandMenus: types.array(MenuItem),
-    contextMenus: types.array(ContextMenuItem)
+    commandMenus: types.array(MenuItem)
   })
   .actions((self) => ({
     setValue(value: string) {
@@ -87,12 +63,6 @@ export const InputStore = types
     setCurrentMenuIndex(index: number) {
       self.currentMenuIndex = index;
     },
-    fetchContextMenus: flow(function* () {
-      try {
-        const items = yield regContextMenus();
-        self.contextMenus.push(...items);
-      } catch (error) {}
-    }),
     fetchCommandMenus: (items: Item[]) => {
       self.commandMenus.clear();
       self.commandMenus.push(...items);

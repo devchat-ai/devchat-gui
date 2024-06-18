@@ -54,12 +54,6 @@ const chatPanel = observer(() => {
       behavior: "smooth",
     });
 
-  const getFeatureToggles = () => {
-    messageUtil.sendMessage({
-      command: "featureToggles",
-    });
-  };
-
   const timer = useTimeout(() => {
     if (chat.isBottom) {
       scrollToBottom();
@@ -115,8 +109,6 @@ const chatPanel = observer(() => {
           });
         });
         chat.fetchHistoryMessages();
-        input.fetchContextMenus().then();
-        getFeatureToggles();
       }
     );
     messageUtil.registerHandler(
@@ -148,12 +140,6 @@ const chatPanel = observer(() => {
         // Clear the input field
         input.setValue("");
         input.clearContexts();
-      }
-    );
-    messageUtil.registerHandler(
-      "featureToggles",
-      (message: { features: object }) => {
-        chat.updateFeatures(message.features);
       }
     );
     messageUtil.registerHandler("codeDiffApply", (_: any) => {

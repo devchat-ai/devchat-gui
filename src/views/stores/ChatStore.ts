@@ -99,7 +99,6 @@ export const ChatStore = types
     chatPanelWidth: 300,
     disabled: false,
     rechargeSite: "https://web.devchat.ai/pricing/",
-    features: types.optional(types.frozen(), {}),
     key: types.optional(types.string, ""),
   })
   .actions((self) => {
@@ -354,9 +353,6 @@ Thinking...
       changeChatModel: (chatModel: string) => {
         const rootStore = getParent<RootInstance>(self);
         rootStore.config.setConfigValue("default_model", chatModel);
-      },
-      updateFeatures: (features: any) => {
-        self.features = features;
       },
       startSystemMessage: () => {
         self.generating = true;
