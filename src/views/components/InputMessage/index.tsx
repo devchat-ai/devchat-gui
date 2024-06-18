@@ -173,7 +173,8 @@ const InputMessage = observer((props: any) => {
     messageUtil.registerHandler(
       "chatWithDevChat",
       (message: { command: string; message: string }) => {
-        chat.commonMessage(message.message, []);
+        input.setValue(message.message);
+        handleSendClick(event as any);
       }
     );
     messageUtil.registerHandler(
