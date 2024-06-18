@@ -11,6 +11,8 @@ import {
 import { useListState, useSetState } from "@mantine/hooks";
 import { useMst } from "@/views/stores/RootStore";
 import yaml from "js-yaml";
+import IDEServiceUtil from "@/util/IDEServiceUtil";
+import APIUtil from "@/util/APIUtil";
 
 const useStyles = createStyles((theme) => ({
   container: {
@@ -75,6 +77,7 @@ const ChatMark = ({
   const values = value ? yaml.load(value) : {};
   const [disabled, setDisabled] = useState(messageDone || !!value);
   const [checkboxArray, setcheckboxArray] = useState<any>([]);
+  const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
 
   const handleSubmit = () => {
     let formData = {};
@@ -91,12 +94,24 @@ const ChatMark = ({
       formData[widget.id] = widget.value;
     });
     chat.userInput(formData);
+
+    IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createEvent({
+      name: "submit",
+      value: JSON.stringify(formData),
+      ide: platform,
+      language: info?.extension || info?.path?.split('.').pop()
+    }))
   };
 
   const handleCancel = () => {
     chat.userInput({
       form: "canceled",
     });
+    IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createEvent({
+      name: "cancel",
+      ide: platform,
+      language: info?.extension || info?.path?.split('.').pop()
+    }))
   };
 
   const handleButtonClick = ({ event, index }) => {
