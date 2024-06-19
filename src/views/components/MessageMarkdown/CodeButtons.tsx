@@ -14,23 +14,6 @@ const IconButton = ({ label, color = 'gray', onClick, children }) => (
     </Tooltip>
 );
 
-const CommitButton = ({ code }) => {
-    const [commited, setCommited] = useState(false);
-    const handleClick = () => {
-        messageUtil.sendMessage({
-            command: 'doCommit',
-            content: code
-        });
-        setCommited(true);
-        setTimeout(() => { setCommited(false); }, 2000);
-    };
-    return (
-        <IconButton label={commited ? 'Committing' : 'Commit'} color={commited ? 'teal' : 'gray'} onClick={handleClick}>
-            {commited ? <IconCheck size="1rem" /> : <IconGitCommit size="1rem" />}
-        </IconButton>
-    );
-};
-
 const CodeCopyButton = ({ code, language, platform }) => {
     return (
         <CopyButton value={code} timeout={2000}>
@@ -123,16 +106,12 @@ const CodeButtons = ({ platform, language, code }) => (
         style={{ position: 'absolute', top: 8, right: 10 }}
     >
         <CodeCopyButton code={code} language={language} platform={platform} />
-        {language && language === 'commitmsg'
-            ? <CommitButton code={code} />
-            : (
-                <>
-                    <DiffButton code={code} language={language} platform={platform} />
-                    <CodeApplyButton code={code} language={language} platform={platform} />
-                    <FileApplyButton code={code} language={language} platform={platform} />
-                    <NewFileButton code={code} language={language} platform={platform} />
-                </>
-            )}
+        <>
+            <DiffButton code={code} language={language} platform={platform} />
+            <CodeApplyButton code={code} language={language} platform={platform} />
+            <FileApplyButton code={code} language={language} platform={platform} />
+            <NewFileButton code={code} language={language} platform={platform} />
+        </>
     </Flex>
 );
 

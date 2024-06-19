@@ -1,6 +1,5 @@
 ## sendMessage
 
-- doCommit // 提交代码
 - updateSetting // 更新设置（目前只有更换模型）
 - getSetting // 获取默认模型
 - deleteChatMessage // 删除最近一条消息
