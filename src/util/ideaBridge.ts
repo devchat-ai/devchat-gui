@@ -104,18 +104,6 @@ const JStoIdea = {
 
     window.JSJavaBridge.callJava(JSON.stringify(params));
   },
-  commit: (code: string) => {
-    const params = {
-      action: "commitCode/request",
-      metadata: {
-        callback: "IdeaToJSMessage",
-      },
-      payload: {
-        message: code,
-      },
-    };
-    window.JSJavaBridge.callJava(JSON.stringify(params));
-  },
   getTopicDetail: (topicHash: string) => {
     const params = {
       action: "loadConversations/request",
@@ -319,6 +307,9 @@ class IdeaBridge {
           break;
         case "listCommands/response":
           this.resviceCommandList(res);
+          break;
+        case "addContext/notify":
+          this.resviesContext(res);
           break;
         case "getSetting/response":
           this.resviceSettings(res);
@@ -532,9 +523,6 @@ class IdeaBridge {
         break;
       case "show_diff":
         JStoIdea.viewDiff(message.content);
-        break;
-      case "doCommit":
-        JStoIdea.commit(message.content);
         break;
       case "getTopics":
         JStoIdea.getTopicList();
