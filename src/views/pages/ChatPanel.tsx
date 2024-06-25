@@ -143,19 +143,29 @@ const chatPanel = observer(() => {
       }
     );
     messageUtil.registerHandler("codeDiffApply", (_: any) => {
-      const e = 'code_diff_apply'
+      const e = 'code_diff_apply';
       const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
       IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createEvent({
         name: e,
         value: e,
         ide: platform,
         language: info?.extension || info?.path?.split('.').pop()
-      }))
-    })
+      }));
+    });
+    messageUtil.registerHandler("logEvent", (event: { name: string, value: string }) => {
+      const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
+      IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createEvent({
+        name: event.name,
+        value: event.value,
+        ide: platform,
+        language: info?.extension || info?.path?.split('.').pop()
+      }));
+      console.log("logEvent:", event);
+    });
 
     messageUtil.registerHandler("getIDEServicePort", (data: any) => {
-      IDEServiceUtil.config(data.result)
-    })
+      IDEServiceUtil.config(data.result);
+    });
 
     messageUtil.sendMessage({ command: "getIDEServicePort" });
     messageUtil.sendMessage({ command: "regCommandList" });

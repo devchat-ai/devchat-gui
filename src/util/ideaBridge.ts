@@ -293,6 +293,9 @@ class IdeaBridge {
         case "codeDiffApply/response":
           this.resviceCodeDiffApply(res);
           break;
+        case "logEvent/response":
+          this.resviceLogEvent(res);
+          break;
         case "sendUserMessage/response":
           this.resviceSendUserMessage(res);
           break;
@@ -343,6 +346,10 @@ class IdeaBridge {
 
   resviceCodeDiffApply(res) {
     this.executeHandlers("codeDiffApply", res.payload);
+  }
+
+  resviceLogEvent(res) {
+    this.executeHandlers("logEvent", res.payload);
   }
 
   resviceIDEServicePort(res) {
