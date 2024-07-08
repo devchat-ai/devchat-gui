@@ -56,7 +56,7 @@ const EditApplyButton = ({ code, language, platform }) => {
         APIUtil.createEvent({name: "edit_apply", value: "edit_apply", language: language, ide: platform});
     };
     return (
-        <IconButton label='Edit and Apply' onClick={handleClick}>
+        <IconButton label='Apply Code' onClick={handleClick}>
             <IconEdit size="1.125rem" />
         </IconButton>
     );
