@@ -1,10 +1,11 @@
 import { Tooltip, ActionIcon, CopyButton, Flex } from "@mantine/core";
-import { IconCheck, IconGitCommit, IconFileDiff, IconColumnInsertRight, IconReplace, IconCopy,IconFile } from "@tabler/icons-react";
+import { IconCheck, IconGitCommit, IconFileDiff, IconEdit, IconColumnInsertRight, IconReplace, IconCopy,IconFile } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { useMst } from "@/views/stores/RootStore";
 
 import messageUtil from '@/util/MessageUtil';
 import APIUtil from "@/util/APIUtil";
+import IDEServiceUtil from "@/util/IDEServiceUtil";
 
 const IconButton = ({ label, color = 'gray', onClick, children }) => (
     <Tooltip sx={{ padding: '3px', fontSize: 'var(--vscode-editor-font-size)' }} label={label} withArrow position="left" color="gray">
@@ -36,11 +37,27 @@ const DiffButton = ({ code, language, platform }) => {
             command: e,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e, language: language, ide: platform})
+        APIUtil.createEvent({name: e, value: e, language: language, ide: platform});
     };
     return (
         <IconButton label='View Diff' onClick={handleClick}>
             <IconFileDiff size="1.125rem" />
+        </IconButton>
+    );
+};
+
+const EditApplyButton = ({ code, language, platform }) => {
+    const handleClick = () => {
+        IDEServiceUtil.callService("diff_apply", {
+            filepath: "",
+            content: code,
+            autoedit: true
+        });
+        APIUtil.createEvent({name: "edit_apply", value: "edit_apply", language: language, ide: platform});
+    };
+    return (
+        <IconButton label='Apply Code' onClick={handleClick}>
+            <IconEdit size="1.125rem" />
         </IconButton>
     );
 };
@@ -52,7 +69,7 @@ const CodeApplyButton = ({ code, language, platform }) => {
             command: e,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e, language: language, ide: platform})
+        APIUtil.createEvent({name: e, value: e, language: language, ide: platform});
     };
     return (
         <IconButton label='Insert Code' onClick={handleClick}>
@@ -68,7 +85,7 @@ const FileApplyButton = ({ code, language, platform }) => {
             command: e,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e, language: language, ide: platform})
+        APIUtil.createEvent({name: e, value: e, language: language, ide: platform});
     };
     return (
         <IconButton label='Replace File' onClick={handleClick}>
@@ -86,7 +103,7 @@ const NewFileButton = ({ code, language, platform }) => {
             language: language,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e, language: language, ide: platform})
+        APIUtil.createEvent({name: e, value: e, language: language, ide: platform});
     };
     return (
         <IconButton label='Create New File' onClick={handleClick}>
@@ -108,6 +125,7 @@ const CodeButtons = ({ platform, language, code }) => (
         <CodeCopyButton code={code} language={language} platform={platform} />
         <>
             <DiffButton code={code} language={language} platform={platform} />
+            <EditApplyButton code={code} language={language} platform={platform} />
             <CodeApplyButton code={code} language={language} platform={platform} />
             <FileApplyButton code={code} language={language} platform={platform} />
             <NewFileButton code={code} language={language} platform={platform} />
