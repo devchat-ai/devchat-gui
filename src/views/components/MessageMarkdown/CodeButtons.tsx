@@ -125,7 +125,9 @@ const CodeButtons = ({ platform, language, code }) => (
         <CodeCopyButton code={code} language={language} platform={platform} />
         <>
             <DiffButton code={code} language={language} platform={platform} />
-            <EditApplyButton code={code} language={language} platform={platform} />
+            {language === 'edits' && (
+                <EditApplyButton code={code} language={language} platform={platform} />
+            )}
             <CodeApplyButton code={code} language={language} platform={platform} />
             <FileApplyButton code={code} language={language} platform={platform} />
             <NewFileButton code={code} language={language} platform={platform} />
