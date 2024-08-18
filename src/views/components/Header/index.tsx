@@ -15,6 +15,7 @@ import SvgAvatarDevChat from "../MessageAvatar/avatar_devchat.svg";
 import messageUtil from "@/util/MessageUtil";
 import { useRouter } from "@/views/router";
 import { useMst } from "@/views/stores/RootStore";
+import APIUtil from "@/util/APIUtil";
 
 const useStyles = createStyles((theme) => ({
   logoName: {
@@ -27,6 +28,7 @@ export default function Head() {
   const { classes } = useStyles();
   const { i18n } = useTranslation();
   const { config } = useMst();
+  const [devchatAvatarSrc, setDevchatAvatarSrc] = React.useState("unknown")
 
   useEffect(() => {
     const lang = config.getLanguage();
@@ -35,6 +37,7 @@ export default function Head() {
     } else {
       i18n.changeLanguage("zh");
     }
+    APIUtil.getDevchatAvatarUrl().then(url => setDevchatAvatarSrc(url))
   }, []);
 
   const openSetting = () => {
@@ -72,7 +75,7 @@ export default function Head() {
             height: 40,
           }}
         >
-          <Avatar color="indigo" size={25} radius="xl" src={SvgAvatarDevChat} />
+          <Avatar color="indigo" size={25} radius="xl" src={devchatAvatarSrc} onError={()=>setDevchatAvatarSrc(SvgAvatarDevChat)} />
           <Text weight="bold" className={classes.logoName}>
             DevChat
           </Text>
