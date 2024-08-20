@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Text,
   Flex,
@@ -23,7 +23,6 @@ import { useTranslation } from "react-i18next";
 import { useMst } from "@/views/stores/RootStore";
 import { IMessage } from "@/views/stores/ChatStore";
 import { IChatContext } from "@/views/stores/InputStore";
-import APIUtil from "@/util/APIUtil";
 
 interface IProps {
   item?: IMessage;
@@ -47,11 +46,6 @@ const MessageAvatar = observer((props: IProps) => {
   const { input, chat } = useMst();
   const [done, setDone] = React.useState(false);
   const { t } = useTranslation();
-  const [devchatAvatarSrc, setDevchatAvatarSrc] = React.useState("")
-
-  useEffect(() => {
-    APIUtil.getDevchatAvatarUrl().then(url => setDevchatAvatarSrc(url))
-  }, [])
   return (
     <Flex
       m="10px 0 10px 0"
@@ -62,7 +56,7 @@ const MessageAvatar = observer((props: IProps) => {
       wrap="wrap"
     >
       {avatarType === "bot" ? (
-        <Avatar color="indigo" size={25} radius="xl" src={devchatAvatarSrc} onError={()=>setDevchatAvatarSrc(SvgAvatarDevChat)} />
+        <Avatar color="indigo" size={25} radius="xl" src={SvgAvatarDevChat} />
       ) : (
         <Avatar color="cyan" size={25} radius="xl" src={SvgAvatarUser} />
       )}
