@@ -7,7 +7,6 @@ class APIUtil {
   private accessKey: string | undefined;
   private webappUrl: string | undefined;
   private currentMessageId: string | undefined;
-  private devchatAvatarUrl: string | undefined;
 
 
   constructor() {
@@ -20,20 +19,6 @@ class APIUtil {
     }
     return APIUtil.instance;
   }
-
-  config(baseUrl: string, accessKey: string) {
-    this.baseUrl = baseUrl;
-    this.accessKey = accessKey;
-    this.fetchWebappUrl().then(url => {
-      this.webappUrl = url;
-      this.fetchDevchatAvatarUrl().then(url => {
-        this.devchatAvatarUrl = url;
-      })
-    }).catch(err => {
-      console.error(err);
-    })
-  }
-
   async fetchWebappUrl() {
     try {
       const res = await axios.get(
@@ -61,6 +46,16 @@ class APIUtil {
     } catch (err) {
       throw(`Error fetch webapp url: ${err}`)
     }
+  }
+
+  config(baseUrl: string, accessKey: string) {
+    this.baseUrl = baseUrl;
+    this.accessKey = accessKey;
+    this.fetchWebappUrl().then(url => {
+      this.webappUrl = url;
+    }).catch(err => {
+      console.error(err);
+    })
   }
 
   async createMessage(message: object) {
@@ -111,25 +106,6 @@ class APIUtil {
       return null;
     }
   }
-
-  async fetchDevchatAvatarUrl() {
-    try {
-      if (!this.webappUrl) this.webappUrl = await this.fetchWebappUrl();
-      const res = await axios.get(
-        `${this.webappUrl}/api/v1/plugin/icons/filename/gui`,
-        {headers: { Authorization: `Bearer ${this.accessKey}` }}
-      )
-      return `${this.webappUrl}/api/v1/plugin/icons/${res?.data?.filename}`
-    } catch(err) {
-      console.error(err);
-      return "unknown";
-    }
-  }
-  async getDevchatAvatarUrl() {
-    if (!this.devchatAvatarUrl) this.devchatAvatarUrl = await this.fetchDevchatAvatarUrl();
-    return this.devchatAvatarUrl;
-  }
-
 }
 
 
