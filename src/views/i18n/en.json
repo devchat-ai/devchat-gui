@@ -1,1 +1,7 @@
-{}
+{
+    "config.api_base": "API Base of {{assistantName}}",
+    "config.custom_api_base": "Custom API Base of {{assistantName}}",
+    "config.access_key": "Access Key of {{assistantName}}",
+    "devchat.help_question": "How do I use {{assistantName}}?",
+    "devchat.input_placeholder": "Ask {{assistantName}} a question or type ‘/’ for workflow"
+}

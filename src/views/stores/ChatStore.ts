@@ -6,6 +6,7 @@ import { RootInstance } from "./RootStore";
 import i18next from "i18next";
 import APIUtil from "@/util/APIUtil";
 import IDEServiceUtil from "@/util/IDEServiceUtil";
+import { ASSISTANT_DISPLAY_NAME } from "@/util/constants";
 
 interface Context {
   content: string;
@@ -196,7 +197,7 @@ export const ChatStore = types
 
     const helpMessage = (originalMessage = false) => {
       let helps = `
-Do you want to write some code or have a question about the project? Simply right-click on your chosen files or code snippets and add them to DevChat. Feel free to ask me anything or let me help you with coding.
+Do you want to write some code or have a question about the project? Simply right-click on your chosen files or code snippets and add them to ${ASSISTANT_DISPLAY_NAME}. Feel free to ask me anything or let me help you with coding.
     
 To see a list of workflows you can run in the context, just type "/". Happy prompting!
 
@@ -205,17 +206,17 @@ To get started, here are some of the things that I can do for you:
 ${helpWorkflowCommands()}`;
 
       const setKeyMessage = `
-Your DevChat Access Key is not detected in the current settings. Please set your Access Key below, and we'll have everything set up for you in no time.
+Your ${ASSISTANT_DISPLAY_NAME} Access Key is not detected in the current settings. Please set your Access Key below, and we'll have everything set up for you in no time.
 
 <button value="get_devchat_key" ${
         process.env.platform === "vscode"
           ? 'href="https://web.devchat.ai" component="a"'
           : ""
-      }>Get DevChat key</button>
-<button value="setting_devchat_key">Set DevChat key</button>
+      }>Get ${ASSISTANT_DISPLAY_NAME} key</button>
+<button value="setting_devchat_key">Set ${ASSISTANT_DISPLAY_NAME} key</button>
 `;
 
-      const setKeyUser = `Is DevChat Access Key ready?`;
+      const setKeyUser = `Is ${ASSISTANT_DISPLAY_NAME} Access Key ready?`;
 
       const accessKey = getParent<RootInstance>(self).config.getUserKey();
 
@@ -236,7 +237,7 @@ Your DevChat Access Key is not detected in the current settings. Please set your
         self.messages.push(
           Message.create({
             type: "user",
-            message: originalMessage ? "How do I use DevChat?" : "/help",
+            message: originalMessage ? i18next.t("devchat.help_question", {assistantName: i18next.t(ASSISTANT_DISPLAY_NAME)}) : "/help",
           })
         );
         self.messages.push(

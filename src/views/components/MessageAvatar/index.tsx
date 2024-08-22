@@ -23,6 +23,7 @@ import { useTranslation } from "react-i18next";
 import { useMst } from "@/views/stores/RootStore";
 import { IMessage } from "@/views/stores/ChatStore";
 import { IChatContext } from "@/views/stores/InputStore";
+import { ASSISTANT_DISPLAY_NAME } from "@/util/constants";
 
 interface IProps {
   item?: IMessage;
@@ -60,7 +61,7 @@ const MessageAvatar = observer((props: IProps) => {
       ) : (
         <Avatar color="cyan" size={25} radius="xl" src={SvgAvatarUser} />
       )}
-      <Text weight="bold">{avatarType === "bot" ? "DevChat" : t("User")}</Text>
+      <Text weight="bold">{avatarType === "bot" ? t(ASSISTANT_DISPLAY_NAME) : t("User")}</Text>
       {avatarType === "user" ? (
         <Flex
           gap="xs"

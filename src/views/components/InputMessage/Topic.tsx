@@ -17,6 +17,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import messageUtil from "@/util/MessageUtil";
 import dayjs from "dayjs";
+import { ASSISTANT_DISPLAY_NAME } from "@/util/constants";
 
 export default function Topic({ styleName, disabled }) {
   const [drawerOpened, { open: openDrawer, close: closeDrawer }] =
@@ -88,7 +89,7 @@ export default function Topic({ styleName, disabled }) {
         position="bottom"
         title={
           <Flex justify="space-between">
-            <Text>DevChat Topics</Text>
+            <Text>{ASSISTANT_DISPLAY_NAME} Topics</Text>
             <Flex>
               <ActionIcon onClick={refreshTopicList}>
                 <IconRefresh size="1rem" />
