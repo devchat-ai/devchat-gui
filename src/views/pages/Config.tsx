@@ -160,6 +160,11 @@ const Config = observer(() => {
     }, 1000);
   };
 
+  const handleSync = () => {
+    // 调用 Local Service 更新工作流，更新、重载命令列表
+    MessageUtil.handleMessage({ command: "reloadConfig" });
+  };
+
   const changeModelDetail = (key: string, value: number | string) => {
     const newModel = { ...form.values.models[current], [key]: value };
     form.setFieldValue("models", {
@@ -451,6 +456,10 @@ const Config = observer(() => {
             />
           </>
           )}
+
+          <Button onClick={handleSync} >
+            {t("Sync Cloud Configs && Reload Workflows")}
+          </Button>
         </Stack>
         <Group
           grow
