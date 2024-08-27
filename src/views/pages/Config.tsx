@@ -161,6 +161,8 @@ const Config = observer(() => {
   };
 
   const handleSync = () => {
+    config.updateSettle(false);
+    startLoading();
     // 调用 Local Service 更新工作流，更新、重载命令列表
     MessageUtil.handleMessage({ command: "reloadConfig" });
   };
@@ -456,10 +458,6 @@ const Config = observer(() => {
             />
           </>
           )}
-
-          <Button onClick={handleSync} >
-            {t("Sync Cloud Configs && Reload Workflows")}
-          </Button>
         </Stack>
         <Group
           grow
@@ -473,9 +471,13 @@ const Config = observer(() => {
             background: "var(--vscode-sideBar-background)",
           }}
         >
-          <Button type="submit" disabled={disabledSubmit}>
-            {t("Save")}
+          {disabledSubmit
+          ? <Button onClick={handleSync} >
+            {t("Reload")}
           </Button>
+          : <Button type="submit" disabled={disabledSubmit}>
+            {t("Save")}
+          </Button>}
           <Button
             variant="outline"
             color="gray"
