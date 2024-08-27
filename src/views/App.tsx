@@ -54,14 +54,17 @@ export default function App() {
     const checkConfigs = () => {
         if (configCount === 3) {
             compare_func(configs);
-            setReady(true); // 假设setReady是一个函数，用于设置应用状态为准备就绪
+            // 假设setReady是一个函数，用于设置应用状态为准备就绪
+            setReady(true); 
+            // 调用 Local Service 更新工作流，更新、重载命令列表
+            MessageUtil.sendMessage({ command: "updateWorkflowList"});
         }
     };
 
     // 注册处理函数
     MessageUtil.registerHandler("readConfig", (data: { value: any }) => {
       config.setConfig(data.value);
-      APIUtil.config(config.getAPIBase(), config.getUserKey())
+      APIUtil.config(config.getAPIBase(), config.getUserKey());
       setReady(true);
       config.fetchServerConfig();
       handleConfig("user_config", data);

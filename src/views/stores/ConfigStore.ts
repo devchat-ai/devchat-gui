@@ -290,9 +290,6 @@ export const ConfigStore = types
             console.log("fetchLLMs error: Failed to fetch server config");
             MessageUtil.handleMessage({ command: "readServerConfig", value: undefined });
           }
-          // 调用 Local Service 更新工作流，更新、重载命令列表
-          MessageUtil.sendMessage({ command: "updateWorkflowList"});
-          
         } catch (e) {
           console.log("fetchLLMs error:", e);
           MessageUtil.handleMessage({ command: "readServerConfig", value: undefined });
