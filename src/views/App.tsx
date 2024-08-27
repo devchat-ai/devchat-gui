@@ -56,8 +56,8 @@ export default function App() {
             compare_func(configs);
             // 假设setReady是一个函数，用于设置应用状态为准备就绪
             setReady(true); 
-            // 调用 Local Service 更新工作流，更新、重载命令列表
-            MessageUtil.sendMessage({ command: "updateWorkflowList"});
+            // update workflow list
+            config.updateWorkflowList();
         }
     };
 
