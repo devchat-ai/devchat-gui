@@ -25,6 +25,7 @@ import cloneDeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
 import { useDisclosure } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
+import { ASSISTANT_DISPLAY_NAME } from "@/util/constants";
 
 const commonInputStyle = {
   label: {
@@ -218,7 +219,7 @@ const Config = observer(() => {
       >
         <Stack>
           <Tabs
-            defaultValue="Devchat"
+            defaultValue={ASSISTANT_DISPLAY_NAME}
             variant="outline"
             sx={{
               ".mantine-UnstyledButton-root::before": {
@@ -228,12 +229,12 @@ const Config = observer(() => {
           >
             <Tabs.List>
               <Tabs.Tab
-                value="Devchat"
+                value={ASSISTANT_DISPLAY_NAME}
                 sx={{
                   color: "var(--vscode-editor-foreground)",
                 }}
               >
-                Devchat
+                {ASSISTANT_DISPLAY_NAME}
               </Tabs.Tab>
               <Tabs.Tab
                 value="OpenAI"
@@ -245,7 +246,7 @@ const Config = observer(() => {
               </Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel
-              value="Devchat"
+              value={ASSISTANT_DISPLAY_NAME}
               pt="xs"
               p={10}
               sx={{
@@ -262,7 +263,7 @@ const Config = observer(() => {
                     ...selectStyle,
                   }}
                   placeholder="https://xxxx.xx"
-                  label={t("API Base of Devchat")}
+                  label={t("config.api_base", {assistantName: t(ASSISTANT_DISPLAY_NAME)})}
                   withAsterisk
                   description={t("the base URL for the API")}
                   {...form.getInputProps("providers.devchat.api_base")}
@@ -270,7 +271,7 @@ const Config = observer(() => {
                 {form.values.providers?.devchat?.api_base === "custom" && (
                   <TextInput
                     styles={commonInputStyle}
-                    label={t("Custom API Base of Devchat")}
+                    label={t("config.custom_api_base", {assistantName: t(ASSISTANT_DISPLAY_NAME)})}
                     withAsterisk
                     description={t("the base URL for the API")}
                     {...form.getInputProps(
@@ -288,7 +289,7 @@ const Config = observer(() => {
                     },
                   }}
                   withAsterisk
-                  label={t("Access Key of Devchat")}
+                  label={t("config.access_key", {assistantName: t(ASSISTANT_DISPLAY_NAME)})}
                   placeholder={t("Your Access Key")}
                   description={t("please keep this secret")}
                   {...form.getInputProps("providers.devchat.api_key")}
@@ -376,7 +377,7 @@ const Config = observer(() => {
                   ...selectStyle,
                 }}
                 data={[
-                  { value: "devchat", label: "Devchat" },
+                  { value: "devchat", label: ASSISTANT_DISPLAY_NAME },
                   { value: "openai", label: "OpenAI" },
                 ]}
                 value={form.values?.models[current]?.provider}

@@ -15,6 +15,7 @@ import SvgAvatarDevChat from "../MessageAvatar/avatar_devchat.svg";
 import messageUtil from "@/util/MessageUtil";
 import { useRouter } from "@/views/router";
 import { useMst } from "@/views/stores/RootStore";
+import { ASSISTANT_DISPLAY_NAME } from "@/util/constants";
 
 const useStyles = createStyles((theme) => ({
   logoName: {
@@ -25,7 +26,7 @@ const useStyles = createStyles((theme) => ({
 export default function Head() {
   const router = useRouter();
   const { classes } = useStyles();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { config } = useMst();
 
   useEffect(() => {
@@ -74,7 +75,7 @@ export default function Head() {
         >
           <Avatar color="indigo" size={25} radius="xl" src={SvgAvatarDevChat} />
           <Text weight="bold" className={classes.logoName}>
-            DevChat
+            {t(ASSISTANT_DISPLAY_NAME)}
           </Text>
         </Flex>
         <Flex align="center" gap="xs" sx={{ paddingRight: 10 }}>

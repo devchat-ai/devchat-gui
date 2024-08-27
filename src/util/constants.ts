@@ -1,0 +1,2 @@
+export const ASSISTANT_DISPLAY_NAME: string = process.env.REACT_APP_ASSISTANT_DISPLAY_NAME_EN || "DevChat"
+export const ASSISTANT_DISPLAY_NAME_ZH: string = process.env.REACT_APP_ASSISTANT_DISPLAY_NAME_ZH || "DevChat"

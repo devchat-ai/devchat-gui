@@ -32,6 +32,7 @@ import { useMst } from "@/views/stores/RootStore";
 import { ChatContext } from "@/views/stores/InputStore";
 import { Trans, useTranslation } from "react-i18next";
 import getModelShowName from "@/util/getModelShowName";
+import { ASSISTANT_DISPLAY_NAME } from "@/util/constants";
 
 const useStyles = createStyles(() => ({
   actionIcon: {
@@ -394,7 +395,7 @@ const InputMessage = observer((props: any) => {
           opened={drawerOpened}
           onClose={closeDrawer}
           position="bottom"
-          title="DevChat Contexts"
+          title={`${ASSISTANT_DISPLAY_NAME} Contexts`}
           overlayProps={{ opacity: 0.5, blur: 4 }}
           closeButtonProps={{ children: <IconChevronDown size="1rem" /> }}
           styles={{
@@ -439,7 +440,7 @@ const InputMessage = observer((props: any) => {
               marginTop: 5,
               marginBottom: 5,
             }}
-            placeholder={t("Ask DevChat a question or type ‘/’ for workflow")}
+            placeholder={t("devchat.input_placeholder", {assistantName: t(ASSISTANT_DISPLAY_NAME)})}
             styles={{
               rightSection: {
                 alignItems: "flex-end",

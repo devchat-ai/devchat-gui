@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useRouter } from "@/views/router";
 import remarkGfm from "remark-gfm";
 import APIUtil from "@/util/APIUtil";
+import { ASSISTANT_DISPLAY_NAME } from "@/util/constants";
 
 (typeof global !== "undefined" ? global : window).Prism = Prism;
 require("prismjs/components/prism-java");
@@ -168,7 +169,7 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
             "Do you want to write some code or have a question about the project? "
           )
         ) {
-          return t("devchat.help") + chat.helpWorkflowCommands();
+          return t("devchat.help", {assistantName: t(ASSISTANT_DISPLAY_NAME)}) + chat.helpWorkflowCommands();
         }
         if (
           children.includes(
@@ -176,23 +177,23 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
           )
         ) {
           if (process.env.platform === "vscode") {
-            return t("devchat.setkey_vscode");
+            return t("devchat.setkey_vscode", {assistantName: t(ASSISTANT_DISPLAY_NAME)});
           }
-          return t("devchat.setkey");
+          return t("devchat.setkey", {assistantName: t(ASSISTANT_DISPLAY_NAME)});
         }
         if (
           children.includes(
             "DevChat intelligently navigates your codebase using GPT-4."
           )
         ) {
-          return t("ask-code-explain");
+          return t("ask-code-explain", {assistantName: t(ASSISTANT_DISPLAY_NAME)});
         }
         if (
           children.includes(
             "Use this DevChat workflow to request code writing. Please input your specific requirement"
           )
         ) {
-          return t("code-explain");
+          return t("code-explain", {assistantName: t(ASSISTANT_DISPLAY_NAME)});
         }
         if (
           children.includes(
