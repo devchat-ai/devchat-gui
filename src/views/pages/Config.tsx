@@ -479,7 +479,7 @@ const Config = observer(() => {
             onClick={handleReload} 
             variant="outline"
             color="gray">
-            {t("Reload merico & custom workflows")}
+            {t("Reload built-in & custom workflows")}
           </Button>
         </Stack>
         <Group
