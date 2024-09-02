@@ -482,6 +482,7 @@ const Config = observer(() => {
             variant="outline"
             color="gray"
             onClick={() => {
+              form.reset();
               router.updateRoute("chat");
             }}
           >
