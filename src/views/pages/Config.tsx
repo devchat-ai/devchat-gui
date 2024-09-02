@@ -171,7 +171,11 @@ const Config = observer(() => {
     config.updateSettle(false);
     startLoading();
     // update workflow list
-    config.updateWorkflowList();
+    config.updateWorkflowList().then(() => {
+      config.updateSettle(true);
+      router.updateRoute("chat");
+      closeLoading();
+    });
   };
 
   const changeModelDetail = (key: string, value: number | string) => {
