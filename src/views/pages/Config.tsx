@@ -161,6 +161,24 @@ const Config = observer(() => {
     }, 1000);
   };
 
+  const handleSync = () => {
+    config.updateSettle(false);
+    startLoading();
+    // 调用 Local Service 更新工作流，更新、重载命令列表
+    MessageUtil.handleMessage({ command: "reloadConfig" });
+  };
+
+  const handleReload = () => {
+    config.updateSettle(false);
+    startLoading();
+    // update workflow list
+    config.updateWorkflowList().then(() => {
+      config.updateSettle(true);
+      router.updateRoute("chat");
+      closeLoading();
+    });
+  };
+
   const changeModelDetail = (key: string, value: number | string) => {
     const newModel = { ...form.values.models[current], [key]: value };
     form.setFieldValue("models", {
@@ -452,6 +470,18 @@ const Config = observer(() => {
             />
           </>
           )}
+          <Button 
+            onClick={handleSync} 
+            variant="outline"
+            color="gray">
+            {t("Sync settings from cloud")}
+          </Button>
+          <Button 
+            onClick={handleReload} 
+            variant="outline"
+            color="gray">
+            {t("Reload merico & custom workflows")}
+          </Button>
         </Stack>
         <Group
           grow
@@ -472,6 +502,7 @@ const Config = observer(() => {
             variant="outline"
             color="gray"
             onClick={() => {
+              form.reset();
               router.updateRoute("chat");
             }}
           >

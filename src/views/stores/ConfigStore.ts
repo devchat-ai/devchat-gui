@@ -1,4 +1,5 @@
 import MessageUtil from "@/util/MessageUtil";
+import IDEServiceUtil from "@/util/IDEServiceUtil";
 import { types, Instance, flow } from "mobx-state-tree";
 import modelsTemplate from "@/models";
 import cloneDeep from "lodash.clonedeep";
@@ -25,6 +26,22 @@ function deepCopy(obj) {
 
   return copy;
 }
+
+
+export const doUpdateWorkflowList = async () => {
+  try {
+    // Get local service port
+    const port = await IDEServiceUtil.callService("get_local_service_port", {});
+    // Call local service to update Workflows
+    await axios.post(`http://localhost:${port}/workflows/update`, {});
+    await axios.post(`http://localhost:${port}/workflows/custom_update`, {});
+    // Update command list
+    MessageUtil.sendMessage({ command: "regCommandList" });
+  } catch (e) {
+    console.error("do update workflow and command list error:", e);
+    return undefined;
+  }
+};
 
 export const fetchServerConfigUtil = async ({ modelsUrl, devchatApiKey }) => {
   try {
@@ -115,12 +132,13 @@ export const ConfigStore = types
         .filter((item) => item.category === "chat");
       self.modelsTemplate = models;
     };
+    const updateSettle = (value: boolean) => {
+      self.settle = value;
+    };
 
     return {
       setTemplate,
-      updateSettle: (value: boolean) => {
-        self.settle = value;
-      },
+      updateSettle,
       getDefaultModel: () => {
         return self.defaultModel;
       },
@@ -294,6 +312,9 @@ export const ConfigStore = types
           console.log("fetchLLMs error:", e);
           MessageUtil.handleMessage({ command: "readServerConfig", value: undefined });
         }
+      }),
+      updateWorkflowList: flow(function* (){
+        yield doUpdateWorkflowList();
       }),
       checkAndSetCompletionDefaults: (newConfig) => {
         const codeModels = self.modelsTemplate.filter(model => model.category === "code");
