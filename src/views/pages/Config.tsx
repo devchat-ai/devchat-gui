@@ -167,6 +167,13 @@ const Config = observer(() => {
     MessageUtil.handleMessage({ command: "reloadConfig" });
   };
 
+  const handleReload = () => {
+    config.updateSettle(false);
+    startLoading();
+    // update workflow list
+    config.updateWorkflowList();
+  };
+
   const changeModelDetail = (key: string, value: number | string) => {
     const newModel = { ...form.values.models[current], [key]: value };
     form.setFieldValue("models", {
@@ -458,6 +465,18 @@ const Config = observer(() => {
             />
           </>
           )}
+          <Button 
+            onClick={handleSync} 
+            variant="outline"
+            color="gray">
+            {t("Sync settings from cloud")}
+          </Button>
+          <Button 
+            onClick={handleReload} 
+            variant="outline"
+            color="gray">
+            {t("Reload merico & custom workflows")}
+          </Button>
         </Stack>
         <Group
           grow
@@ -471,13 +490,9 @@ const Config = observer(() => {
             background: "var(--vscode-sideBar-background)",
           }}
         >
-          {disabledSubmit
-          ? <Button onClick={handleSync} >
-            {t("Reload")}
-          </Button>
-          : <Button type="submit" disabled={disabledSubmit}>
+          <Button type="submit" disabled={disabledSubmit}>
             {t("Save")}
-          </Button>}
+          </Button>
           <Button
             variant="outline"
             color="gray"

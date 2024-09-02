@@ -132,12 +132,13 @@ export const ConfigStore = types
         .filter((item) => item.category === "chat");
       self.modelsTemplate = models;
     };
+    const updateSettle = (value: boolean) => {
+      self.settle = value;
+    };
 
     return {
       setTemplate,
-      updateSettle: (value: boolean) => {
-        self.settle = value;
-      },
+      updateSettle,
       getDefaultModel: () => {
         return self.defaultModel;
       },
