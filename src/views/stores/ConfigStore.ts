@@ -32,6 +32,11 @@ export const doUpdateWorkflowList = async () => {
   try {
     // Get local service port
     const port = await IDEServiceUtil.callService("get_local_service_port", {});
+    // check whether port is valid 
+    if (!port) {
+      console.error("do update workflow and command list error: port is invalid");
+      return undefined;
+    }
     // Call local service to update Workflows
     await axios.post(`http://localhost:${port}/workflows/update`, {});
     await axios.post(`http://localhost:${port}/workflows/custom_update`, {});
