@@ -58,8 +58,9 @@ class APIUtil {
     })
   }
 
-  async createMessage(message: object) {
-    this.currentMessageId = `msg-${uuidv4()}`;
+  async createMessage(message: object, messageId?: string) {
+    // 如果 messageId 为空，则使用 uuid 生成新的 ID
+    this.currentMessageId = messageId || `msg-${uuidv4()}`;
     try {
       if (!this.webappUrl) this.webappUrl = await this.fetchWebappUrl();
       const res = await axios.post(
@@ -69,24 +70,26 @@ class APIUtil {
           Authorization: `Bearer ${this.accessKey}`,
           'Content-Type': 'application/json',
         }}
-      )
+      );
       console.log("Message created: ", res?.data);
     } catch(err) {
       console.error(err);
     }
   }
 
-  async createEvent(event: object) {
+  async createEvent(event: object, messageId?: string) {
+    // 如果 messageId 为空，则使用当前的 messageId
+    const idToUse = messageId || this.currentMessageId;
     try {
       if (!this.webappUrl) this.webappUrl = await this.fetchWebappUrl();
       const res = await axios.post(
-        `${this.webappUrl}/api/v1/messages/${this.currentMessageId}/events`,
+        `${this.webappUrl}/api/v1/messages/${idToUse}/events`,
         event,
         {headers: {
           Authorization: `Bearer ${this.accessKey}`,
           'Content-Type': 'application/json',
         }}
-      )
+      );
       console.log("Event created: ", res?.data);
     } catch(err) {
       console.error(err);

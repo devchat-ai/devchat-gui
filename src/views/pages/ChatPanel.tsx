@@ -152,15 +152,26 @@ const chatPanel = observer(() => {
         language: info?.extension || info?.path?.split('.').pop()
       }));
     });
-    messageUtil.registerHandler("logEvent", (event: { name: string, value: string }) => {
+    messageUtil.registerHandler("logEvent", (id: string, event: { name: string, value: string }) => {
       const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
       IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createEvent({
         name: event.name,
         value: event.value,
         ide: platform,
         language: info?.extension || info?.path?.split('.').pop()
-      }));
+      }, id));
       console.log("logEvent:", event);
+    });
+
+    messageUtil.registerHandler("logMessage", (id: string, message: { content: string, timestamp: string }) => {
+      const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
+      IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createMessage({
+        content: message.content,
+        timestamp: message.timestamp,
+        ide: platform,
+        language: info?.extension || info?.path?.split('.').pop()
+      }, id));
+      console.log("logMessage:", message);
     });
 
     messageUtil.registerHandler("getIDEServicePort", (data: any) => {
