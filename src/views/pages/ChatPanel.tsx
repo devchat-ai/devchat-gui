@@ -152,26 +152,29 @@ const chatPanel = observer(() => {
         language: info?.extension || info?.path?.split('.').pop()
       }));
     });
-    messageUtil.registerHandler("logEvent", (id: string, event: { name: string, value: string }) => {
+    messageUtil.registerHandler("logEvent", (message: {id: string, language: string,  event: { name: string, value: string }}) => {
       const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
-      IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createEvent({
-        name: event.name,
-        value: event.value,
+      APIUtil.createEvent({
+        name: message.event.name,
+        value: message.event.value,
         ide: platform,
-        language: info?.extension || info?.path?.split('.').pop()
-      }, id));
-      console.log("logEvent:", event);
+        language: message.language
+      }, message.id);
+      console.log("logEvent:", message);
     });
 
-    messageUtil.registerHandler("logMessage", (id: string, message: { content: string, timestamp: string }) => {
+    messageUtil.registerHandler("logMessage", (message: {id: string, language: string, message: Record<string, any>}) => {
       const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
-      IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createMessage({
-        content: message.content,
-        timestamp: message.timestamp,
+      const timestamp = new Date().toISOString(); // 自动生成当前时间的ISO格式时间戳
+
+      APIUtil.createMessage({
+        content: JSON.stringify(message.message), // 将整个 message 对象转换为 JSON 字符串
+        timestamp: timestamp,
         ide: platform,
-        language: info?.extension || info?.path?.split('.').pop()
-      }, id));
-      console.log("logMessage:", message);
+        language: message.language
+      }, message.id);
+
+      console.log("logMessage:", { message, timestamp });
     });
 
     messageUtil.registerHandler("getIDEServicePort", (data: any) => {
