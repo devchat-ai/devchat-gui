@@ -1,17 +1,17 @@
-import IdeaBridge from "./ideaBridge";
-
 class MessageUtil {
   private static instance: MessageUtil;
 
   handlers: { [x: string]: any };
-  vscodeApi: any;
+  ideApi: any;
   messageListener: any;
 
   constructor() {
     this.handlers = {};
     this.messageListener = null;
     if (process.env.platform === "vscode") {
-      this.vscodeApi = window.acquireVsCodeApi();
+      this.ideApi = window.acquireVsCodeApi();
+    } else if (process.env.platform === "idea") {
+      this.ideApi = window.acquireIdeaCodeApi();
     }
 
     if (!this.messageListener) {
@@ -34,14 +34,10 @@ class MessageUtil {
 
   // Register a message handler for a specific message type
   registerHandler(messageType: string, handler: any) {
-    if (process.env.platform === "idea") {
-      IdeaBridge.registerHandler(messageType, handler);
-    } else {
-      if (!this.handlers[messageType]) {
+    if (!this.handlers[messageType]) {
         this.handlers[messageType] = [];
-      }
-      this.handlers[messageType].push(handler);
     }
+    this.handlers[messageType].push(handler);
   }
 
   // Unregister a message handler for a specific message type
@@ -58,26 +54,18 @@ class MessageUtil {
     if (!('command' in message)) {
       throw new Error('Missing required field: command');
     }
-  
-    if (process.env.platform === "idea") {
-      IdeaBridge.handleMessage(message)
-    } else {
-      const handlers = this.handlers[message.command];
-      if (handlers) {
+
+    const handlers = this.handlers[message.command];
+    if (handlers) {
         handlers.forEach((handler: (arg0: { command: string | number } & Record<string, any>) => any) =>
-          handler(message)
+            handler(message)
         );
-      }
     }
   }
 
   // Send a message to the VSCode API
   sendMessage(message: any) {
-    if (process.env.platform === "idea") {
-      IdeaBridge.sendMessage(message);
-    } else {
-      this.vscodeApi.postMessage(message);
-    }
+    this.ideApi.postMessage(message);
   }
 }
 
