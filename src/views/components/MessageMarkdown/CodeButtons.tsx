@@ -33,12 +33,24 @@ const CodeCopyButton = ({ code, language, platform }) => {
 const DiffButton = ({ code, language, platform }) => {
     const handleClick = () => {
         const e = 'show_diff';
+        let selectedCode = code;
+        const selection = window.getSelection();
+        if (selection) {
+            selectedCode = selection.toString().trim();
+        }
+        
+        // If no code is selected, use the entire code block
+        if (!selectedCode) {
+            selectedCode = code;
+        }
+
         messageUtil.sendMessage({
             command: e,
-            content: code
+            content: selectedCode
         });
         APIUtil.createEvent({name: e, value: e, language: language, ide: platform});
     };
+
     return (
         <IconButton label='View Diff' onClick={handleClick}>
             <IconFileDiff size="1.125rem" />
