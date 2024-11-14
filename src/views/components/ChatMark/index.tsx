@@ -7,6 +7,7 @@ import {
   Radio,
   Textarea,
   createStyles,
+  MultiSelect
 } from "@mantine/core";
 import { useListState, useSetState } from "@mantine/hooks";
 import { useMst } from "@/views/stores/RootStore";
@@ -58,7 +59,7 @@ interface IWdiget {
   id: string;
   value: string;
   title?: string;
-  type: "editor" | "checkbox" | "radio" | "button" | "text";
+  type: "editor" | "checkbox" | "radio" | "button" | "text"| "multiSelect";
   submit?: string;
   cancel?: string;
 }
@@ -167,6 +168,23 @@ const ChatMark = ({
     widget["value"] = event.currentTarget.value;
     widgetsHandlers.setItem(index, widget);
   };
+  const handleSelectChange = (values:string[],allValues:string[]) => {
+    widgetsHandlers.apply((item) => {
+      if (allValues.includes(item.id)) {
+        if(!values.length){
+          item.value='unchecked';
+          return item;
+        }
+        item.value = "unchecked";
+        values.forEach(el=>{
+          if(item.id==el){
+            item.value = "checked";
+          }
+        })
+      }
+      return item;
+    });
+  };
 
   useEffect(() => {
     const lines = children.split("\n");
@@ -176,6 +194,7 @@ const ChatMark = ({
     const textRegex = /^([^>].*)/; // Text widget
     const buttonRegex = /^>\s*\((.*?)\)\s*(.*)/; // Button widget
     const checkboxRegex = /^>\s*\[([x ]*)\]\((.*?)\)\s*(.*)/; // Checkbox widget
+    const selectRegex = /^>\s*\{([x ]*)\}\((.*?)\)\s*(.*)/; //MultiSelect widget
     const radioRegex = /^>\s*-\s*\((.*?)\)\s*(.*)/; // Radio button widget
     const editorRegex = /^>\s*\|\s*\((.*?)\)/; // Editor widget
     const editorContentRegex = /^>\s*(.*)/; // Editor widget
@@ -200,6 +219,40 @@ const ChatMark = ({
           value: id,
         });
       } else if ((match = line.match(checkboxRegex))) {
+        const [status, id, title] = match.slice(1);
+        const check = value
+          ? "unchecked"
+          : status === "x"
+          ? "checked"
+          : "unchecked";
+        widgetsHandlers.append({
+          id,
+          title,
+          type: "checkbox",
+          value: check,
+        });
+        setAutoForm(true);
+        let currentCheckboxData: any = prevIsCheckbox
+          ? checkArrayTemp[checkArrayTemp.length - 1]
+          : {};
+
+        if (prevIsCheckbox) {
+          currentCheckboxData.group.push({
+            id: id,
+            // 只记录初始化时的状态，后续状态变化不会更新
+            check: check,
+          });
+        } else {
+          currentCheckboxData = {
+            id: `select-all-${id}`,
+            allChecked: false,
+            indeterminate: false,
+            check: false,
+            group: [{ id: id, check: check }],
+          };
+          checkArrayTemp.push(currentCheckboxData);
+        }
+      }else if ((match = line.match(selectRegex))) {
         const [status, id, title] = match.slice(1);
         const check = value
           ? "unchecked"
@@ -304,6 +357,9 @@ const ChatMark = ({
     let radioValuesTemp: any = [];
     let wdigetsTemp: any = [];
     let prevIsCheckbox = false;
+    let groupTemp: any = [];
+    let valuesTemp: any = [];
+    let selectValues: any = [];
     widgets.map((widget, index) => {
       if (widget.type === "text") {
         wdigetsTemp.push(<Text key={index}>{widget.value}</Text>);
@@ -421,6 +477,34 @@ const ChatMark = ({
             onChange={(event) => handleEditorChange({ event, index })}
           />
         );
+      }else if(widget.type === "multiSelect"){
+        if(widget.value==="checked")selectValues.push(widget.id);
+        groupTemp.push({label:widget.title,value:widget.id});
+        valuesTemp.push(widget.id);
+        // if next widget is not radio, then end current group
+        const nextWidget =
+          index + 1 < widgets.length ? widgets[index + 1] : null;
+        if (!nextWidget || nextWidget.type !== "checkbox") {
+          const multiSelect = ((data, allValues) => {
+            return (
+              <MultiSelect
+                disabled={disabled}
+                styles={{searchInput:{outline:'none !important'}}}
+                data={data}
+                disableSelectedItemFiltering
+                label=""
+                nothingFound="暂无数据"
+                placeholder="请选择您的task编号"
+                searchable
+                value={selectValues}
+                onChange={(values)=>handleSelectChange(values,allValues)}
+              />);
+          })(groupTemp, valuesTemp);
+          groupTemp = [];
+          valuesTemp = [];
+          selectValues = [];
+          wdigetsTemp.push(multiSelect);
+        }
       }
 
       prevIsCheckbox = widget.type === "checkbox";
