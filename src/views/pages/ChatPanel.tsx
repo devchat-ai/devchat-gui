@@ -152,26 +152,29 @@ const chatPanel = observer(() => {
         language: info?.extension || info?.path?.split('.').pop()
       }));
     });
-    messageUtil.registerHandler("logEvent", (message: {id: string, language: string,  event: { name: string, value: string }}) => {
+
+    messageUtil.registerHandler("logEvent", (message: {id: string, language: string,  name: string, value: Record<string, any>}) => {
       const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
       APIUtil.createEvent({
-        name: message.event.name,
-        value: message.event.value,
+        name: message.name,
+        value: JSON.stringify(message.value),
         ide: platform,
         language: message.language
       }, message.id);
       console.log("logEvent:", message);
     });
 
-    messageUtil.registerHandler("logMessage", (message: {id: string, language: string, message: Record<string, any>}) => {
+    messageUtil.registerHandler("logMessage", (message: {id: string, language: string, commandName: string, content: string, model: string}) => {
       const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
       const timestamp = new Date().toISOString(); // 自动生成当前时间的ISO格式时间戳
 
       APIUtil.createMessage({
-        content: JSON.stringify(message.message), // 将整个 message 对象转换为 JSON 字符串
+        content: message.content,
+        command: message.commandName,
         timestamp: timestamp,
         ide: platform,
-        language: message.language
+        language: message.language,
+        model: message.model
       }, message.id);
 
       console.log("logMessage:", { message, timestamp });
