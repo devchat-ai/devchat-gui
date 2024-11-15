@@ -262,7 +262,7 @@ const ChatMark = ({
         widgetsHandlers.append({
           id,
           title,
-          type: "checkbox",
+          type: "multiSelect",
           value: check,
         });
         setAutoForm(true);
@@ -484,7 +484,7 @@ const ChatMark = ({
         // if next widget is not radio, then end current group
         const nextWidget =
           index + 1 < widgets.length ? widgets[index + 1] : null;
-        if (!nextWidget || nextWidget.type !== "checkbox") {
+        if (!nextWidget || nextWidget.type !== "multiSelect") {
           const multiSelect = ((data, allValues) => {
             return (
               <MultiSelect
