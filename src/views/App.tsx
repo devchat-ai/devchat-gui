@@ -28,10 +28,25 @@ export default function App() {
   const getConfig = () => {
     // 比较函数
     const compare_func = (configs: any) => {
-        const [serverConfig, userConfig] = config.updateConfig(configs.server_config, configs.server_config_base, configs.user_config);
+        const [serverConfig, userConfig] = config.updateConfig(configs.server_config, configs.server_config_base, configs.user_config);        
         if (serverConfig) {
-          // save server config as base
-          MessageUtil.sendMessage({ command: "writeServerConfigBase", value: serverConfig });
+            // save server config as base
+            MessageUtil.sendMessage({ command: "writeServerConfigBase", value: serverConfig });
+        }
+
+        const modelList = Object.keys(userConfig.models || {});
+        
+        // 判断是否需要重设默认模型值
+        if (!userConfig.default_model || !modelList.includes(userConfig.default_model)) {
+            // 需要重新设置默认模型
+            if (serverConfig && serverConfig.default_model && modelList.includes(serverConfig.default_model)) {
+                // 优先使用服务器配置中的默认设置
+                userConfig.default_model = serverConfig.default_model;
+            } else {
+                // 使用 chat 类型的第一个模型
+                const chatModel = modelList.find(model => userConfig.models[model].category === "chat");
+                userConfig.default_model = chatModel || modelList[0] || "";
+            }
         }
 
         // set user config
