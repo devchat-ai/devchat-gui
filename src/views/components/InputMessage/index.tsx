@@ -88,7 +88,18 @@ const InputMessage = observer((props: any) => {
     input.setValue(value);
   };
 
+  const resetCursor = () => {
+    if (inputRef.current) {
+      inputRef.current.selectionStart = 0;
+      inputRef.current.selectionEnd = 0;
+    }
+  };
+
   const handleSendClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (generating || chat.disabled) {
+      return;
+    }
+
     const inputValue = input.value;
     if (inputValue) {
       if (inputValue.trim() === "/help") {
@@ -106,12 +117,22 @@ const InputMessage = observer((props: any) => {
       }
       // Clear the input field
       input.setValue("");
+      setTimeout(resetCursor, 0);
       input.clearContexts();
       // event.preventDefault();
     }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (generating) {
+      if (event.key === 'Enter' && 
+          !event.shiftKey &&
+          !event.nativeEvent.isComposing) {
+        event.preventDefault();
+      }
+      return;
+    }
+
     if (menuOpend) {
       if (event.key === "Escape") {
         input.closeMenu();
@@ -425,7 +446,7 @@ const InputMessage = observer((props: any) => {
         <Popover.Target>
           <Textarea
             id="chat-textarea"
-            disabled={generating || chat.disabled}
+            // disabled={generating || chat.disabled}
             value={input.value}
             ref={inputRef}
             onKeyDown={handleKeyDown}
