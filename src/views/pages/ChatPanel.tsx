@@ -157,7 +157,7 @@ const chatPanel = observer(() => {
       const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
       APIUtil.createEvent({
         name: message.name,
-        value: JSON.stringify(message.value),
+        value: typeof message.value === 'string' ? message.value : JSON.stringify(message.value),
         ide: platform,
         language: message.language
       }, message.id);
