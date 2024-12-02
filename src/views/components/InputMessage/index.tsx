@@ -92,6 +92,7 @@ const InputMessage = observer((props: any) => {
     if (inputRef.current) {
       inputRef.current.selectionStart = 0;
       inputRef.current.selectionEnd = 0;
+      inputRef.current.focus();
     }
   };
 
@@ -178,6 +179,7 @@ const InputMessage = observer((props: any) => {
         !event.nativeEvent.isComposing
       ) {
         handleSendClick(event as any);
+        event.preventDefault();
       }
     }
   };
