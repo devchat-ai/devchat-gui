@@ -1,5 +1,15 @@
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
+import IDEServiceUtil from "./IDEServiceUtil";
+
+interface EventData {
+  ide: string | undefined;
+  [key: string]: any;  // For other potential properties
+}
+interface MessageData {
+  ide: string | undefined;
+  [key: string]: any;  // For other potential properties
+}
 
 class APIUtil {
   private static instance: APIUtil;
@@ -7,6 +17,7 @@ class APIUtil {
   private accessKey: string | undefined;
   private webappUrl: string | undefined;
   private currentMessageId: string | undefined;
+  private extensionVersion: string | undefined;
 
 
   constructor() {
@@ -19,6 +30,22 @@ class APIUtil {
     }
     return APIUtil.instance;
   }
+
+  async getExtensionVersion(): Promise<string | undefined> {
+    if (this.extensionVersion) {
+      return this.extensionVersion;
+    }
+
+    try {
+      const version = await IDEServiceUtil.callService("get_extension_version", {});
+      this.extensionVersion = version || "unknown";
+      return this.extensionVersion;
+    } catch (err) {
+      console.error("Failed to get extension version:", err);
+      return "unknown";
+    }
+  }
+  
   async fetchWebappUrl() {
     try {
       const res = await axios.get(
@@ -58,12 +85,18 @@ class APIUtil {
     })
   }
 
-  async createMessage(message: object, messageId?: string) {
+  async createMessage(message: MessageData, messageId?: string) {
     // 如果 messageId 为空，则使用 uuid 生成新的 ID
     var newMessageId = messageId || `msg-${uuidv4()}`;
     newMessageId = newMessageId || this.currentMessageId || '';
+    
     try {
       if (!this.webappUrl) this.webappUrl = await this.fetchWebappUrl();
+      
+      // 获取版本号并更新ide字段
+      const version = await this.getExtensionVersion() || "unknown";
+      message.ide = `${message.ide}[${version}]`;
+
       const res = await axios.post(
         `${this.webappUrl}/api/v1/messages`,
         {...message, message_id: newMessageId},
@@ -77,39 +110,42 @@ class APIUtil {
       console.error(err);
     }
   }
-
-async createEvent(event: object, messageId?: string) {
-  // 如果 messageId 为空，则使用当前的 messageId
-  const idToUse = messageId || this.currentMessageId;
-  
-  const attemptCreate = async () => {
-    try {
-      if (!this.webappUrl) this.webappUrl = await this.fetchWebappUrl();
-      const res = await axios.post(
-        `${this.webappUrl}/api/v1/messages/${idToUse}/events`,
-        event,
-        {headers: {
-          Authorization: `Bearer ${this.accessKey}`,
-          'Content-Type': 'application/json',
-        }}
-      );
-      console.log("Event created: ", res?.data);
-      return true; // 成功创建事件
-    } catch(err) {
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        return false; // 遇到 404 错误，返回 false
+  async createEvent(event: EventData, messageId?: string) {
+    // 如果 messageId 为空，则使用当前的 messageId
+    const idToUse = messageId || this.currentMessageId;
+    
+    // 获取版本号
+    const version = await this.getExtensionVersion() || "unknow";
+    // 更新event.ide, 添加version信息。
+    // 原来值为vscode,修改后值为vscode[0.1.96]
+    event.ide = `${event.ide}[${version}]`;
+    const attemptCreate = async () => {
+      try {
+        if (!this.webappUrl) this.webappUrl = await this.fetchWebappUrl();
+        const res = await axios.post(
+          `${this.webappUrl}/api/v1/messages/${idToUse}/events`,
+          event,
+          {headers: {
+            Authorization: `Bearer ${this.accessKey}`,
+            'Content-Type': 'application/json',
+          }}
+        );
+        console.log("Event created: ", res?.data);
+        return true;
+      } catch(err) {
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          return false;
+        }
+        console.error(err);
+        return true;
       }
-      console.error(err);
-      return true; // 其他错误，不再重试
-    }
-  };
+    };
 
-  if (!(await attemptCreate())) {
-    // 如果第一次尝试失败且是 404 错误，等待 2 秒后重试
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    await attemptCreate();
+    if (!(await attemptCreate())) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await attemptCreate();
+    }
   }
-}
 
   async getBalance() {
     try {
