@@ -407,9 +407,20 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
               {children}
             </Anchor>
           ) : (
-            <a {...props} href={href} className={className}>
+            <Anchor
+              className={classes.link}
+              href="javascript:void()"
+              onClick={() => {
+                if (href) {
+                  messageUtil.sendMessage({
+                    command: "openLink",
+                    url: href,
+                  });
+                }
+              }}
+            >
               {children}
-            </a>
+            </Anchor>
           );
         },
         img({ node, ...props }) {
