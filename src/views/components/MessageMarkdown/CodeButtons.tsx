@@ -21,7 +21,10 @@ const CodeCopyButton = ({ code, language, platform }) => {
             {({ copied, copy }) => (
                 <IconButton label={copied ? 'Copied' : 'Copy'} color={copied ? 'teal' : 'gray'} onClick={() => {
                     copy();
-                    APIUtil.createEvent({name: 'copy', value: 'copy', language: language, ide: platform})
+                    APIUtil.createEvent(
+                        {name: 'copy', value: code, language: language, ide: platform}, 
+                        APIUtil.getCurrentMessageId()
+                    );
                 }}>
                     {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
                 </IconButton>
@@ -48,7 +51,10 @@ const DiffButton = ({ code, language, platform }) => {
             command: e,
             content: selectedCode
         });
-        APIUtil.createEvent({name: e, value: e, language: language, ide: platform});
+        APIUtil.createEvent(
+            {name: e, value: selectedCode, language: language, ide: platform},
+            APIUtil.getCurrentMessageId()
+        );
     };
 
     return (
@@ -65,7 +71,10 @@ const EditApplyButton = ({ code, language, platform }) => {
             content: code,
             autoedit: true
         });
-        APIUtil.createEvent({name: "edit_apply", value: "edit_apply", language: language, ide: platform});
+        APIUtil.createEvent(
+            {name: "edit_apply", value: code, language: language, ide: platform},
+            APIUtil.getCurrentMessageId()
+        );
     };
     return (
         <IconButton label='Apply Code' onClick={handleClick}>
@@ -81,7 +90,10 @@ const CodeApplyButton = ({ code, language, platform }) => {
             command: e,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e, language: language, ide: platform});
+        APIUtil.createEvent(
+            {name: e, value: code, language: language, ide: platform},
+            APIUtil.getCurrentMessageId()
+        );
     };
     return (
         <IconButton label='Insert Code' onClick={handleClick}>
@@ -97,7 +109,10 @@ const FileApplyButton = ({ code, language, platform }) => {
             command: e,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e, language: language, ide: platform});
+        APIUtil.createEvent(
+            {name: e, value: code, language: language, ide: platform},
+            APIUtil.getCurrentMessageId()
+        );
     };
     return (
         <IconButton label='Replace File' onClick={handleClick}>
@@ -115,7 +130,10 @@ const NewFileButton = ({ code, language, platform }) => {
             language: language,
             content: code
         });
-        APIUtil.createEvent({name: e, value: e, language: language, ide: platform});
+        APIUtil.createEvent(
+            {name: e, value: code, language: language, ide: platform},
+            APIUtil.getCurrentMessageId()
+        );
     };
     return (
         <IconButton label='Create New File' onClick={handleClick}>

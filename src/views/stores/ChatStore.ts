@@ -7,6 +7,7 @@ import i18next from "i18next";
 import APIUtil from "@/util/APIUtil";
 import IDEServiceUtil from "@/util/IDEServiceUtil";
 import { ASSISTANT_DISPLAY_NAME } from "@/util/constants";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Context {
   content: string;
@@ -186,13 +187,14 @@ export const ChatStore = types
       const supportedCommands = new Set(rootStore.input.commandMenus.map(x => x.name));
       let command = text.startsWith("/") ? text.split(" ", 1)[0] : null;
       command = command && supportedCommands.has(command.slice(1)) ? command : null;
+      
       IDEServiceUtil.getCurrentFileInfo().then(info => APIUtil.createMessage({
         content: text,
         command: command,
         model: chatModel,
         language: info?.extension || info?.path?.split(".").pop(),
         ide: platform === "idea" ? "intellij" : platform
-      }));
+      }, APIUtil.updateCurrentMessageId()));
     };
 
     const helpMessage = (originalMessage = false) => {
@@ -392,6 +394,13 @@ Thinking...
         } else {
           self.messages[messagesLength - 1].message = message;
         }
+
+        // send event to server
+        const platform = process.env.platform === "idea" ? "intellij" : process.env.platform;
+        APIUtil.createEvent(
+          {name: 'stopGenerating', value: message, language: "unknow", ide: platform},
+          APIUtil.getCurrentMessageId()
+        );
       },
 
       newMessage: (message: IMessage) => {
