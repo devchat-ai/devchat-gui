@@ -113,8 +113,11 @@ const MessageMarkdown = observer((props: MessageMarkdownProps) => {
     const selection = window.getSelection()?.toString();
     console.log("Copied: ", selection);
     const e = 'manual_copy';
-    APIUtil.createEvent({name: e, value: selection, language: language, ide: platform})
-  }
+    APIUtil.createEvent(
+      {name: e, value: selection, language: language, ide: platform},
+      APIUtil.getCurrentMessageId()
+    );
+  };
 
   useEffect(() => {
     let previousNode: any = null;

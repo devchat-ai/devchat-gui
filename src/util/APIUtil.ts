@@ -85,6 +85,15 @@ class APIUtil {
     })
   }
 
+  updateCurrentMessageId() {
+    this.currentMessageId = `msg-${uuidv4()}`;
+    return this.currentMessageId;
+  }
+  
+  getCurrentMessageId() {
+    return this.currentMessageId;
+  }
+
   async createMessage(message: MessageData, messageId?: string) {
     // 如果 messageId 为空，则使用 uuid 生成新的 ID
     var newMessageId = messageId || `msg-${uuidv4()}`;

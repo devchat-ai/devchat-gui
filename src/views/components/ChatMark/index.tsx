@@ -101,7 +101,7 @@ const ChatMark = ({
       value: JSON.stringify(formData),
       ide: platform,
       language: info?.extension || info?.path?.split('.').pop()
-    }))
+    }));
   };
 
   const handleCancel = () => {
@@ -112,7 +112,7 @@ const ChatMark = ({
       name: "cancel",
       ide: platform,
       language: info?.extension || info?.path?.split('.').pop()
-    }))
+    }));
   };
 
   const handleButtonClick = ({ event, index }) => {
