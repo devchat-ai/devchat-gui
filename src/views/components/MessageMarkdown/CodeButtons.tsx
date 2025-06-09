@@ -86,12 +86,20 @@ const EditApplyButton = ({ code, language, platform }) => {
 const CodeApplyButton = ({ code, language, platform }) => {
     const handleClick = () => {
         const e = 'code_apply';
+        let selectedCode = code;
+        const selection = window.getSelection();
+        if (selection) {
+            const selected = selection.toString().trim();
+            if (selected) {
+                selectedCode = selected;
+            }
+        }
         messageUtil.sendMessage({
             command: e,
-            content: code
+            content: selectedCode
         });
         APIUtil.createEvent(
-            {name: e, value: code, language: language, ide: platform},
+            {name: e, value: selectedCode, language: language, ide: platform},
             APIUtil.getCurrentMessageId()
         );
     };
